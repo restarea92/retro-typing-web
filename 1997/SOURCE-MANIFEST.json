@@ -1,0 +1,199 @@
+{
+  "snapshotDate": "2026-10-22",
+  "provenance": "1997 production runtime snapshot. Static production files are recovered artifacts, not the complete historical development workspace. Further 1997 development is paused.",
+  "verificationScope": "See README.md. The public source has intentionally omitted resource modules.",
+  "files": [
+    {
+      "path": "app.js",
+      "sourceSha256": "418f9e0428dbcb29fab7b1ea7de5f19a0ef5558e138ca15984f904dce1e2a104",
+      "publishedSha256": "418f9e0428dbcb29fab7b1ea7de5f19a0ef5558e138ca15984f904dce1e2a104",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "data.js",
+      "sourceSha256": "0f1cc01f750fe794877114a4980cd37d4acb97ef385f784881281b28e6fb070a",
+      "publishedSha256": "0f1cc01f750fe794877114a4980cd37d4acb97ef385f784881281b28e6fb070a",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "drill-rules.js",
+      "sourceSha256": "e66dece85f4577bb6a87fed31872d3e5146bbaf1b5d203ee0d48b1c804cdf5b3",
+      "publishedSha256": "e66dece85f4577bb6a87fed31872d3e5146bbaf1b5d203ee0d48b1c804cdf5b3",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "edition.js",
+      "sourceSha256": "a6acec949a4692d9a754d60f8ddae3b58c8bf65472494e564c43f5c6508dcef8",
+      "publishedSha256": "a6acec949a4692d9a754d60f8ddae3b58c8bf65472494e564c43f5c6508dcef8",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "engine.js",
+      "sourceSha256": "877b5e6500103242e3644fce3f7f57230293e4a465d419ffecedfbd0ec7c070e",
+      "publishedSha256": "877b5e6500103242e3644fce3f7f57230293e4a465d419ffecedfbd0ec7c070e",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "extras.css",
+      "sourceSha256": "c6a421f9483eb98e8585d0e7ba93d42d5c8f5416ab0f06e8a93e7df6eec3222e",
+      "publishedSha256": "c6a421f9483eb98e8585d0e7ba93d42d5c8f5416ab0f06e8a93e7df6eec3222e",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "extras.js",
+      "sourceSha256": "a8b38d0c71b9be6ff61ad24d8bba643845200f1056f63e7101605f667d1378a2",
+      "publishedSha256": "a8b38d0c71b9be6ff61ad24d8bba643845200f1056f63e7101605f667d1378a2",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "game-engine.js",
+      "sourceSha256": "015fa7cd6d5d7051fdf6446966b1ae52a9248071df1297e9c27d1554c6dfd96a",
+      "publishedSha256": "015fa7cd6d5d7051fdf6446966b1ae52a9248071df1297e9c27d1554c6dfd96a",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "game-rules.js",
+      "sourceSha256": "d98ef4ddd75913dbc4f46ccf0c2fdc8460bd87c71203b96376f14d082254ec1e",
+      "publishedSha256": "d98ef4ddd75913dbc4f46ccf0c2fdc8460bd87c71203b96376f14d082254ec1e",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "game-selector.css",
+      "sourceSha256": "d35fb51dd11d9ee60d021164a039ee4e8cefb658a58df37d5074db8970f4e61d",
+      "publishedSha256": "d35fb51dd11d9ee60d021164a039ee4e8cefb658a58df37d5074db8970f4e61d",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "game-selector.js",
+      "sourceSha256": "d8ff1797d08d79150305c3cc1364e558ee85826a63acee32c910b30eb63af0d9",
+      "publishedSha256": "d8ff1797d08d79150305c3cc1364e558ee85826a63acee32c910b30eb63af0d9",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "index.html",
+      "sourceSha256": "e5fa03671510fe8e8334f666b0eaa0b4f6bbe79100217f65b0e7e868c1524939",
+      "publishedSha256": "e5fa03671510fe8e8334f666b0eaa0b4f6bbe79100217f65b0e7e868c1524939",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "input-composer.js",
+      "sourceSha256": "86aa3b333269e64810f30822f5675ebba0ddbcdd7ecd9568eb6ee9a406767923",
+      "publishedSha256": "86aa3b333269e64810f30822f5675ebba0ddbcdd7ecd9568eb6ee9a406767923",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "native-borders.css",
+      "sourceSha256": "f31f141cc7020e05891c1a1cb5d4bf10d945c89df655be674bfb36fa5685bf46",
+      "publishedSha256": "7cfc338db9c19f6470f4b091c57e6108f61b8b8b8fb91b95eff2ceef2f04b768",
+      "removedEmbeddedAssets": 12
+    },
+    {
+      "path": "original-history-store.js",
+      "sourceSha256": "6b17c8e40d466e0d222bc5dabb1332333ef5aafae86875ca701601f0a0b24704",
+      "publishedSha256": "6b17c8e40d466e0d222bc5dabb1332333ef5aafae86875ca701601f0a0b24704",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "original-idle.js",
+      "sourceSha256": "25b9a2207ef49daf901beab93cf3cbb7951a95f88da2c8447eeb17c4755377da",
+      "publishedSha256": "25b9a2207ef49daf901beab93cf3cbb7951a95f88da2c8447eeb17c4755377da",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "original-key-guide.js",
+      "sourceSha256": "e78b5f98c8518ae8e0497ba2a3ec9430a7c3705752379d9ed9ec5b9c1e70cb98",
+      "publishedSha256": "e78b5f98c8518ae8e0497ba2a3ec9430a7c3705752379d9ed9ec5b9c1e70cb98",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "original-key-paint.js",
+      "sourceSha256": "95ad5de00a14aa0ebbd1766b9b879be3e0fbfb420236252654839d75ce0bd0d6",
+      "publishedSha256": "95ad5de00a14aa0ebbd1766b9b879be3e0fbfb420236252654839d75ce0bd0d6",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "original-key-profile.js",
+      "sourceSha256": "aae0c7455682d361a66073868cd24a92444edb9851dc3f228b85dd185cf97db3",
+      "publishedSha256": "aae0c7455682d361a66073868cd24a92444edb9851dc3f228b85dd185cf97db3",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "original-key-stats.js",
+      "sourceSha256": "d0ca86ce02be4805e05eb080d389e2946f03c6b1a15a915fa2c2188bd50575af",
+      "publishedSha256": "d0ca86ce02be4805e05eb080d389e2946f03c6b1a15a915fa2c2188bd50575af",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "original-metrics.js",
+      "sourceSha256": "93cb2afe759d6a741932312b90ad0e10664b743050cb389c3192f24327088109",
+      "publishedSha256": "93cb2afe759d6a741932312b90ad0e10664b743050cb389c3192f24327088109",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "original-random.js",
+      "sourceSha256": "8803b62b4ce3fdcc5d71538243208194c73db972b308c17d07f9d030b4300757",
+      "publishedSha256": "8803b62b4ce3fdcc5d71538243208194c73db972b308c17d07f9d030b4300757",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "original-record-store.js",
+      "sourceSha256": "ca7b8236b1dbe22f74dc3311aab6e876eba679576d438d612e8aad1a35c3c3f6",
+      "publishedSha256": "ca7b8236b1dbe22f74dc3311aab6e876eba679576d438d612e8aad1a35c3c3f6",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "original-records.js",
+      "sourceSha256": "ee5a693f9b73ad43ae9d472cde1d9b89e96dc40990ac06547cbcf385c4c6e71c",
+      "publishedSha256": "ee5a693f9b73ad43ae9d472cde1d9b89e96dc40990ac06547cbcf385c4c6e71c",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "original-sound.js",
+      "sourceSha256": "84cf222b1c2708d1355d9c76abbbbb83f534a6a0ffc991d283c778af9f46f1b2",
+      "publishedSha256": "84cf222b1c2708d1355d9c76abbbbb83f534a6a0ffc991d283c778af9f46f1b2",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "original-word-getter.js",
+      "sourceSha256": "078b576cb15ab56295a9655218dd48facc6c6ff66e8d9ab654fb80510dc6ba07",
+      "publishedSha256": "078b576cb15ab56295a9655218dd48facc6c6ff66e8d9ab654fb80510dc6ba07",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "presentation.js",
+      "sourceSha256": "3cc00969737e4e6a2281d06b706a6d1955b78809b9363975b514e7c37ffa8bd5",
+      "publishedSha256": "3cc00969737e4e6a2281d06b706a6d1955b78809b9363975b514e7c37ffa8bd5",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "progression.js",
+      "sourceSha256": "c0f529d63f5e9e6265782b0984d83041d9d6727b9ac25218aad0dd5ff23421fa",
+      "publishedSha256": "c0f529d63f5e9e6265782b0984d83041d9d6727b9ac25218aad0dd5ff23421fa",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "settings.css",
+      "sourceSha256": "df1af155dabb73973be14dc035891e7a078df02d3553566fe37e7e4103abf815",
+      "publishedSha256": "ac4e4f3ae55e46c89358887e5134b15d03f20a697b167af5b87eb5b5ce76dcf5",
+      "removedEmbeddedAssets": 2
+    },
+    {
+      "path": "settings.js",
+      "sourceSha256": "34f89289c29df2dcfb790bfab680c44bcd2c134ef0842bc95f498a483a48d9f4",
+      "publishedSha256": "34f89289c29df2dcfb790bfab680c44bcd2c134ef0842bc95f498a483a48d9f4",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "styles.css",
+      "sourceSha256": "6834a9c4d244fc5e1abbe89e8d7283260a6b116894afb630c0deb3fde2092332",
+      "publishedSha256": "fda8dfc326208e23ff20cd0ee69bef4ac6a2340f29f09ec90246a395821f452e",
+      "removedEmbeddedAssets": 21
+    },
+    {
+      "path": "text-practice.js",
+      "sourceSha256": "813ada4872a557ebb1987d3ed8e9f0300f1f327afa17b9c47b7a50f2bba4fc98",
+      "publishedSha256": "813ada4872a557ebb1987d3ed8e9f0300f1f327afa17b9c47b7a50f2bba4fc98",
+      "removedEmbeddedAssets": 0
+    }
+  ]
+}

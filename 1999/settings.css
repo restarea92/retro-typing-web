@@ -1,0 +1,58 @@
+/* Native settings framebuffer: outer(192,120)265×241. */
+.original-settings{position:absolute;left:190px;top:72px;width:265px;height:241px;box-sizing:border-box;background:#aaa;border:1px solid;border-color:#656565 #000 #000 #656565;box-shadow:inset 1px 1px #fff,inset -1px -1px #656565;color:#000;font:16px/16px HTTDPixel,monospace}
+.original-settings header{position:absolute;left:4px;right:4px;top:4px;height:19px;margin:0;background:#00008a;color:#fff;display:block;padding:1px 4px 2px;box-sizing:border-box}
+.original-settings button,.original-settings input{font:16px/16px HTTDPixel,monospace;border-radius:0;color:#000}
+.original-settings .settings-close{position:absolute;right:3px;top:2px;padding:0;width:15px;height:15px;margin:0;line-height:12px;border:1px solid;border-color:#fff #000 #000 #fff;box-shadow:inset -1px -1px #656565;background:#aaa;font:14px/12px monospace}
+.original-settings .settings-body{margin:0}
+.original-settings .settings-row{position:absolute;left:7px;top:30px;width:244px;height:23px;margin:0;display:block}
+.original-settings .settings-row:nth-child(2){top:55px}
+.original-settings .settings-row label{position:absolute;left:0;top:2px;width:104px;height:16px;white-space:nowrap;padding:0 8px;line-height:16px}
+.original-settings .settings-row:has(button:focus) label{background:#000;color:#fff}
+.original-settings .settings-cycle{position:absolute;left:116px;top:0;width:121px;height:23px;background:#fff;text-align:left;border:1px solid;border-color:#656565 #fff #fff #656565;box-shadow:inset 1px 1px #000,inset -1px -1px #aaa;padding:2px 11px 3px;line-height:16px;white-space:nowrap}
+.original-settings .settings-cycle:focus{outline:none}
+.original-settings fieldset{position:absolute;left:15px;top:86px;width:229px;height:61px;border:1px solid;border-color:#656565 #fff #fff #656565;box-shadow:inset 1px 1px #fff,inset -1px -1px #656565;margin:0;padding:0;box-sizing:border-box}
+.original-settings .settings-switches label{position:absolute;left:9px;top:6px;height:21px;display:flex;align-items:center;gap:25px;white-space:nowrap}
+.original-settings .settings-switches label+label{top:31px}
+.original-settings .settings-switches label:has(input:focus) span{background:#000;color:#fff}
+.original-settings input[type=checkbox]{appearance:none;width:21px;height:21px;border:1px solid;border-color:#fff #000 #000 #fff;box-shadow:inset -1px -1px #656565;background:#aaa;margin:0;position:relative;flex:none}
+.original-settings .settings-targets{top:161px;height:66px;display:block}
+.original-settings legend{position:absolute;left:23px;top:-9px;padding:0 8px;margin:0;line-height:16px;background:#aaa;height:16px}
+.original-settings .settings-targets label{position:absolute;left:15px;top:13px;white-space:nowrap;font-size:16px;line-height:16px}
+.original-settings .settings-targets label[for=setting-accuracy]{top:38px}
+.original-settings input[data-numeric]{position:absolute;left:139px;top:10px;width:81px;height:22px;box-sizing:border-box;background:#fff;border:1px solid;border-color:#656565 #fff #fff #656565;box-shadow:inset 1px 1px #000,inset -1px -1px #aaa;padding:1px 3px 3px;font-size:16px;line-height:16px;appearance:textfield;outline:0}
+.original-settings #setting-accuracy{top:35px}
+.original-settings input[data-numeric]::-webkit-inner-spin-button{appearance:none}
+.original-settings header span:before{content:'';display:inline-block;vertical-align:top;width:32px;height:16px;margin-right:8px;background-image:none /* Embedded asset omitted from public source archive. */}
+
+.original-settings input[type=checkbox]:checked:after{content:"";left:0;top:0;width:16px;height:16px;background:none /* Embedded asset omitted from public source archive. */;image-rendering:pixelated}
+.original-settings header{padding:2px 3px 1px}
+.original-settings input::selection{background:#0aa;color:#fff}
+
+.original-settings input[type=checkbox]:checked:after{position:absolute;display:block}
+
+/* Keep the native input semantics, but draw its bitmap selection/block cursor. */
+.original-settings input[data-numeric]{color:transparent;-webkit-text-fill-color:transparent;caret-color:transparent}
+.original-settings input[data-numeric]::selection{background:transparent;color:transparent}
+.settings-number-render{position:absolute;left:143px;top:12px;width:73px;height:16px;overflow:hidden;white-space:pre;font:16px/16px HTTDPixel;pointer-events:none;color:#000}
+.settings-number-render.accuracy-number-render{top:37px}
+.settings-number-glyphs{position:relative;display:inline-block;vertical-align:top;height:16px}
+.settings-number-glyphs>span{display:inline-block;width:8px;height:16px;vertical-align:top}
+.settings-number-glyphs .number-selected{background:#0aa;color:#fff}
+.settings-number-glyphs .number-caret{position:absolute;top:0;color:#fff;font-style:normal}
+/* Native second-row label is one scanline below the first row's25px cadence. */
+.original-settings .settings-row:nth-child(2) label{top:3px}
+
+/* Native checkbox captions start one scanline above the flex midpoint. */
+.original-settings .settings-switches span{position:relative;top:-1px;white-space:pre}
+/* Native checkbox focus is the black caption, never the browser's rounded ring. */
+.original-settings input[type=checkbox]:focus-visible{outline:none}
+
+/* Native target label text cells align with the numeric text at y295 and y320. */
+.original-settings .settings-targets label{top:12px}
+.original-settings .settings-targets label[for=setting-accuracy]{top:37px}
+
+/* Exact native 1999 settings border paint; layout widths and content stay unchanged. */
+.original-settings{--qa-settings-border-input:none /* Embedded asset omitted from public source archive. */ 2 / 2px / 0 stretch;border-image:var(--qa-native-border-window);box-shadow:none}
+.original-settings fieldset{border-image:var(--qa-native-border-field);box-shadow:none}
+.original-settings .settings-cycle,.original-settings input[data-numeric]{border-image:var(--qa-settings-border-input);box-shadow:none}
+.classic .original-settings .settings-close,.original-settings input[type=checkbox]{border-image:var(--qa-native-border-close);box-shadow:none}

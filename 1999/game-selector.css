@@ -1,0 +1,11 @@
+.original-game-select{position:absolute;left:198px;top:62px;width:249px;height:261px;box-sizing:border-box;border:1px solid;border-color:#656565 #000 #000 #656565;box-shadow:inset 1px 1px #fff,inset -1px -1px #656565;background:#aaa;color:#000;padding:0;font:16px/16px HTTDPixel,monospace}
+.original-game-select h1{position:absolute;left:4px;right:4px;top:4px;height:19px;line-height:16px;background:#00008a;color:#fff;font-size:16px;margin:0;padding:1px 4px 2px;white-space:nowrap;font-weight:normal}
+.original-game-select .dialog-close{top:2px;right:3px}
+.original-game-select fieldset{position:absolute;left:39px;top:35px;width:169px;height:185px;margin:0;border:1px solid;border-color:#656565 #fff #fff #656565;box-shadow:inset 1px 1px #fff,inset -1px -1px #656565;padding:0}
+.original-game-select legend{position:absolute;left:55px;top:-9px;margin:0;color:#fff;font-size:16px;padding:0 8px;background:#aaa;text-align:center;height:16px;line-height:16px;white-space:nowrap}
+.original-game-levels{position:absolute;left:30px;top:14px;width:106px;height:162px;border:1px solid;border-color:#656565 #fff #fff #656565;box-sizing:border-box;outline:0;line-height:16px;font-size:16px;overflow:hidden}
+.original-game-levels>div{height:16px;white-space:pre;cursor:pointer;text-align:center}
+.original-game-levels>div.selected{background:#0000ba;color:white}
+.original-game-select-message{position:absolute;left:3px;right:3px;bottom:3px;height:19px;border:1px solid;border-color:#656565 #fff #fff #656565;color:white;font-size:16px;line-height:16px;padding:0 3px}
+.original-game-select h1{padding:2px 3px 1px}
+.original-game-select legend{top:-7px}

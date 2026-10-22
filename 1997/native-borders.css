@@ -1,0 +1,52 @@
+/* Exact lossless-native 9-slice border paint. Layout border widths remain independent. */
+:root {
+  --native-border-window: none /* Embedded asset omitted from public source archive. */ 2 / 2px / 0 stretch;
+  --native-border-black-window: none /* Embedded asset omitted from public source archive. */ 2 / 2px / 0 stretch;
+  --native-border-close: none /* Embedded asset omitted from public source archive. */ 2 / 2px / 0 stretch;
+  --native-border-input: none /* Embedded asset omitted from public source archive. */ 2 / 2px / 0 stretch;
+  --native-border-field: none /* Embedded asset omitted from public source archive. */ 2 / 2px / 0 stretch;
+  --native-border-raised: none /* Embedded asset omitted from public source archive. */ 1 / 1px / 0 stretch;
+  --native-border-sunken: none /* Embedded asset omitted from public source archive. */ 1 / 1px / 0 stretch;
+  --native-border-key-white: none /* Embedded asset omitted from public source archive. */ 3 / 3px / 0 stretch;
+  --native-border-key-gray: none /* Embedded asset omitted from public source archive. */ 3 / 3px / 0 stretch;
+  --native-border-enter-upper: none /* Embedded asset omitted from public source archive. */ 3 / 3px / 0 stretch;
+  --native-border-enter-lower: none /* Embedded asset omitted from public source archive. */ 3 / 3px / 0 stretch;
+}
+
+/* 1997-only, bounded native-capture corrections. Border-image changes paint,
+   not the existing layout border widths. The outer .classic frame is untouched. */
+.original-settings,.original-help{border-image:var(--native-border-window);box-shadow:none}
+.stage-dialog:not(.repeat-dialog){border-image:var(--native-border-black-window);box-shadow:none}
+.extra-game-scores::after,.extra-exam-results::after{border-image:var(--native-border-window);box-shadow:none}
+.classic .titlebar>button,.classic .original-help .dialog-close,.classic .stage-dialog .dialog-close,.classic .original-settings .settings-close,.original-settings input[type=checkbox]{border-image:var(--native-border-close);box-shadow:none}
+.original-settings .settings-close::after{content:none}
+.original-settings .settings-cycle,.original-settings input[data-numeric]{border-image:var(--native-border-input);box-shadow:none}
+.original-settings fieldset,.original-help .help-keyboard.full-keyboard,.extra-notepad .extra-keyboard{border-image:var(--native-border-field);box-shadow:none}
+.stage-dialog:not(.repeat-dialog) .stage-answer{border-image:var(--native-border-raised)}
+
+/* Only the captured Help/notepad key grids use these measured3px corners.
+   Preserve active key rendering and the other drill keyboard states. */
+.help-keyboard .physical-key:not(.active-key),.extra-notepad .extra-keyboard span:not(.pressed){border-image:var(--native-border-key-white)}
+.help-keyboard .physical-key.wide:not(.active-key),.help-keyboard .row-4 .physical-key:not(.space):not(.active-key),.extra-notepad .extra-keyboard .wide:not(.pressed),.extra-notepad .extra-keyboard .extra-blank:not(.pressed){border-image:var(--native-border-key-gray);border-top-color:#aaa;border-left-color:#aaa}
+
+/* Enter is one L-shaped key. Its continuous right edge is not the corner
+   of a second ordinary gray rectangle. Native upper/lower stencils preserve it. */
+.help-keyboard .row-2 .physical-key:last-child:not(.active-key),.extra-notepad .extra-keyboard>div:nth-child(3)>span:last-child:not(.pressed){border-image:var(--native-border-enter-lower)}
+.help-keyboard .row-1::after,.extra-notepad .extra-keyboard>div:nth-child(2)::after{box-sizing:border-box;width:48px;height:32px;border:3px solid transparent;border-image:var(--native-border-enter-upper)}
+
+/* The eight native Help home-key perimeters are uniformly gray, not raised. */
+.original-help .row-2 .physical-key:nth-child(n+2):nth-child(-n+5),.original-help .row-2 .physical-key:nth-child(n+8):nth-child(-n+11){border-image:none}
+
+/* Native notepad top/height plus compensated child offsets retain the already
+   verified keyboard, title glyph and result-value screen coordinates. */
+.extra-notepad{top:52px;height:281px;border-image:var(--native-border-window);box-shadow:none}
+.extra-notepad>.extra-body{top:24px}
+.extra-notepad>h1{margin:3px;padding-left:3px;padding-top:2px}
+.extra-notepad-result{width:281px;height:91px;border-image:var(--native-border-window);box-shadow:none}
+.extra-notepad-result>h1{margin:3px;padding-left:3px;padding-top:2px}
+.extra-notepad-result>div{margin-top:8px}
+.extra-notepad .extra-note-input{left:6px;top:4px;width:601px;padding-left:7px;border:1px solid;border-color:#656565 #fff #fff #656565;border-image:var(--native-border-sunken);box-shadow:none}
+
+/* Every captured native close uses the same15px bevel and8px bitmap X.
+   Passive ranking geometry remains pointer-events:none in extras.css. */
+.extra-notepad>.extra-close,.extra-notepad-result>.extra-close,.extra-game-scores>.extra-close,.extra-exam-results>.extra-close{right:6px;top:5px;width:15px;height:15px;border:1px solid;border-image:var(--native-border-close);box-shadow:none;font-size:0;color:transparent;background-color:#aaa;background-image:none /* Embedded asset omitted from public source archive. */;background-repeat:no-repeat;background-position:2px 2px;z-index:1}

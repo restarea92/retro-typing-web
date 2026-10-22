@@ -1,0 +1,294 @@
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#24282b;color:#111}body{font-family:"Gulim","굴림","Dotum",monospace;display:flex;justify-content:center;padding:32px 12px}button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,textarea:focus-visible{outline:2px dotted #000;outline-offset:-4px}.app-wrap{width:640px;max-width:100%}#frame-box{width:640px;height:480px;transform-origin:top left}.classic{width:640px;height:480px;background:#aaa;border:2px outset #eee;position:relative;overflow:hidden;font-size:14px;font-weight:bold;image-rendering:pixelated}.titlebar{height:23px;display:flex;align-items:center;justify-content:space-between;background:#666;color:white;border-bottom:2px ridge white;padding:0 4px;letter-spacing:1px}.titlebar button{width:15px;height:15px;line-height:10px;padding:0;background:#bbb;color:#000;border:2px outset #ddd;font-size:17px}.classic nav{height:21px;margin:1px 3px;display:flex;border:1px solid #333;background:#aaa}.classic nav button{height:18px;min-width:55px;padding:0 11px;background:#aaa;border:0;border-right:1px solid #333;color:#000;line-height:17px;letter-spacing:1px}.classic nav button.active{background:#000080;color:#fff}#workspace{height:409px;position:relative;padding:16px}.statusbar{height:20px;position:absolute;bottom:0;left:0;right:0;display:flex;font-size:14px}.statusbar>span{border:2px inset #eee;height:20px;line-height:16px;padding:0 5px}#language{width:70px}#status{flex:1;color:#ffff55;white-space:nowrap;overflow:hidden}#clock{width:68px;text-align:center}.welcome{width:460px;height:308px;position:absolute;top:38px;left:87px;background:#fff;box-shadow:5px 5px #555,8px 8px #999;border-bottom:1px solid #111}.welcome-art{height:168px;background:#00a3b9;overflow:hidden;position:relative}.welcome-art svg{display:block;width:100%;height:100%}.welcome-copy{padding:16px 26px;font-size:13px;line-height:1.35;max-width:400px}.welcome-copy p{margin:0 0 13px}.pane{height:100%;border:2px outset #eee;padding:12px;background:#bcbcbc}.pane h1{font-size:16px;margin:0 0 14px;padding:5px 7px;color:white;background:#000080}.toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px}.classic .bevel{background:#c0c0c0;border:2px outset #fff;padding:4px 12px;color:#111}.classic .bevel:active{border-style:inset}.target{background:white;border:2px inset #eee;min-height:64px;max-height:104px;overflow:auto;padding:12px;line-height:1.7;white-space:pre-wrap;font-size:18px;overflow-wrap:anywhere}.target .correct{color:#008000}.target .wrong{color:white;background:#a00000}.target .cursor{border-bottom:2px solid navy;background:#ffffaa}.typing-input{display:block;resize:none;width:100%;height:66px;background:#fff;color:#111;border:2px inset #eee;margin:10px 0;padding:8px;font-size:18px;line-height:1.5}.metrics{display:flex;justify-content:space-around;border:2px inset #eee;padding:6px;margin:8px 0;background:#aaa;font-size:13px}.keyboard{text-align:center;padding-top:3px}.key{display:inline-block;min-width:28px;margin:2px;padding:4px;border:2px outset #eee;background:#bbb}.key.next{background:#ffff55}.footnote{font-weight:normal;font-size:11px;color:#333;margin-top:8px}.result{border:2px inset white;background:#fff;padding:15px;text-align:center;line-height:2}.records{width:100%;border-collapse:collapse;background:#fff;font-size:13px}.records td,.records th{border:1px solid #777;padding:5px;text-align:left}.records-wrap{max-height:260px;overflow:auto}.helpers{color:#bbb;font:12px/1.6 sans-serif;margin-top:16px;text-align:center}.helpers div{margin-top:8px;display:flex;justify-content:center;gap:8px}.helpers button{border:1px solid #626b70;background:#30373c;color:#ddd;padding:6px 10px;border-radius:3px}#outside-help{color:#ddd;font:13px/1.8 sans-serif}.import-label{cursor:pointer}.import-label input{display:none}.help-copy{font-size:14px;line-height:1.9;font-weight:normal}.long .target{height:145px;max-height:145px}.long .typing-input{height:80px}.menu-choice{display:block;margin:12px auto;width:230px}.badge{font-size:11px;font-weight:normal;color:#444;text-align:right}body:has(.classic:fullscreen){padding:0}.classic:fullscreen{position:fixed;inset:0;margin:auto}.classic:fullscreen #workspace{height:calc(100% - 66px)}@media(max-width:660px){body{padding:12px 8px}.helpers{margin-top:10px}}
+/* Fit every drill into the original fixed-size workspace. */
+.pane{position:relative}.pane h1{margin-bottom:8px;padding:4px 7px}.toolbar{margin-bottom:8px}.typing-input{height:52px;margin:8px 0}.metrics{padding:5px;margin:6px 0}.keys .target{min-height:42px;max-height:42px;padding:5px 10px}.keys .typing-input{height:42px;margin:6px 0;padding:4px 8px}.keys .key{min-width:28px;margin:1px 2px;padding:1px 4px}.keys .keyboard{padding-top:0}.long .target{height:115px;max-height:115px;min-height:60px}.long .typing-input{height:65px}.result{position:absolute;left:12px;right:12px;bottom:12px;box-shadow:3px 3px #555;z-index:2;background:#eee;padding:10px}.welcome-art img{display:block;image-rendering:pixelated}
+.key-dialog{position:absolute;left:63px;top:40px;width:514px;height:307px;border:2px outset #eee;background:#aaa;padding:3px}.key-dialog h1{height:19px;line-height:19px;background:#000080;color:#fff;font-size:14px;margin:0;white-space:nowrap;padding:0 4px}.key-dialog h1>span{float:right;margin-right:21px;color:#5fffff;font-size:12px}.dialog-close{position:absolute;right:5px;top:5px;width:15px;height:15px;padding:0;line-height:10px;border:2px outset #eee;background:#aaa}.key-target{position:absolute;left:222px;top:29px;width:66px;height:48px;border:2px inset #ddd;text-align:center;font-size:25px;line-height:44px}.full-keyboard{position:absolute;left:11px;right:11px;top:85px;height:166px;border:2px inset white;padding:1px}.keyboard-row{display:flex;height:32px}.physical-key{height:32px;flex:1;background:#fff;border:3px outset #eee;text-align:center;line-height:26px;font-size:13px;min-width:0}.physical-key.wide{flex:1.6;background:#aaa}.row-2 .physical-key:not(.wide){background:#aaa}.row-3 .physical-key.wide{flex:2.5}.row-4 .physical-key{background:#aaa;color:transparent}.row-4 .space{flex:5.5;background:white}.physical-key.active-key{background:#888!important;color:#ffff55;outline:1px dotted white;outline-offset:-4px}.fingers{position:absolute;top:264px;left:96px;right:96px;display:flex;gap:5px}.fingers i{display:block;width:28px;height:30px;border:2px outset #ddd;border-radius:11px;background:#aaa;position:relative}.fingers i:nth-child(4){margin-right:26px}.fingers i:before{content:'';position:absolute;left:12px;top:-15px;width:1px;height:12px;background:#555}.fingers i.lit{background:#00aaa9}.key-input{position:absolute;left:208px;top:29px;width:92px;height:48px;opacity:.01;cursor:text}.key-mobile-hint{display:none}.key-dialog:focus-within .key-target{outline:1px dotted #888;outline-offset:-5px}
+.sentence-dialog{position:absolute;left:15px;top:63px;width:610px;height:262px;border:2px outset white;background:#aaa;padding:3px}.sentence-dialog h1{height:19px;line-height:19px;background:#000080;color:white;font-size:14px;margin:0;padding:0 4px}.sentence-dialog h1>span{float:right;color:#ffff55;margin-right:24px}.sentence-paper{position:absolute;left:5px;right:5px;top:27px;height:63px;border:2px inset #eee;padding:8px;font-size:16px;line-height:18px}.sentence-paper #target{white-space:pre-wrap}.sentence-paper textarea{width:100%;height:21px;resize:none;background:transparent;border:0;outline:0;font-size:16px;font-weight:bold;line-height:18px;padding:0;margin:0;color:#111}.speed-panel{position:absolute;left:22px;top:99px;width:386px;height:142px;border:2px groove white;padding:16px 14px 6px;margin:0}.sentence-dialog legend{text-align:center;font-size:16px;padding:0 6px}.speed-panel>div{display:flex;align-items:center;justify-content:space-between;margin:0 0 12px;font-size:15px}.bar-track{display:block;width:274px;height:20px;border:2px inset white}.bar-track b{display:block;min-width:18px;height:16px;line-height:16px;color:white;padding-left:4px;overflow:visible}.red{background:#c00}.blue{background:#000080}.teal{background:#00a9aa}.result-panel{position:absolute;left:422px;right:21px;top:99px;height:142px;border:2px groove white;padding:8px 8px;margin:0;font-size:14px}.result-panel>div{white-space:nowrap;display:flex;justify-content:space-between;line-height:23px}
+.word-dialog{left:23px;top:59px;width:594px}.word-dialog .key-target{left:87px;top:29px;width:420px;font-size:22px;letter-spacing:7px;white-space:nowrap;overflow:hidden}.word-dialog .full-keyboard{left:51px;right:51px}.word-dialog .fingers{left:136px;right:136px}.word-dialog .key-input{left:87px;width:420px}.word-dialog #key-score{color:#ffff55}
+.long-dialog{position:absolute;left:15px;top:48px;width:610px;height:291px;border:2px outset #eee;padding:3px;background:#aaa}.long-dialog h1,.result-dialog h1{height:19px;line-height:19px;background:#000080;color:#fff;margin:0;font-size:14px;padding:0 4px}.long-lines{padding:23px 3px 0;font-size:16px;line-height:18px}.long-line{height:48px}.long-line textarea{display:block;width:100%;resize:none;height:20px;font-weight:bold;font-size:16px;line-height:18px;border:0;background:transparent;outline:0;padding:0;color:#111}.long-import{position:absolute;right:6px;top:23px;color:#555;font-size:10px;cursor:pointer;font-weight:normal}.long-import input{display:none}.result-dialog{position:absolute;left:165px;top:80px;width:310px;border:2px outset #eee;background:#aaa;padding:4px 4px 16px;text-align:center}.result-dialog p{margin:20px}.result-dialog button{margin:4px}
+.game-hud{position:absolute;top:0;left:3px;right:3px;height:20px;line-height:18px;border:1px solid #555;padding-left:8px;font-size:14px}.game-hud span{color:#ffff55}.game-field{position:absolute;top:21px;left:0;right:0;height:389px;overflow:hidden}.enemy{position:absolute;font-size:16px;line-height:16px;white-space:nowrap;color:#000}.enemy.shootable{color:white}.game-input{position:absolute;left:266px;top:414px;width:105px;height:23px;background:white;border:1px solid #000;font-size:16px;font-weight:bold;z-index:2}.game-start{position:absolute;top:230px;left:110px;right:110px;background:#aaa;border:2px outset white;padding:20px;text-align:center;cursor:pointer;z-index:3}
+@font-face{font-family:HTTDPixel;src:url('httd-original-pixel.woff') format('woff');font-display:swap}.classic,.classic button,.classic input,.classic textarea{font-family:HTTDPixel,monospace;font-weight:normal;font-size:16px;font-synthesis:none;letter-spacing:0}.classic nav button{letter-spacing:0;padding:0 7px}.titlebar{letter-spacing:0}.welcome-copy{font-family:HTTDPixel,monospace;font-size:13px}.classic h1,.classic h1 span,.game-hud,.result-panel,.speed-panel>div,.statusbar,.physical-key{font-family:HTTDPixel,monospace;font-size:16px;font-weight:normal;letter-spacing:0}.key-target{font-size:24px}.word-dialog .key-target{font-size:20px;letter-spacing:7px}.classic .footnote,.classic .badge,.classic .long-import{font-family:sans-serif;font-size:10px}.classic .dialog-close,.titlebar button{font-family:monospace;font-size:14px}.sentence-dialog legend{letter-spacing:0}.key-dialog h1>span{font-size:14px}.enemy{font-size:16px}
+.ph-meter{position:absolute;right:74px;top:0;height:18px;display:flex;align-items:center;color:#000080;font-size:14px}.ph-meter i{display:inline-block;width:7px;height:15px;border:1px solid #eee;margin-right:1px}.welcome-copy{font-size:16px;line-height:16px}.word-dialog .key-target{font-size:16px;letter-spacing:16px}
+.welcome-copy{max-width:none}
+.welcome-original{position:absolute;left:78px;top:29px;width:480px;height:326px;image-rendering:pixelated}
+.game-start.game-ended{left:246px;right:auto;top:192px;width:180px;height:50px;padding:15px 6px;background:#000080;color:#ffff55;border:1px outset white;font-size:16px;line-height:18px}
+
+/* Measured original 640×480 shell coordinates. */
+.titlebar{position:relative;display:block;background:transparent;border:0;padding:0;height:23px}.titlebar:before{content:'';position:absolute;left:3px;right:3px;top:3px;height:18px;background:#656565}.titlebar>span{position:absolute;left:6px;top:4px;line-height:16px;height:16px;white-space:nowrap}.titlebar>span:before{content:'';display:inline-block;width:32px;height:16px;vertical-align:top;margin-right:8px;background-image:none /* Embedded asset omitted from public source archive. */}.titlebar button{position:absolute;right:6px;top:5px}.classic nav button{flex:none;height:19px;line-height:16px;padding:0 0 0 10px;text-align:left;border-top:1px solid #fff;border-bottom:1px solid #656565;width:88px}.classic nav button:nth-child(4){width:72px}.classic nav button:nth-child(5),.classic nav button:nth-child(6){width:56px}.classic nav button:nth-child(7){width:72px}.statusbar{height:19px;left:1px;right:1px;gap:1px}.statusbar>span{height:19px;border-width:1px;line-height:16px;padding:0 4px}#language{width:68px;flex:none}#clock{width:66px;flex:none}.classic h1:before{content:'';display:inline-block;vertical-align:top;width:32px;height:16px;margin-right:8px;background-image:none /* Embedded asset omitted from public source archive. */}
+.long-select{position:absolute;left:150px;top:71px;width:336px;height:244px;border:2px outset #fff;background:#aaa;padding:3px}.long-select h1{height:19px;line-height:19px;background:#00008a;color:white;font-size:16px;margin:0;padding-left:2px}.long-select fieldset{position:absolute;left:37px;top:27px;width:258px;height:168px;border:2px groove white;margin:0;padding:9px 30px 4px}.long-select legend{text-align:center;color:#fff;font-size:16px;padding:0 9px}.long-select #long-list{height:146px;overflow:auto;outline:0;font-size:16px;line-height:16px;text-align:center}.long-select [role=option]{height:16px;white-space:nowrap;cursor:pointer}.long-select [role=option].selected{color:#fff;background:#00008a}.select-message{position:absolute;left:3px;right:3px;bottom:3px;height:20px;border:2px inset #eee;color:#fff;font-size:16px;line-height:16px;padding-left:3px}
+.dropdown-menu{position:absolute;top:44px;min-width:110px;border:1px solid #000;background:#aaa;z-index:20;outline:0;font-size:16px;line-height:18px}.dropdown-menu>div{height:20px;border-top:1px solid #fff;border-bottom:1px solid #656565;padding:0 10px;white-space:nowrap;cursor:pointer}.dropdown-menu>div.chosen,.dropdown-menu>div:hover{background:#fff}.classic nav button.open{background:#fff;color:#000}.classic.menu-open .titlebar:before{background:#00008a}
+.external-import{display:inline-block;border:1px solid #626b70;background:#30373c;color:#ddd;padding:6px 10px;border-radius:3px;cursor:pointer}.external-import input{display:none}
+.stage-dialog{position:absolute;left:134px;top:103px;width:434px;height:182px;border:2px outset #fff;background:#aaa;padding:3px}.stage-dialog h1{height:19px;line-height:19px;background:#00008a;color:#fff;margin:0;padding-left:2px;font-size:16px}.stage-copy{position:absolute;left:14px;top:40px;line-height:20px;font-size:16px;white-space:nowrap}.stage-answer{position:absolute;top:142px;left:110px;width:92px;height:28px;background:#aaa;border:2px outset #eee;font-family:HTTDPixel;font-size:16px}#stage-no{left:222px}
+
+.original-help{position:absolute;left:14px;top:43px;width:609px;height:300px;border:1px solid #000;box-shadow:inset 1px 1px white,inset -1px -1px #656565}.original-help h1{height:20px;background:#00008a;color:white;font:16px HTTDPixel;margin:3px;padding:1px 4px}.help-copy,.help-next{position:absolute;white-space:nowrap;font:16px HTTDPixel}.help-keyboard{position:absolute;left:61px;top:30px;width:486px;height:166px}
+/* Native640×480 key screen measurements: box288,118 and keyboard77,175. */
+.key-dialog:not(.word-dialog) .key-target{left:221px;top:28px;width:66px;height:44px;font-size:16px;line-height:40px}
+.key-dialog:not(.word-dialog) .full-keyboard{left:10px;right:auto;width:486px}
+.key-dialog .key-target{font-family:HTTDPixel;font-weight:normal}
+/* Pixel coordinates and colors measured from the native 640×480 framebuffer.
+   The web frame border is 2px; regular workspace origin is (2,48). */
+.classic [hidden]{display:none!important}
+.classic{color:#000;border-color:#fff #000 #000 #fff}
+.classic button:focus-visible,.classic textarea:focus-visible{outline:none}
+.titlebar button,.classic .dialog-close,.original-settings .settings-close{width:15px;height:15px;border:1px solid;border-color:#fff #000 #000 #fff;box-shadow:inset -1px -1px #656565;background:#aaa;border-radius:0;line-height:12px;font:14px/12px monospace;padding:0;color:#000}
+.titlebar button{right:6px;top:5px}
+.key-dialog,.sentence-dialog,.long-dialog,.long-select,.stage-dialog,.original-help,.original-game-select,.original-settings{padding:0;border:1px solid;border-color:#656565 #000 #000 #656565;box-shadow:inset 1px 1px #fff,inset -1px -1px #656565;background:#aaa}
+.key-dialog h1,.sentence-dialog h1,.long-dialog h1,.long-select h1,.stage-dialog h1,.original-help h1,.original-game-select h1{position:absolute;left:4px;right:4px;top:4px;height:19px;margin:0;padding:1px 4px 2px;background:#00008a;line-height:16px;font-size:16px;color:#fff;font-weight:normal}
+.classic h1 .dialog-close{right:3px;top:2px}
+.key-dialog{left:62px;top:39px;width:513px;height:306px}
+.word-dialog{left:22px;top:58px;width:593px;height:306px}
+.key-dialog h1>span{height:16px;line-height:16px;font-size:16px;color:#55ffff;margin-right:23px}
+.word-dialog h1>span{color:#ffff55}
+.key-dialog .key-target{border:1px solid;border-color:#656565 #fff #fff #656565;background:#aaa;box-shadow:none;font-size:16px}
+.key-dialog:not(.word-dialog) .key-target{left:223px;top:30px;width:65px;height:44px;line-height:42px}
+.key-dialog:focus-within .key-target{outline:none}
+.word-dialog .key-target{left:87px;top:31px;width:417px;height:47px;line-height:45px;letter-spacing:0;display:flex;justify-content:center;align-items:center;gap:16px;font-size:24px;white-space:pre}
+.word-dialog .key-target>span{font-size:24px;display:inline-block;min-width:24px}
+.full-keyboard,.key-dialog:not(.word-dialog) .full-keyboard{position:absolute;left:12px;right:auto;top:86px;width:486px;height:166px;padding:2px;border:1px solid;border-color:#656565 #fff #fff #656565;box-shadow:inset 1px 1px #fff,inset -1px -1px #656565;text-align:center}
+.word-dialog .full-keyboard{left:52px;top:86px}
+.keyboard-row{display:flex;width:480px;height:32px;position:relative}
+.physical-key,.physical-key.wide,.row-3 .physical-key.wide{display:block;flex:none;width:32px;height:32px;min-width:0;box-sizing:border-box;border:3px solid;border-color:#fff #656565 #656565 #fff;background:#fff;color:#000;line-height:26px;font-size:16px;white-space:nowrap}
+.row-0 .physical-key:last-child{background:#aaa}
+.row-1 .physical-key:first-child{width:48px;background:#aaa}
+.row-1:after{content:'';display:block;width:48px;height:32px;background:#aaa}
+.row-2 .physical-key:first-child,.row-2 .physical-key:last-child{width:64px;background:#aaa}
+.row-2 .physical-key:not(.wide){background:#fff}
+.row-3 .physical-key:first-child,.row-3 .physical-key:last-child{width:80px;background:#aaa}
+.row-4 .physical-key{background:#aaa;color:transparent}
+.row-4 .physical-key:first-child,.row-4 .physical-key:last-child{width:64px}
+.row-4 .physical-key:nth-child(2),.row-4 .physical-key:nth-child(4){width:48px}
+.row-4 .physical-key.space{flex:none;width:256px;background:#fff}
+.key-dialog .physical-key.native-stippled-key{background-color:#fff;background-image:conic-gradient(#000 25%,#fff 0 50%,#000 0 75%,#fff 0);background-size:2px 2px;color:#aaa;border-color:#656565}
+.physical-key.active-key{background:#aaa!important;color:#ffff55!important;outline:none;border-color:#656565!important}
+.key-dialog .fingers{top:265px;left:97px;right:auto;width:316px;height:30px;gap:4px;padding:0}
+.word-dialog .fingers{left:137px}
+.fingers i{width:28px;height:30px;flex:none;border:0;border-radius:0;background:none;position:relative}
+.fingers i:nth-child(4){margin-right:64px}
+/* Native connector shadow is black; only the first and center stems are 13px. */
+.fingers i:before{left:-4px;top:-12px;width:2px;height:12px;background:linear-gradient(to right,#000 1px,#fff 1px)}
+.fingers i:first-child:before,.fingers i:nth-child(5):before{height:13px}
+.fingers i:nth-child(5):before{left:-36px}
+.fingers i:last-child:after{content:'';position:absolute;right:-2px;top:-12px;width:2px;height:12px;background:linear-gradient(to right,#000 1px,#fff 1px)}
+.sentence-dialog{left:14px;top:62px;width:609px;height:261px}
+.sentence-paper{left:7px;right:auto;top:29px;width:593px;height:61px;padding:18px 7px 0;border:1px solid;border-color:#656565 #fff #fff #656565;font-size:16px;line-height:16px}
+.sentence-paper textarea{height:20px;line-height:16px;font:16px/16px HTTDPixel;margin:0;padding:0;caret-color:#000}
+.speed-panel{left:23px;top:109px;width:385px;height:136px;padding:23px 14px 0;border:1px solid;border-color:#656565 #fff #fff #656565;box-shadow:inset 1px 1px #fff,inset -1px -1px #656565}
+.sentence-dialog legend{position:absolute;top:-9px;left:134px;background:#aaa;padding:0 8px;font:16px/16px HTTDPixel;text-align:center;white-space:nowrap}
+.speed-panel>div{height:20px;line-height:20px;margin:8px 0 15px;font-size:16px;position:relative}
+.speed-panel>div:first-of-type{margin-top:8px}
+.bar-track{width:273px;height:20px;border:1px solid;border-color:#656565 #fff #fff #656565;background:#aaa}
+.bar-track b{min-width:30px;height:17px;line-height:16px;font:16px/16px HTTDPixel;padding-left:5px;color:#fff}
+.bar-track:before{content:'';position:absolute;top:-9px;width:241px;height:8px;background:repeating-linear-gradient(to right,#000 0 1px,transparent 1px 40px);margin-left:31px}
+.speed-panel>div:not(:first-of-type) .bar-track:before{display:none}
+.red{background:#a00}.blue{background:#00008a}.teal{background:#0aa}
+.result-panel{left:423px;right:auto;top:109px;width:161px;height:136px;border:1px solid;border-color:#656565 #fff #fff #656565;box-shadow:inset 1px 1px #fff,inset -1px -1px #656565;padding:13px 7px 0;font-size:16px}
+.result-panel legend{left:47px;padding:0 8px}
+.result-panel>div{height:23px;line-height:23px;font-size:16px}
+.long-dialog{left:14px;top:47px;width:609px;height:291px}
+.long-lines{position:absolute;left:7px;top:47px;padding:0;font-size:16px;line-height:16px}
+.long-line{height:48px}.long-line textarea{font:16px/16px HTTDPixel;height:20px}
+.long-select{left:150px;top:70px;width:337px;height:245px}
+.long-select fieldset{left:39px;top:35px;width:257px;height:169px;padding:0;border:1px solid;border-color:#656565 #fff #fff #656565;box-shadow:inset 1px 1px #fff,inset -1px -1px #656565}
+.long-select legend{position:absolute;left:111px;top:-9px;margin:0;padding:0 8px;background:#aaa;height:16px;line-height:16px}
+.long-select #long-list{position:absolute;left:30px;top:14px;width:194px;height:146px;border:1px solid;border-color:#656565 #fff #fff #656565;line-height:16px;overflow:hidden}
+.long-select [role=option].selected{background:#0000ba}
+.select-message,.original-game-select-message{left:3px;right:3px;bottom:3px;height:19px;border:1px solid;border-color:#656565 #fff #fff #656565;padding:0 3px;line-height:16px}
+.stage-dialog{left:134px;top:102px;width:433px;height:181px}
+.original-help{left:14px;top:42px;width:609px;height:301px}
+.original-help .help-keyboard.full-keyboard{left:60px;top:30px;width:486px;height:166px}
+.original-help .row-2 .physical-key:nth-child(n+2):nth-child(-n+5),.original-help .row-2 .physical-key:nth-child(n+8):nth-child(-n+11){background:#aaa;color:#ffff55}
+.original-help .help-copy,.original-help .help-next{margin:0;font:16px/20px HTTDPixel}
+.classic.game-mode #workspace{height:433px;padding:0}
+.classic.game-mode .titlebar:before{background:#00008a}
+.game-hud{left:3px;right:3px;top:2px;height:19px;border:1px solid;border-color:#fff #656565 #656565 #fff;line-height:16px;padding:0 2px;background:#aaa;font:16px/16px HTTDPixel}
+.game-field{left:0;right:0;top:21px;height:393px}
+.game-input{left:266px;top:414px;width:105px;height:23px;background:#fff;border:1px solid #000;padding:2px 1px;font:16px/16px HTTDPixel;outline:none;border-radius:0}
+.game-start.game-intro,.game-start.game-ended{left:246px;right:auto;top:191px;width:153px;height:49px;border:1px solid;border-color:#fff #656565 #656565 #fff;background:#0000ba;color:#ffff55;padding:15px 7px 16px;font:16px/16px HTTDPixel;text-align:center;white-space:pre;box-shadow:none}
+.game-start.game-ended{width:177px;background:#00008a}
+
+.fingers i{background-image:none /* Embedded asset omitted from public source archive. */}
+.fingers i.lit{background-color:transparent;background-image:none /* Embedded asset omitted from public source archive. */}
+/* Native practice prompts draw the same 16px mask at exactly 2×, not24px. */
+.key-dialog:not(.word-dialog) .key-target{left:223px;top:31px;width:65px;height:47px;padding:7px 15px 6px;font:32px/32px HTTDPixel;text-align:left}
+.word-dialog .key-target{padding:7px 0 6px 15px;align-items:flex-start;justify-content:flex-start;gap:8px;font:32px/32px HTTDPixel}
+.word-dialog .key-target>span{font:32px/32px HTTDPixel;width:32px;min-width:32px;flex:none}
+.game-hud span{color:#000}.game-hud .game-score-label{color:#ffff55}
+.game-hud .game-hits,.game-hud .game-misses,.game-hud .game-accuracy,.game-hud .game-score-label,.game-hud .game-score{position:absolute;top:0;line-height:16px}
+.game-hud .game-hits{left:2px}.game-hud .game-misses{left:98px}.game-hud .game-accuracy{left:194px}.game-hud .game-score-label{right:66px}.game-hud .game-score{right:2px;min-width:56px;text-align:right}
+/* invaders-t25 native HUD: outer(5,25)630×21; divided metric and score panels. */
+.game-hud{top:0;height:21px;border:1px solid #000;padding:0;background:#aaa}
+.game-hud:before{content:'';position:absolute;left:0;top:0;width:385px;height:19px;border-top:1px solid #fff;border-bottom:1px solid #656565;border-right:1px solid #656565;background:linear-gradient(to right,transparent 247px,#656565 247px 248px,#fff 248px 249px,transparent 249px);pointer-events:none}
+.game-hud .game-hits,.game-hud .game-misses,.game-hud .game-accuracy,.game-hud .game-score-label,.game-hud .game-score{top:2px;right:auto;min-width:0;text-align:left}
+.game-hud .game-hits{left:10px}.game-hud .game-misses{left:82px}.game-hud .game-accuracy{left:154px}.game-hud .game-score-label{left:258px}.game-hud .game-score{left:354px}
+.dropdown-menu{top:45px;min-width:0;border:1px solid #000;font:16px/18px HTTDPixel}
+.dropdown-menu>div{height:20px;border-top:1px solid #fff;border-bottom:1px solid #000;padding:0 10px;position:relative}
+.dropdown-menu>div:last-child{border-bottom-color:#656565}
+.dropdown-menu:has([data-action=settings]){width:111px}
+.dropdown-menu:has([data-action^="keys:"]),.dropdown-menu:has([data-action^="words:"]){width:127px}
+.dropdown-menu:has([data-action=sentences]){width:135px}
+.dropdown-menu:has([data-action=invaders]){width:87px}
+.dropdown-menu:has([data-action=stats-speed]){width:135px}
+.dropdown-menu:has([data-action=about]){width:159px}
+.dropdown-menu [data-action=exit]:after{content:'@X';position:absolute;right:10px}
+.dropdown-menu [data-action=help]:after{content:'F1';position:absolute;right:18px}
+.classic{border:2px solid transparent}
+.classic:before{content:'';position:absolute;left:-2px;right:-2px;top:-2px;bottom:-2px;border:1px solid;border-color:#656565 #000 #000 #656565;box-shadow:inset 1px 1px #fff,inset -1px -1px #656565;pointer-events:none;z-index:50}
+.classic.game-mode:before{display:none}
+.titlebar:before{height:19px}
+.dropdown-menu:has([data-action=stats-speed]){width:127px}
+.game-start.game-intro,.game-start.game-ended{padding:15px;font:16px/16px HTTDPixel;text-align:left}
+.game-start.game-intro{color:#fff}
+.stage-copy{left:15px;top:43px;font:16px/20px HTTDPixel}
+.stage-copy .stage-question{display:block;margin-top:8px}
+.stage-answer{top:143px;width:91px;height:27px;background:#aaa;border:1px solid;border-color:#fff #656565 #656565 #fff;padding:4px 15px 5px;line-height:16px}
+.stage-answer:focus:after{content:'';position:absolute;inset:2px 15px;border:1px dotted #656565;pointer-events:none}
+
+.classic.boot-welcome .titlebar>span:before,.classic.menu-open .titlebar>span:before,.classic.game-mode .titlebar>span:before,.classic:has(#workspace:empty) .titlebar>span:before{background-image:none /* Embedded asset omitted from public source archive. */}
+
+.classic:has(#workspace:empty) .titlebar:before{background:#00008a}
+/* Original key legends use a16px cell even for8px ASCII glyphs. */
+.physical-key,.physical-key.wide,.row-3 .physical-key.wide{text-align:left;padding-left:5px}
+.physical-key,.physical-key.wide,.row-3 .physical-key.wide{line-height:24px}
+/* Font-mask registration: label coordinates refer to mask origins, not ink bounds. */
+.key-dialog h1,.sentence-dialog h1,.long-dialog h1,.long-select h1,.stage-dialog h1,.original-help h1,.original-game-select h1{padding:2px 3px 1px}
+.titlebar>span{top:5px}
+.stage-copy{top:39px}
+.original-help .help-copy,.original-help .help-next{margin-top:-4px}
+
+/* Original StudyTyping input is byte-cell aligned, with checks above the target. */
+.sentence-paper{padding-top:21px;overflow:visible}
+.practice-input-wrap{position:relative;width:100%;height:16px;line-height:16px}
+#practice-typed-render{position:absolute;left:0;top:0;right:0;height:16px;white-space:pre;font:16px/16px HTTDPixel;pointer-events:none}
+#practice-typed-render>span{height:16px;vertical-align:top;position:relative;color:#000}
+.practice-input-wrap textarea#typing{position:absolute;left:0;top:0;width:100%;height:16px;padding:0;margin:0;border:0;outline:0;background:transparent;color:transparent;-webkit-text-fill-color:transparent;caret-color:transparent;font:16px/16px HTTDPixel;resize:none;overflow:hidden}
+.practice-error:before{content:'';position:absolute;left:0;right:0;top:-32px;height:16px;background-repeat:repeat-x;background-image:none /* Embedded asset omitted from public source archive. */;pointer-events:none}
+.practice-caret{display:inline-block;vertical-align:top;width:8px;height:16px;background:#000;animation:practice-blink 1s step-end infinite}
+@keyframes practice-blink{50%{visibility:hidden}}
+/* Word StudyTyping, after its5-row warmup: native outer(24,106)593×269. */
+.sentence-dialog.word-study{left:22px;top:58px;width:593px;height:269px}
+.word-study .sentence-paper{left:15px;top:29px;width:561px;height:59px;padding:19px 15px 0}
+.word-study .speed-panel{left:15px;top:115px}
+.word-study .result-panel{left:415px;top:115px}
+.speed-panel legend{left:135px;top:-7px}
+.result-panel legend{top:-7px}
+.long-select legend{top:-7px}
+.long-lines{top:51px;right:7px}
+.practice-typed-render{position:absolute;left:0;top:0;right:0;height:16px;white-space:pre;font:16px/16px HTTDPixel;pointer-events:none}
+.practice-typed-render>span{height:16px;vertical-align:top;position:relative;color:#000}
+.long-dialog .practice-input-wrap textarea{position:absolute;left:0;top:0;width:100%;height:16px;padding:0;margin:0;border:0;outline:0;background:transparent;color:transparent;-webkit-text-fill-color:transparent;caret-color:transparent;font:16px/16px HTTDPixel;resize:none;overflow:hidden}
+.ph-meter{position:absolute;left:384px;right:auto;top:0;width:169px;height:19px;display:flex;align-items:flex-start;border-top:1px solid #fff;border-right:1px solid #656565;border-bottom:1px solid #656565;padding-left:2px;color:#00008a;font:16px/16px HTTDPixel}
+.ph-meter .ph-label{width:28px;flex:none;color:#00008a}
+.ph-meter i{display:block;width:8px;height:16px;flex:none;border:1px solid #fff;margin:0}
+
+/* Native15×15 close control: exact8×8 glyph, independent of platform fonts. */
+.classic .titlebar button,.classic .dialog-close,.classic .original-settings .settings-close{font-size:0;color:transparent;background-image:none /* Embedded asset omitted from public source archive. */;background-repeat:no-repeat;background-position:2px 2px}
+/* Startup answers use the native8px alignment grid, not fractional CSS centering. */
+.stage-answer{padding-top:5px;padding-bottom:4px;text-align:left}
+#stage-yes{padding-left:40px}
+#stage-no{padding-left:24px}
+.stage-answer:focus:after{inset:2px 11px 2px 16px}
+/* Modern touch conveniences are intentionally outside the classic640×480 frame. */
+.helpers>div{flex-wrap:wrap}
+.external-controls{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:8px 0 0}
+.external-controls[hidden]{display:none!important}
+.external-controls button{min-width:44px;min-height:36px;padding:6px 10px;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+#control-toggle[aria-expanded=true]{background:#48535a;border-color:#a0adb5;color:#fff}
+@media(pointer:coarse){.external-controls button{min-height:44px}.helpers button,.external-import{min-height:40px}}
+
+/* Browser-overlay corrections, captured against release1813 at native scale. */
+.classic{overflow:clip;border-image:none /* Embedded asset omitted from public source archive. */ 2 stretch}
+.classic:before{display:none}
+.classic.game-mode{border-image:none}
+.classic nav button.active:not(.open){background:#aaa;color:#000}
+.statusbar>span{border-style:solid;border-color:#656565 #fff #fff #656565;padding-top:1px}
+#status{padding-left:7px}
+.key-dialog h1>span,.long-dialog h1,.long-select [role=option],.sentence-dialog legend,.original-help .help-copy,.original-help .help-next,.long-line>div:first-child{white-space:pre}
+.game-input{padding:2px 3px 2px 11px;color:transparent;-webkit-text-fill-color:transparent;caret-color:transparent}
+.game-input-render{position:absolute;left:278px;top:417px;width:88px;height:16px;overflow:hidden;white-space:pre;font:16px/16px HTTDPixel;pointer-events:none;color:#000}
+.game-input-render>span{display:inline-block;vertical-align:top;height:16px}
+/* Verified word StudyTyping completion modal: outer(208,180)273×121. */
+.repeat-dialog.stage-dialog{left:206px;top:132px;width:273px;height:121px;border-color:#000;z-index:30}
+.repeat-dialog .stage-copy{left:23px;top:42px;line-height:16px;color:#fff}
+.repeat-dialog .repeat-answers{position:absolute;left:38px;top:75px;display:flex;gap:5px}
+.repeat-dialog .repeat-answers .bevel{position:relative;width:83px;height:27px;border:1px solid;border-color:#fff #656565 #656565 #fff;background:#aaa;color:#000;padding:5px 0 4px 24px;font:16px/16px HTTDPixel;text-align:left}
+.repeat-dialog .repeat-answers .bevel:focus:after{content:'';position:absolute;inset:2px 11px 2px 16px;border:1px dotted #656565;pointer-events:none}
+.repeat-dialog:has(.repeat-answers button:nth-child(3)) .repeat-answers{left:6px}
+.classic:has(.repeat-dialog) .sentence-dialog h1,.classic:has(.repeat-dialog) .key-dialog h1{background:#656565}
+.classic:has(.repeat-dialog) .sentence-dialog h1:before,.classic:has(.repeat-dialog) .key-dialog h1:before{background-image:none /* Embedded asset omitted from public source archive. */}
+/* Zero-mismatch glyph registration fixes for the StudyTyping meter panels. */
+.speed-panel{padding-left:15px;padding-right:15px}
+.speed-panel>div:last-of-type{top:2px}
+.bar-track{padding:1px}
+.bar-track b{height:16px;padding-left:6px}
+.result-panel{padding:17px 8px 0 7px}
+.result-panel>div{line-height:16px}
+.result-panel>div:nth-of-type(4){position:relative;top:1px}
+.titlebar>span,.game-hud .game-hits,.game-hud .game-misses,.game-hud .game-accuracy,.game-hud .game-score{white-space:pre}
+.game-input-render{z-index:3}
+/* Lossless native rain reference: panel(390,26)171×19, segments(419,28)8×15. */
+.ph-meter{width:171px;border-left:1px solid #656565;box-shadow:inset 1px 0 #fff;padding:1px 0 0 1px}
+.ph-meter .ph-label{width:27px}
+.ph-meter i{height:15px;border-color:#fff #656565 #656565 #fff}
+
+/* Native post-game scores preserve the game framebuffer and deactivate its title. */
+.classic.game-mode .extra-game-scores{left:110px;top:87px;width:393px;height:256px;z-index:5}
+.classic.game-mode:has(.extra-game-scores) .titlebar:before{background:#656565}
+.classic.game-mode:has(.extra-game-scores) .titlebar>span:before{background-image:none /* Embedded asset omitted from public source archive. */}
+
+/* Original three-choice prompt, source routine1c5ac/1c70f. */
+.repeat-dialog.stage-dialog:has(.repeat-answers .bevel:nth-child(3)){left:166px;width:353px}
+.repeat-dialog.stage-dialog:has(.repeat-answers .bevel:nth-child(3)) .repeat-answers{left:30px}
+/* Fixed-label mask registration: help content is measured from outer, not inner border. */
+.original-help .help-copy,.original-help .help-next{transform:translateX(-1px)}
+
+/* Clean native inactive icon sits one scanline above the active icon. */
+.titlebar>span:before{position:relative;top:-1px}
+.classic.boot-welcome .titlebar>span:before,.classic.menu-open .titlebar>span:before,.classic.game-mode .titlebar>span:before,.classic:has(#workspace:empty) .titlebar>span:before{top:0}
+.classic.game-mode:has(.extra-game-scores) .titlebar>span:before,.classic:has(.repeat-dialog) .sentence-dialog h1:before,.classic:has(.repeat-dialog) .key-dialog h1:before{position:relative;top:-1px}
+.extra-notepad:has(.extra-notepad-result)>h1:before,.extra-exam-running:has(.extra-exam-result-modal)>h1:before{position:relative;top:-1px;background-image:none /* Embedded asset omitted from public source archive. */}
+/* Native key states: stippled home keys use white text+1px; depressed keys+3px. */
+.original-help .row-2 .physical-key:nth-child(n+2):nth-child(-n+5),.original-help .row-2 .physical-key:nth-child(n+8):nth-child(-n+11){border-color:#656565;padding-top:3px}
+.key-dialog .physical-key.native-stippled-key{color:#fff;padding-top:1px}
+.key-dialog .physical-key.active-key{padding-top:3px!important}
+/* The original workspace has no browser-native keyboard-focus outline. */
+.classic #workspace:focus-visible{outline:none}
+
+/* Fresh 1997 startup keeps the main window active; reopened About is inactive. */
+.classic.boot-welcome .titlebar:before{background:#00008a}
+
+/* Independent 2026-10-22 source/native pixel corrections. Paint-only unless noted.
+   Exact four-corner stencils replace browser diagonal border joins. */
+@font-face{font-family:HTTDClockSource;src:none /* Embedded asset omitted from public source archive. */ format("woff");font-display:block}
+/* The recovered native clock font starts at y460, without the caption padding. */
+#clock{font-family:HTTDClockSource,HTTDPixel,monospace;font-size:16px;line-height:16px;font-weight:normal;letter-spacing:0;padding-top:0}
+:root{
+--qa-native-border-window:none /* Embedded asset omitted from public source archive. */ 2 / 2px / 0 stretch;
+--qa-native-border-close:none /* Embedded asset omitted from public source archive. */ 2 / 2px / 0 stretch;
+--qa-native-border-field:none /* Embedded asset omitted from public source archive. */ 2 / 2px / 0 stretch;
+--qa-native-border-sunken:none /* Embedded asset omitted from public source archive. */ 1 / 1px / 0 stretch;
+--qa-native-border-key-white:none /* Embedded asset omitted from public source archive. */ 3 / 3px / 0 stretch;
+--qa-native-border-key-gray:none /* Embedded asset omitted from public source archive. */ 3 / 3px / 0 stretch;
+--qa-native-border-enter-upper:none /* Embedded asset omitted from public source archive. */ 3 / 3px / 0 stretch;
+--qa-native-border-enter-lower:none /* Embedded asset omitted from public source archive. */ 3 / 3px / 0 stretch;
+}
+
+.key-dialog #key-score{position:relative;left:-2px}
+.key-dialog #key-score .key-count{color:#ffff55}
+/* Match the legacy key-only geometry selector so its border reset cannot win. */
+.key-dialog .full-keyboard,.key-dialog:not(.word-dialog) .full-keyboard{border-image:var(--qa-native-border-field);box-shadow:none}
+.key-dialog .physical-key:not(.active-key){border-image:var(--qa-native-border-key-white)}
+.key-dialog .physical-key.wide:not(.active-key),.key-dialog .row-4 .physical-key:not(.space):not(.active-key){border-image:var(--qa-native-border-key-gray);border-top-color:#aaa;border-left-color:#aaa}
+.key-dialog .row-2 .physical-key:last-child:not(.active-key){border-image:var(--qa-native-border-enter-lower)}
+.key-dialog .row-1::after{box-sizing:border-box;width:48px;height:32px;border:3px solid transparent;border-image:var(--qa-native-border-enter-upper)}
+.key-dialog .physical-key.native-stippled-key:not(.active-key){border-color:transparent;border-image:none;background-image:none /* Embedded asset omitted from public source archive. */;background-origin:border-box;background-clip:border-box;background-size:32px 32px;background-repeat:no-repeat}
+/* One native 8px check per committed 16px text cell; no duplicate tiling. */
+.practice-error:before{background-repeat:no-repeat}
+
+/* Native 1997 actual-word quota starts at x504, not x505. */
+.word-study h1>span{position:relative;left:-1px}
+
+/* Any ordinary stippled cap retains local(0,30) from its last full paint. */
+.key-dialog .physical-key.native-stippled-key.native-gray-corner:not(.active-key){position:relative}
+.key-dialog .physical-key.native-stippled-key.native-gray-corner:not(.active-key)::after{content:"";position:absolute;left:-3px;top:27px;width:1px;height:1px;background:#656565;pointer-events:none}
+/* Original flags0x20 draws all eight home rings AFTER the individual cap paint. */
+.key-dialog .physical-key.native-home-ring{position:relative}
+.key-dialog .physical-key.native-home-ring::before{content:"";position:absolute;left:0;top:0;width:26px;height:26px;box-sizing:border-box;border:1px solid #a00;pointer-events:none}

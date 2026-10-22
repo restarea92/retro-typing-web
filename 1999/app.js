@@ -1,5 +1,5 @@
 import { originalKeyGuide } from './original-key-guide.js';
-import { createKeyPaintState, paintKeyGlyph, initializeKeyPaint } from './original-key-paint.js';
+import { createKeyPaintState, paintKeyGlyph, paintWarmupClockCue, initializeKeyPaint } from './original-key-paint.js';
 import { createOriginalRandom, originalRandomIndex } from './original-random.js';
 import { loadOriginalSpeedHistory, appendOriginalSpeedHistory } from './original-history-store.js';
 import { localRecordDate, loadOriginalGameScores, loadOriginalExamRecords, saveOriginalExamRecord } from './original-record-store.js';
@@ -119,7 +119,7 @@ keyPaint=initializeKeyPaint(createKeyPaintState(appSettings.layout,physicalKeybo
 $('#status').textContent='네모 속에 들어있는 글쇠를 누르세요';highlightKeys();if(mode==='words')$('#key-score').textContent='[횟수:  5]';const input=$('#key-input');input.focus({preventScroll:true});preventBulkInput(input);input.oncompositionstart=()=>composing=true;input.oncompositionend=()=>{composing=false;if(input.value&&!keyUsesPhysical)keyPress(input.value);input.value=''};input.oninput=e=>{if(composing||e.isComposing)return;if(input.value&&!keyUsesPhysical)keyPress(input.value);input.value=''};input.onkeydown=e=>{if(e.ctrlKey||e.metaKey||e.altKey)return;const physical=physicalCharacter(e);if(physical){e.preventDefault();keyUsesPhysical=true;keyPress(physical,physicalAscii(e));return}if(e.isComposing||composing||e.keyCode===229)return;if(KEYMAP[e.key.toLowerCase()]){e.preventDefault();keyPress(KEYMAP[e.key.toLowerCase()])}else if(['Backspace','Enter','Tab','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End','PageUp','PageDown','Insert','Delete'].includes(e.key)||/^F(?:[1-9]|10)$/.test(e.key)){e.preventDefault();keyPress(e.key)}};
 }
 // Render the original ordered cap paints, including retained labels and home rings.
-function highlightKeys(){const guide=originalKeyGuide(appSettings.layout,keyTarget);document.querySelectorAll('.key-dialog .physical-key').forEach(key=>{const paint=keyPaint.cells.get(`${key.dataset.keyRow}:${key.dataset.keyColumn}`);key.dataset.nativePaint=paint.paint;key.classList.toggle('wide',paint.physical.length>1);key.classList.toggle('native-ordinary-key',paint.ordinary);key.classList.toggle('active-key',paint.paint==='active');key.classList.toggle('native-stippled-key',paint.paint==='stipple');key.classList.toggle('native-gray-corner',paint.paint==='stipple'&&paint.cornerGray);key.classList.toggle('native-home-ring',paint.homeRing);key.textContent=paint.physical===' '?'':paint.label;});if(mode==='words')$('#key-target').innerHTML=keySequence.map((c,i)=>`<span style="color:${i===wordCompleted%10?'#55ffff':'#000'}">${esc(c)}</span>`).join(' ');document.querySelectorAll('.fingers i').forEach((finger,index)=>finger.classList.toggle('lit',!keyDrill?.finished&&guide.fingers.includes(index)));}
+function highlightKeys(){const guide=originalKeyGuide(appSettings.layout,keyTarget);document.querySelectorAll('.key-dialog .physical-key').forEach(key=>{const paint=keyPaint.cells.get(`${key.dataset.keyRow}:${key.dataset.keyColumn}`);key.dataset.nativePaint=paint.paint;key.classList.toggle('wide',paint.physical.length>1);key.classList.toggle('native-ordinary-key',paint.ordinary);key.classList.toggle('active-key',paint.paint==='active');key.classList.toggle('native-stippled-key',paint.paint==='stipple');key.classList.toggle('native-gray-corner',paint.paint==='stipple'&&paint.cornerGray);key.classList.toggle('native-home-ring',paint.homeRing);key.textContent=paint.physical===' '?'':paint.label;});if(mode==='words')$('#key-target').innerHTML=keySequence.map((c,i)=>`<span class="${i<wordCompleted%10?'warmup-consumed':''}" style="color:${i===wordCompleted%10?'#55ffff':'#000'}">${esc(c)}</span>`).join(' ');document.querySelectorAll('.fingers:not(.clock-ghost-fingers) i').forEach((finger,index)=>finger.classList.toggle('lit',keyPaint.fingers.has(index)));if(keyPaint.fingers.has(-1)&&!workspace.querySelector('.clock-ghost-fingers')){const ghost=document.createElement('div');ghost.className='fingers clock-ghost-fingers';ghost.setAttribute('aria-hidden','true');ghost.innerHTML='<i class="lit"></i>';workspace.querySelector('.key-dialog').append(ghost);}}
 function keyPress(value,ascii=null){
  if(finished)return;touchCoreIdle();
  const now=performance.now();
@@ -147,10 +147,17 @@ function keyPress(value,ascii=null){
  }else{
   keyCount++;if(correct){keyCorrect++;wordRepeatCount++;if(wordRepeatCount>=(appSettings.repeat?4:1)){wordRepeatCount=0;wordCompleted++;if(appSettings.repeat)sound(2);}}
   $('#key-score').textContent=`[횟수:${String(Math.max(0,5-Math.floor(wordCompleted/10))).padStart(3,' ')}]`;
+  const completedTarget=correct&&wordRepeatCount===0,rowEnd=completedTarget&&wordCompleted%10===0;
+  if(completedTarget){
+   paintKeyGlyph(keyPaint,previousTarget,selectedStage>0?0x26:6);
+   // f317 paints the adjacent sampled clock word before checking row/quota.
+   // Use the same input-time sample as native idle handling, not a later clock.
+   if(rowEnd)paintWarmupClockCue(keyPaint,coreIdle.last);
+   else paintKeyGlyph(keyPaint,keySequence[wordCompleted%10],5);
+  }
   if(wordCompleted>=50){startWordStudy();return;}
-  const base=stagePool();if(correct&&wordRepeatCount===0&&wordCompleted%10===0)keySequence=Array.from({length:10},()=>base[originalRandomIndex(base.length,originalRandom)]);
+  if(rowEnd){const base=stagePool();keySequence=Array.from({length:10},()=>base[originalRandomIndex(base.length,originalRandom)]);paintKeyGlyph(keyPaint,keySequence[0],5);}
   keyTarget=keySequence[wordCompleted%10];
-  if(correct&&wordRepeatCount===0){paintKeyGlyph(keyPaint,previousTarget,selectedStage>0?0x26:6);paintKeyGlyph(keyPaint,keyTarget,5);}
  }
  $('#key-target').textContent=keyTarget;highlightKeys();
 }
@@ -177,8 +184,10 @@ function showRepeatDialog(canAdvance,entry){
 
 function preventBulkInput(input){for(const type of ['paste','drop'])input.addEventListener(type,e=>{e.preventDefault();$('#status').textContent='연습할 글은 한 글자씩 직접 입력하세요'});input.addEventListener('beforeinput',e=>{if(e.inputType==='insertFromPaste'||e.inputType==='insertFromDrop')e.preventDefault()});}
 
+// Native DS:6700/6b1a maxima survive rounds and navigation, not app reload.
+const textPracticeBest={words:0,sentences:0};
 let textPractice=null,sentenceComposer=null,textTiming=null;
-function newTextPractice(kind){return {kind,quota:kind==='words'?40:35,completed:0,correct:0,target:0,ticks:0,best:0,last:null,keyRecords:[]};}
+function newTextPractice(kind){return {kind,quota:kind==='words'?40:35,completed:0,correct:0,target:0,ticks:0,best:textPracticeBest[kind],last:null,keyRecords:[]};}
 function startSentence(reset=true,reseed=true){if(reseed){originalRandom.reseedFromTime();resetNativeComposerMode();}if(reset||!textPractice||textPractice.kind!=='sentences')textPractice=newTextPractice('sentences');renderTextPracticeLine();}
 function startWordStudy(reset=true,reseed=true){if(reseed){originalRandom.reseedFromTime();resetNativeComposerMode();}wordPhase='study';if(reset||!textPractice||textPractice.kind!=='words')textPractice=newTextPractice('words');renderTextPracticeLine();}
 function renderTextPracticeLine(){
@@ -229,7 +238,7 @@ function finishTextPracticeLine(){
  const ticks=session.startedAt===null?0:originalElapsedTicks(session.startedAt,now);
  const metric=originalMetrics({correctUnits:analysis.correctUnits,targetUnits:analysis.targetUnits,elapsedTicks:ticks});
  if(metric.speed>textPractice.best)sound(2);
- textPractice.completed++;textPractice.correct+=analysis.correctUnits;textPractice.target+=analysis.targetUnits;textPractice.ticks+=ticks;textPractice.last=metric;textPractice.best=Math.max(textPractice.best,metric.speed);
+ textPractice.completed++;textPractice.correct+=analysis.correctUnits;textPractice.target+=analysis.targetUnits;textPractice.ticks+=ticks;textPractice.last=metric;textPractice.best=textPracticeBest[textPractice.kind]=Math.max(textPracticeBest[textPractice.kind],metric.speed);
  const entry={mode,layout:appSettings.layout,language:currentLanguage,correct:analysis.correctUnits,entered:analysis.targetUnits,errors:analysis.targetUnits-analysis.correctUnits,elapsedTicks:ticks,elapsedMs:metric.seconds*1000,cpm:metric.speed,accuracy:metric.accuracy,date:new Date().toISOString()};
  textPractice.keyRecords.push(...records);const chartRecords=mode==='sentences'?records:textPractice.completed>=textPractice.quota?textPractice.keyRecords:null;
  if(chartRecords)entry.originalKeyStats=originalLineKeyStats(chartRecords);storePracticeRecord(entry,chartRecords);

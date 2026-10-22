@@ -5,7 +5,7 @@ import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const skip = new Set(['.git', 'node_modules']);
-const allowed = new Set(['.js', '.mjs', '.css', '.html', '.json', '.md']);
+const allowed = new Set(['.js', '.mjs', '.css', '.html', '.json', '.md', '.py']);
 const excludedNames = new Set(['practice-texts.js','long-texts.js','help-pages.js','original-compounds.js','original-finger-tables.js','original-key-stage-pools.js','original-keyboard-maps.js','original-progression.js','original-word-stage-rules.js']);
 const checks = [
   ['embedded image/font asset', /data:(?:image|font)\/[\w.+-]+[;,]/i],
@@ -29,13 +29,18 @@ async function walk(dir) {
       if (result.status !== 0) throw new Error(`Syntax check failed: ${path}\n${result.stderr}`);
       syntax++;
     }
+    if (extname(entry.name) === '.py') {
+      const result = spawnSync('python3', ['-c', 'import ast,pathlib,sys; ast.parse(pathlib.Path(sys.argv[1]).read_text())', full], {encoding:'utf8'});
+      if (result.status !== 0) throw new Error(`Python syntax check needs Python 3 and valid source: ${path}\n${result.stderr || result.error || ''}`);
+    }
     count++;
   }
 }
 await walk(root);
 for (const edition of ['1997', '1999']) {
   const manifest = JSON.parse(await readFile(join(root, edition, 'SOURCE-MANIFEST.json'), 'utf8'));
-  for (const file of manifest.files) {
+  const testManifest = edition === '1999' ? JSON.parse(await readFile(join(root, edition, 'TEST-SOURCE-MANIFEST.json'), 'utf8')) : {files:[]};
+  for (const file of [...manifest.files, ...testManifest.files]) {
     const data = await readFile(join(root, edition, file.path));
     const digest = createHash('sha256').update(data).digest('hex');
     if (digest !== file.publishedSha256) throw new Error(`Manifest hash mismatch: ${edition}/${file.path}`);

@@ -1,0 +1,66 @@
+{
+  "snapshotDate": "2026-10-22",
+  "scope": "Selected authored tests/tooling from the reviewed border-paint candidate. Not the full private QA collection.",
+  "files": [
+    {
+      "path": "tests/warmup-clock-paint.test.mjs",
+      "sourceSha256": "ce29973eda44ede0e359e0878bbadd78ff3dd62f095a1666cc3e5c68864cd256",
+      "publishedSha256": "e3921cb67bdfa2c4b1e568c76402c6081003b81fb4818209b45f36b9f0694ef0",
+      "adaptation": "Explicit resource gate; test bodies retained."
+    },
+    {
+      "path": "qa/warmup-clock-integration.test.mjs",
+      "sourceSha256": "46987871ae06064d9fe419693bb507e3d970f4872a547fa55f1f40cd09dd212f",
+      "publishedSha256": "daa5011caa3d9660e6cd7944bf02c26e7032ffbf9c30e90fed7d6dcf97b24a6e",
+      "adaptation": "Explicit resource gate; test bodies retained."
+    },
+    {
+      "path": "qa/best-speed-lifetime.test.mjs",
+      "sourceSha256": "11b1e7dd8b2fd48e0dbdc004e9caf43f803b80585793400aff693556a65f69af",
+      "publishedSha256": "3c45ebc4e36d11b591a811426e4cb7a85dbc4dc62f35c85fecae6bcdd7beac6c",
+      "adaptation": "Explicit resource gate; test bodies retained."
+    },
+    {
+      "path": "qa/completion-paint-regression.test.mjs",
+      "sourceSha256": "e26f70a557d7642013a2d60f8dcc4a02b4db49d730fbbde67de456e89004312d",
+      "publishedSha256": "54cce5d81929ec43891c9bb52b47d0614c0a33373b5b1920c5fd74e787dbf2aa",
+      "adaptation": "Explicit resource gate; test bodies retained."
+    },
+    {
+      "path": "qa/warmup-rollover-regression.test.mjs",
+      "sourceSha256": "c8797fef42fbb3f38399a0f6fe52020ad7e3aa3b32a2792b8d8df0b41e9bda93",
+      "publishedSha256": "d57051179f21e9ccca9718f999d5e2c826a2181647822fa3de28babf5697fb5e",
+      "adaptation": "Explicit resource gate; test bodies retained."
+    },
+    {
+      "path": "qa/modal-raster-regression.test.mjs",
+      "sourceSha256": "ef5a9d9e018c455bda6e3895b45cfcc332b1afa122421391dbbd6c1883b6f3de",
+      "publishedSha256": "6a28409ef9fbffbb79fdf29529df7c5b27bd0d322157c78ac5bdc980928e7bb0",
+      "adaptation": "Explicit resource gate. Modal source additionally fixes the local edition root and skips the intentionally omitted title bitmap check."
+    },
+    {
+      "path": "qa/native-history-replay.test.mjs",
+      "sourceSha256": "186ee8f6295d3c406e2322333333a058d6bcaac56a1606eff36e25371965de5f",
+      "publishedSha256": "186ee8f6295d3c406e2322333333a058d6bcaac56a1606eff36e25371965de5f",
+      "adaptation": "None. Numeric-only fixture or authored source; no original resource bytes."
+    },
+    {
+      "path": "qa/fixtures/native-word40-history-20261022.json",
+      "sourceSha256": "ceb136efc61242da8831275ddfb2c2bd08a0e7fdf6a6a047be64d024b78e63b5",
+      "publishedSha256": "ceb136efc61242da8831275ddfb2c2bd08a0e7fdf6a6a047be64d024b78e63b5",
+      "adaptation": "None. Numeric-only fixture or authored source; no original resource bytes."
+    },
+    {
+      "path": "qa/extend-raw-ank-font.py",
+      "sourceSha256": "00a5ec8ffcb11b94dfceff8dfc0d4bfd50b7536505db4cedf8a93ee785d45295",
+      "publishedSha256": "00a5ec8ffcb11b94dfceff8dfc0d4bfd50b7536505db4cedf8a93ee785d45295",
+      "adaptation": "None. Numeric-only fixture or authored source; no original resource bytes."
+    },
+    {
+      "path": "qa/test-raw-ank-font.py",
+      "sourceSha256": "208d163c45ec6e87b8aef963e78831d0bf7d43960a3fb480df312299715b4138",
+      "publishedSha256": "208d163c45ec6e87b8aef963e78831d0bf7d43960a3fb480df312299715b4138",
+      "adaptation": "None. Numeric-only fixture or authored source; no original resource bytes."
+    }
+  ]
+}

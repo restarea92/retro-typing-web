@@ -1,12 +1,12 @@
 {
   "snapshotDate": "2026-10-22",
-  "provenance": "1999 production runtime snapshot plus the current 2026-10-22 app.js correction. Static production files are recovered artifacts, not the complete historical development workspace.",
-  "verificationScope": "See README.md. The public source has intentionally omitted resource modules.",
+  "provenance": "1999 recovered production runtime with the reviewed 2026-10-22 completion, warmup clock-paint, retained best-speed, and final border-paint successor. This is a sanitized source candidate, not a full historical development workspace or a complete runtime release.",
+  "verificationScope": "Resource-independent public tests and source checks only. Resource-dependent tests are explicitly skipped by default; see TESTING.md. No all-game, native input, or pixel acceptance claim.",
   "files": [
     {
       "path": "app.js",
-      "sourceSha256": "37fa513ce74e2083a53c5de3c52ffdddd21df919d42a13ac05fd52ae97360783",
-      "publishedSha256": "37fa513ce74e2083a53c5de3c52ffdddd21df919d42a13ac05fd52ae97360783",
+      "sourceSha256": "562b8d3992ff12703b3c1e20d6ad400177b638aa5a148eee95302dc032f90a1b",
+      "publishedSha256": "562b8d3992ff12703b3c1e20d6ad400177b638aa5a148eee95302dc032f90a1b",
       "removedEmbeddedAssets": 0
     },
     {
@@ -95,8 +95,8 @@
     },
     {
       "path": "original-key-paint.js",
-      "sourceSha256": "95ad5de00a14aa0ebbd1766b9b879be3e0fbfb420236252654839d75ce0bd0d6",
-      "publishedSha256": "95ad5de00a14aa0ebbd1766b9b879be3e0fbfb420236252654839d75ce0bd0d6",
+      "sourceSha256": "eb94158bb879b0e583f8c5b714bb7c4f1f0423f692f9feb554fa74d17b031ee1",
+      "publishedSha256": "eb94158bb879b0e583f8c5b714bb7c4f1f0423f692f9feb554fa74d17b031ee1",
       "removedEmbeddedAssets": 0
     },
     {
@@ -173,8 +173,8 @@
     },
     {
       "path": "styles.css",
-      "sourceSha256": "b323a05c776e60c9741b0e49daaa2b2f6a7fa6891ff434ec24e208ebf97419b9",
-      "publishedSha256": "0583c7d7fe32e94f0e61ceaa112395c49e1d173bbbd95538222fd0062dc8cfee",
+      "sourceSha256": "a95f86f006b769dc4d6de0283c07ca5bc54a2dfc9f5df93075e993ba2c6acac3",
+      "publishedSha256": "9bcf9143fad5ef2efa6f3e47c23025c69cd24980a0b874ad227cdd7a3e41b5b8",
       "removedEmbeddedAssets": 21
     },
     {
@@ -183,5 +183,6 @@
       "publishedSha256": "813ada4872a557ebb1987d3ed8e9f0300f1f327afa17b9c47b7a50f2bba4fc98",
       "removedEmbeddedAssets": 0
     }
-  ]
+  ],
+  "previousPublishedAppSha256": "37fa513ce74e2083a53c5de3c52ffdddd21df919d42a13ac05fd52ae97360783"
 }

@@ -1,0 +1,342 @@
+{
+  "schemaVersion": 1,
+  "edition": 1999,
+  "evidenceQualification": "Speeds and accuracies are exact bitmap readings of completed-line screenshots. Elapsed BIOS ticks are reconstructed from the source timing formula and uniquely constrained by all observed per-line speeds, cumulative times and cumulative speeds; they are not a runtime-memory read. No original target text or font data is included.",
+  "lines": [
+    {
+      "line": 1,
+      "targetUnits": 30,
+      "correctUnits": 30,
+      "elapsedTicks": 785,
+      "observedSpeed": 41,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 2,
+      "targetUnits": 33,
+      "correctUnits": 33,
+      "elapsedTicks": 48,
+      "observedSpeed": 750,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 3,
+      "targetUnits": 32,
+      "correctUnits": 32,
+      "elapsedTicks": 41,
+      "observedSpeed": 852,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 4,
+      "targetUnits": 31,
+      "correctUnits": 31,
+      "elapsedTicks": 38,
+      "observedSpeed": 891,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 5,
+      "targetUnits": 29,
+      "correctUnits": 29,
+      "elapsedTicks": 35,
+      "observedSpeed": 904,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 6,
+      "targetUnits": 33,
+      "correctUnits": 33,
+      "elapsedTicks": 44,
+      "observedSpeed": 819,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 7,
+      "targetUnits": 34,
+      "correctUnits": 34,
+      "elapsedTicks": 27,
+      "observedSpeed": 1375,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 8,
+      "targetUnits": 30,
+      "correctUnits": 30,
+      "elapsedTicks": 29,
+      "observedSpeed": 1129,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 9,
+      "targetUnits": 31,
+      "correctUnits": 31,
+      "elapsedTicks": 26,
+      "observedSpeed": 1302,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 10,
+      "targetUnits": 34,
+      "correctUnits": 34,
+      "elapsedTicks": 34,
+      "observedSpeed": 1092,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 11,
+      "targetUnits": 33,
+      "correctUnits": 33,
+      "elapsedTicks": 32,
+      "observedSpeed": 1126,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 12,
+      "targetUnits": 29,
+      "correctUnits": 29,
+      "elapsedTicks": 10,
+      "observedSpeed": 3167,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 13,
+      "targetUnits": 31,
+      "correctUnits": 31,
+      "elapsedTicks": 7,
+      "observedSpeed": 4837,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 14,
+      "targetUnits": 33,
+      "correctUnits": 33,
+      "elapsedTicks": 23,
+      "observedSpeed": 1567,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 15,
+      "targetUnits": 32,
+      "correctUnits": 32,
+      "elapsedTicks": 13,
+      "observedSpeed": 2688,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 16,
+      "targetUnits": 33,
+      "correctUnits": 33,
+      "elapsedTicks": 15,
+      "observedSpeed": 2402,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 17,
+      "targetUnits": 30,
+      "correctUnits": 30,
+      "elapsedTicks": 27,
+      "observedSpeed": 1213,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 18,
+      "targetUnits": 34,
+      "correctUnits": 34,
+      "elapsedTicks": 30,
+      "observedSpeed": 1237,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 19,
+      "targetUnits": 31,
+      "correctUnits": 31,
+      "elapsedTicks": 20,
+      "observedSpeed": 1692,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 20,
+      "targetUnits": 30,
+      "correctUnits": 30,
+      "elapsedTicks": 25,
+      "observedSpeed": 1310,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 21,
+      "targetUnits": 33,
+      "correctUnits": 33,
+      "elapsedTicks": 23,
+      "observedSpeed": 1567,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 22,
+      "targetUnits": 32,
+      "correctUnits": 32,
+      "elapsedTicks": 16,
+      "observedSpeed": 2184,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 23,
+      "targetUnits": 34,
+      "correctUnits": 34,
+      "elapsedTicks": 33,
+      "observedSpeed": 1125,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 24,
+      "targetUnits": 33,
+      "correctUnits": 33,
+      "elapsedTicks": 36,
+      "observedSpeed": 1001,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 25,
+      "targetUnits": 32,
+      "correctUnits": 32,
+      "elapsedTicks": 8,
+      "observedSpeed": 4368,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 26,
+      "targetUnits": 33,
+      "correctUnits": 33,
+      "elapsedTicks": 39,
+      "observedSpeed": 924,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 27,
+      "targetUnits": 32,
+      "correctUnits": 32,
+      "elapsedTicks": 20,
+      "observedSpeed": 1747,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 28,
+      "targetUnits": 34,
+      "correctUnits": 34,
+      "elapsedTicks": 30,
+      "observedSpeed": 1237,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 29,
+      "targetUnits": 32,
+      "correctUnits": 32,
+      "elapsedTicks": 38,
+      "observedSpeed": 919,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 30,
+      "targetUnits": 34,
+      "correctUnits": 34,
+      "elapsedTicks": 32,
+      "observedSpeed": 1160,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 31,
+      "targetUnits": 29,
+      "correctUnits": 29,
+      "elapsedTicks": 15,
+      "observedSpeed": 2111,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 32,
+      "targetUnits": 34,
+      "correctUnits": 34,
+      "elapsedTicks": 31,
+      "observedSpeed": 1197,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 33,
+      "targetUnits": 31,
+      "correctUnits": 31,
+      "elapsedTicks": 15,
+      "observedSpeed": 2257,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 34,
+      "targetUnits": 33,
+      "correctUnits": 33,
+      "elapsedTicks": 38,
+      "observedSpeed": 948,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 35,
+      "targetUnits": 32,
+      "correctUnits": 32,
+      "elapsedTicks": 22,
+      "observedSpeed": 1588,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 36,
+      "targetUnits": 31,
+      "correctUnits": 31,
+      "elapsedTicks": 19,
+      "observedSpeed": 1782,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 37,
+      "targetUnits": 32,
+      "correctUnits": 32,
+      "elapsedTicks": 34,
+      "observedSpeed": 1027,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 38,
+      "targetUnits": 32,
+      "correctUnits": 32,
+      "elapsedTicks": 31,
+      "observedSpeed": 1127,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 39,
+      "targetUnits": 33,
+      "correctUnits": 33,
+      "elapsedTicks": 29,
+      "observedSpeed": 1242,
+      "observedAccuracy": 100
+    },
+    {
+      "line": 40,
+      "targetUnits": 31,
+      "correctUnits": 30,
+      "elapsedTicks": 44,
+      "observedSpeed": 744,
+      "observedAccuracy": 96
+    }
+  ],
+  "expected": {
+    "totalTargetUnits": 1280,
+    "totalCorrectUnits": 1279,
+    "totalElapsedTicks": 1862,
+    "cumulativeSeconds": 102.28583526611328,
+    "cumulativeSpeed": 750,
+    "cumulativeAccuracy": 99,
+    "bestLineSpeed": 4837,
+    "historyIndex": 0,
+    "historyWeight": 1279,
+    "historySpeed": 1499,
+    "historyAccuracy": 99,
+    "historySeconds": 102.16316986083984,
+    "historySecondsFloat32LittleEndianHex": "8b53cc42"
+  }
+}

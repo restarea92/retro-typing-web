@@ -77,7 +77,7 @@
 .speed-panel>div:first-of-type{margin-top:8px}
 .bar-track{width:273px;height:20px;border:1px solid;border-color:#656565 #fff #fff #656565;background:#aaa}
 .bar-track b{min-width:30px;height:17px;line-height:16px;font:16px/16px HTTDPixel;padding-left:5px;color:#fff}
-.bar-track:before{content:'';position:absolute;top:-9px;width:241px;height:8px;background:repeating-linear-gradient(to right,#000 0 1px,transparent 1px 40px);margin-left:31px}
+.bar-track:before{content:'';position:absolute;top:-9px;width:241px;height:7px;background:repeating-linear-gradient(to right,#000 0 1px,transparent 1px 40px);margin-left:30px}
 .speed-panel>div:not(:first-of-type) .bar-track:before{display:none}
 .red{background:#a00}.blue{background:#00008a}.teal{background:#0aa}
 .result-panel{left:423px;right:auto;top:109px;width:161px;height:136px;border:1px solid;border-color:#656565 #fff #fff #656565;box-shadow:inset 1px 1px #fff,inset -1px -1px #656565;padding:13px 7px 0;font-size:16px}
@@ -210,7 +210,7 @@
 .repeat-dialog .stage-copy{left:23px;top:42px;line-height:16px;color:#fff}
 .repeat-dialog .repeat-answers{position:absolute;left:38px;top:75px;display:flex;gap:5px}
 .repeat-dialog .repeat-answers .bevel{position:relative;width:83px;height:27px;border:1px solid;border-color:#fff #656565 #656565 #fff;background:#aaa;color:#000;padding:5px 0 4px 24px;font:16px/16px HTTDPixel;text-align:left}
-.repeat-dialog .repeat-answers .bevel:focus:after{content:'';position:absolute;inset:2px 11px 2px 16px;border:1px dotted #656565;pointer-events:none}
+.repeat-dialog .repeat-answers .bevel:focus:after{content:'';position:absolute;inset:2px 12px 2px 16px;border:0;background-image:repeating-linear-gradient(to right,#656565 0 1px,transparent 1px 2px),repeating-linear-gradient(to right,#656565 0 1px,transparent 1px 2px),repeating-linear-gradient(to bottom,#656565 0 1px,transparent 1px 2px),repeating-linear-gradient(to bottom,#656565 0 1px,transparent 1px 2px);background-size:100% 1px,100% 1px,1px 100%,1px 100%;background-position:left top,left bottom,left top,right top;background-repeat:no-repeat;pointer-events:none}
 .repeat-dialog:has(.repeat-answers button:nth-child(3)) .repeat-answers{left:6px}
 .classic:has(.repeat-dialog) .sentence-dialog h1,.classic:has(.repeat-dialog) .key-dialog h1{background:#656565}
 .classic:has(.repeat-dialog) .sentence-dialog h1:before,.classic:has(.repeat-dialog) .key-dialog h1:before{background-image:none /* Embedded asset omitted from public source archive. */}
@@ -289,3 +289,18 @@
 /* Original flags0x20 draws all eight home rings AFTER the individual cap paint. */
 .key-dialog .physical-key.native-home-ring{position:relative}
 .key-dialog .physical-key.native-home-ring::before{content:"";position:absolute;left:0;top:0;width:26px;height:26px;box-sizing:border-box;border:1px solid #a00;pointer-events:none}
+
+/* e6a1/ec84 clock-cue backtick uses column -1: one ghost finger32px left. */
+.key-dialog .clock-ghost-fingers{transform:translateX(-32px);width:28px;pointer-events:none}
+.clock-ghost-fingers i::before,.clock-ghost-fingers i::after{display:none}
+
+/* Native paint order: 1bef8 focus pixels, aae8 recessed edges, b0b2 icon. */
+.key-dialog .key-target{border-color:transparent;background-origin:border-box;background-clip:border-box;background-image:linear-gradient(#fff,#fff),linear-gradient(#fff,#fff),linear-gradient(#656565,#656565),linear-gradient(#656565,#656565);background-size:1px 100%,100% 1px,1px 100%,100% 1px;background-position:right top,left bottom,left top,left top;background-repeat:no-repeat}
+/* The keyboard component begins one row below the verified32×16 composite. */
+.classic:has(.repeat-dialog) .sentence-dialog h1,.classic:has(.repeat-dialog) .key-dialog h1{background-image:linear-gradient(#000,#000);background-size:13px 1px;background-position:22px 17px;background-repeat:no-repeat}
+/* f283 erases completed32px slots; a624 anchors16px ASCII at the same x. */
+.word-dialog .key-target>span{text-align:left}
+.word-dialog .key-target>span.warmup-consumed{visibility:hidden}
+/* Native10c8c uses a raised32×18 frame around the unchanged30×16 fill. */
+.bar-track b{position:relative}
+.bar-track b:after{content:'';position:absolute;inset:-1px;background-image:linear-gradient(#656565,#656565),linear-gradient(#656565,#656565),linear-gradient(#fff,#fff),linear-gradient(#fff,#fff);background-size:1px 100%,100% 1px,1px 100%,100% 1px;background-position:right top,left bottom,left top,left top;background-repeat:no-repeat;pointer-events:none}

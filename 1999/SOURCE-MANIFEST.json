@@ -1,12 +1,12 @@
 {
   "snapshotDate": "2026-10-22",
-  "provenance": "1999 native-input/header preview checkpoint, frozen 2026-10-22 17:39 UTC. Only app.js and index.html change from the 17:10 main-focus runtime. The optional virtual keyboard is hidden/inert with renderer and stylesheet inactive; native composition and physical input remain. Original resources remain omitted.",
-  "verificationScope": "Public default tests and source checks only. Resource-dependent focus, header, lifecycle and input-policy tests are explicitly skipped by default. Bounded desktop checks are not iPhone/Safari, full-main or full-application acceptance. See TESTING.md.",
+  "provenance": "1999 native-event preview checkpoint, frozen 2026-10-22 18:23 UTC. Only app.js, input-composer.js and key-practice-input.js change from the 17:39 native-input/header runtime. Expiring compatibility echoes and selected-layout handoff are repaired. The 100 ms boundary is a compatibility heuristic, not device evidence. Virtual keyboard remains inactive; original resources remain omitted.",
+  "verificationScope": "Public default tests and source checks only. Resource-dependent native-event, layout, focus, header, lifecycle and input-policy cases are explicitly skipped by default. Bounded desktop checks are not actual OS IME, iPhone/Safari or full-application acceptance. See TESTING.md.",
   "files": [
     {
       "path": "app.js",
-      "sourceSha256": "30999d4ad2165efb8b8b386c642cbaa825d8f132b99aa4d376c3869e66ecaac0",
-      "publishedSha256": "30999d4ad2165efb8b8b386c642cbaa825d8f132b99aa4d376c3869e66ecaac0",
+      "sourceSha256": "5be794f0debcaccb4224e56683eb569ca5fa62cdb48e9597b7bd76a9b40eca29",
+      "publishedSha256": "5be794f0debcaccb4224e56683eb569ca5fa62cdb48e9597b7bd76a9b40eca29",
       "removedEmbeddedAssets": 0
     },
     {
@@ -71,14 +71,14 @@
     },
     {
       "path": "input-composer.js",
-      "sourceSha256": "e5799e7aa72fc44f1b77e00742b2141f5313ccf7c67f7d5c7883d7c31740006d",
-      "publishedSha256": "e5799e7aa72fc44f1b77e00742b2141f5313ccf7c67f7d5c7883d7c31740006d",
+      "sourceSha256": "46a1a0f0736245f3b9a0f90d858ab0557d373c8b0256d05079b638f4f942d62e",
+      "publishedSha256": "46a1a0f0736245f3b9a0f90d858ab0557d373c8b0256d05079b638f4f942d62e",
       "removedEmbeddedAssets": 0
     },
     {
       "path": "key-practice-input.js",
-      "sourceSha256": "511cd5dfe159d416be30b2f56c1771f1c66f33e0b4a18604adab7bf562fa7c6a",
-      "publishedSha256": "511cd5dfe159d416be30b2f56c1771f1c66f33e0b4a18604adab7bf562fa7c6a",
+      "sourceSha256": "00cbc5bd3ca53eb5f71d3d24f5353bfcf4f3864df2361618d637e8ec66ea0b3b",
+      "publishedSha256": "00cbc5bd3ca53eb5f71d3d24f5353bfcf4f3864df2361618d637e8ec66ea0b3b",
       "removedEmbeddedAssets": 0
     },
     {
@@ -214,6 +214,6 @@
       "removedEmbeddedAssets": 0
     }
   ],
-  "previousPublishedAppSha256": "a9b88e65f9df97b6a09c52a8d8891e91dc2e45d2ef8976532b1ec1fb3d489fb7",
-  "sourceRuntimeManifestSha256": "207fea9901843e89f94344c3ab273424f885c3c938ec93a826beaadb1cb4d9fb"
+  "previousPublishedAppSha256": "30999d4ad2165efb8b8b386c642cbaa825d8f132b99aa4d376c3869e66ecaac0",
+  "sourceRuntimeManifestSha256": "f37ae768a3e18658895491e1e8642c21fca865e0cf1a29216840133cd95025ea"
 }

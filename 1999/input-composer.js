@@ -180,7 +180,7 @@ export function bindComposer(textarea,{layout='2',latinMode=false,latinLayout='u
   const r=hasSelection&&event.key==='Backspace'?result(state,true):feedKey(state,inputEvent);
   if(!r.handled)return;
   if(event.keyboardBridgeEvent){lastPhysicalAt=-Infinity;physicalComposition=false;}else if(physical||latinFallback){lastPhysicalAt=Date.now();if(activeComposition||event.isComposing||event.keyCode===229||event.key==='Process')physicalComposition=true;}
-  event.preventDefault();state=r.state;restore();if(latinFallback)fallbackEcho={raw:event.key,value:rawValue,accepted:fullText()};onInput(describe(r,event,{physical}));
+  event.preventDefault();state=r.state;restore();if(latinFallback)fallbackEcho={raw:event.key,value:rawValue,accepted:fullText(),at:Date.now()};onInput(describe(r,event,{physical}));
  };
  const compositionStart=()=>{if(disposed)return;physicalEcho=null;fallbackEcho=null;interruptedNative=null;lastNativeData=null;activeComposition=true;physicalComposition=!hybridInput&&Date.now()-lastPhysicalAt<100;if(hybridInput){lastPhysicalAt=-Infinity;state=commitComposer(state);}};
  const beforeInput=event=>{if(disposed)return;
@@ -207,7 +207,9 @@ export function bindComposer(textarea,{layout='2',latinMode=false,latinLayout='u
    if(nativePreview&&!physicalComposition)onInput({...describe(result(state,false),event,{native:true}),text:textarea.value,composing:event.data??'',nativeComposing:true});
    return;
   }
-  if(fallbackEcho){const echo=fallbackEcho;fallbackEcho=null;if((event.data===undefined||event.data===echo.raw)&&(textarea.value===echo.value||textarea.value===echo.accepted+echo.raw)){restore();return;}}
+  // Only an immediate compatibility echo belongs to the earlier key. A later
+  // input-only native insertion owns its text even if its value is identical.
+  if(fallbackEcho){const echo=fallbackEcho;fallbackEcho=null;if(Date.now()-echo.at<100&&(event.data===undefined||event.data===echo.raw)&&(textarea.value===echo.value||textarea.value===echo.accepted+echo.raw)){restore();return;}}
   // Echo ownership is exact-buffer scoped, not merely same data in a time window.
   if(physicalEcho&&textarea.value===physicalEcho.value&&Date.now()-physicalEcho.at<100&&(event.inputType?.includes('Composition')||(event.inputType==='insertText'&&event.data===physicalEcho.data))){restore();physicalEcho=null;suppressInputValue=null;return;}
   physicalEcho=null;

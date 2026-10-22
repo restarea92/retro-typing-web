@@ -19,7 +19,7 @@ export function nativeDrillUnits(value){
  return result;
 }
 const isLatinFallback=event=>(!event.code||event.code==='Unidentified')&&/^[\x20-\x7e]$/.test(event.key||'')&&!event.isComposing&&event.keyCode!==229;
-export function bindKeyPracticeInput(input,{onAttempt=()=>{},physicalCharacter,physicalAscii,onComposition=()=>{},now=Date.now,hybridInput=false}={}){
+export function bindKeyPracticeInput(input,{onAttempt=()=>{},physicalCharacter,physicalAscii,onComposition=()=>{},now=Date.now,hybridInput=false,layout='2'}={}){
  let disposed=false,active=false,physicalComposition=false,physicalAt=-Infinity,previous=nativeDrillUnits(input.value),physicalEcho=null,keyEcho=null,interruptedNative=null,lastNativeData=null;
  const live=()=>!disposed&&input.isConnected!==false&&!input.readOnly&&!input.disabled;
  const recentPhysical=()=>now()-physicalAt<100;
@@ -44,7 +44,7 @@ export function bindKeyPracticeInput(input,{onAttempt=()=>{},physicalCharacter,p
    if(hybridInput&&isNativeInputKey(event,active&&!physicalComposition)){physicalAt=-Infinity;physicalComposition=false;physicalEcho=null;keyEcho=null;interruptedNative=null;return;}
    const physical=hasPhysicalKey(event),latin=!active&&isLatinFallback(event);
    if(physical||latin){
-    let mappedEvent=event,glyph=physicalCharacter(event);if(hybridInput&&latin&&!event.shiftKey&&/^[A-Z]$/.test(event.key)&&glyph?.codePointAt(0)>127){mappedEvent={key:event.key.toLowerCase(),code:event.code,shiftKey:false};glyph=physicalCharacter(mappedEvent);}
+    let mappedEvent=event,glyph=physicalCharacter(event);if(hybridInput&&latin&&!event.shiftKey&&!['us','dvorak'].includes(layout)&&/^[A-Z]$/.test(event.key)){mappedEvent={key:event.key.toLowerCase(),code:event.code,shiftKey:false};glyph=physicalCharacter(mappedEvent);}
     if(glyph!==null&&glyph!==undefined){
      event.preventDefault();physicalEcho=null;keyEcho=null;
      if(event.keyboardBridgeEvent){physicalAt=-Infinity;physicalComposition=false;}
@@ -77,7 +77,9 @@ export function bindKeyPracticeInput(input,{onAttempt=()=>{},physicalCharacter,p
    if(interruptedNative&&input.value===interruptedNative.value){if(!event.isComposing)interruptedNative.terminalInputSeen=true;clearPhysicalBuffer();return;}
    if(interruptedNative&&!event.isComposing)interruptedNative=null;
    if(physicalComposition)return;
-   if(keyEcho&&!active&&!event.isComposing){const echo=keyEcho;keyEcho=null;if(input.value===echo.raw||input.value===echo.glyph){clearPhysicalBuffer();return;}}
+   // Match only an immediate compatibility echo, never a later same-glyph
+   // native insertion after the previous physical key's ownership expired.
+   if(keyEcho&&!active&&!event.isComposing){const echo=keyEcho;keyEcho=null;if(recentPhysical()&&(input.value===echo.raw||input.value===echo.glyph)){clearPhysicalBuffer();return;}}
    if(physicalEcho){const echo=physicalEcho;physicalEcho=null;if(input.value===echo.value&&(event.data===undefined||event.data===echo.data||event.inputType?.includes('Composition'))){clearPhysicalBuffer();return;}}
    nativeUpdate(event);
   }

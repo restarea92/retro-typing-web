@@ -1,3 +1,6 @@
+import { bindKeyPracticeInput } from './key-practice-input.js';
+import { createKeyboardInputBridge } from './keyboard-input-bridge.js';
+import { createVirtualKeyboard } from './virtual-keyboard-view.js';
 import { originalKeyGuide } from './original-key-guide.js';
 import { createKeyPaintState, paintKeyGlyph, paintWarmupClockCue, initializeKeyPaint } from './original-key-paint.js';
 import { createOriginalRandom, originalRandomIndex } from './original-random.js';
@@ -29,6 +32,36 @@ import { LONG_TEXTS, LONG_TEXT_INVENTORY } from './long-texts.js';
 import { MODES, LESSONS, KEY_ROWS } from './data.js';
 const $ = s => document.querySelector(s);
 const workspace = $('#workspace');
+workspace.tabIndex=-1;
+let keyboardBridge=null,keyboardView=null,keyboardVisible=true,inputMethod='virtual',settingsController=null;
+function focusTypingInput(element){if(!element)return;return keyboardBridge?keyboardBridge.focusTypingInput(element,{preventScroll:true}):element.focus({preventScroll:true});}
+function dispatchNativeReturn(element){if(!element?.isConnected)return;for(const type of ['keydown','keyup']){const fields={key:'Enter',code:'Enter',bubbles:true,cancelable:true};let event;if(window.KeyboardEvent)event=new window.KeyboardEvent(type,fields);else{event=new window.Event(type,{bubbles:true,cancelable:true});Object.assign(event,{key:'Enter',code:'Enter'});}Object.defineProperty(event,'nativeTextControl',{value:true});element.dispatchEvent(event);}}
+function outsideProgramEvent(event){return Boolean(event.target?.closest?.('.helpers,#external-controls,#virtual-keyboard-panel'));}
+function currentInputOwner(){
+ if(mode==='exited'||workspace.hasAttribute('aria-busy'))return null;
+ const active=document.activeElement,focusedClose=active?.matches?.('.dialog-close')?active:null;
+ const repeat=workspace.querySelector('.repeat-dialog');if(repeat)return focusedClose&&repeat.contains(focusedClose)?focusedClose:repeat.querySelector(`[data-choice="${repeat.dataset.selectedChoice||'0'}"]`)||repeat;
+ const stage=workspace.querySelector('.stage-dialog');if(stage)return focusedClose&&stage.contains(focusedClose)?focusedClose:stage.querySelectorAll('.stage-answer')[Number(stage.dataset.selectedChoice)||0];
+ if(openMenuId)return mode==='home'&&active===$('#close')?active:document.querySelector('.dropdown-menu');
+ if(mode==='settings'&&settingsController)return settingsController.getInputOwner();
+ const modal=workspace.querySelector('.extra-exam-result-modal,.extra-notepad-result');if(modal)return modal;
+ const list=workspace.querySelector('[role=listbox]');if(list)return list;
+ const input=workspace.querySelector('#key-input,#typing,#game-input,textarea:not([readonly])');if(input)return input;
+ return workspace.contains(active)&&active!==workspace?active:workspace;
+}
+// A focused close control owns Enter/Space before a dialog's selected answer.
+// Reuse its ordinary click path and consume the key once, so a later keyup
+// cannot confirm the newly opened parent menu.
+function activateFocusedDialogClose(event,dialog){
+ const close=event.target?.closest?.('.dialog-close');
+ if(!close||!dialog.contains(close)||!['Enter',' '].includes(event.key))return false;
+ event.preventDefault();event.stopImmediatePropagation();close.click();return true;
+}
+function refreshKeyboardLabels(){keyboardView?.setLayout(ensureComposerMode().latinMode?ensureComposerMode().latinLayout:ensureComposerMode().layout);}
+function reflectKeyboardVisibility(visible){keyboardVisible=Boolean(visible);$('#focus-input').setAttribute('aria-expanded',String(keyboardVisible));$('#focus-input').textContent=keyboardVisible?'가상 키보드 숨기기':'가상 키보드 보이기';}
+function setKeyboardVisible(visible){reflectKeyboardVisibility(visible);keyboardView?.setVisible(keyboardVisible);if(!keyboardVisible)keyboardBridge?.releaseAll();}
+function setInputMethod(next){if(!['virtual','native','hardware'].includes(next))return;inputMethod=next;releaseProgramKeys();keyboardBridge?.resetInputOwnership();$('#keyboard-input-mode').value=next;const owner=currentInputOwner();if(owner?.matches?.('input:not([type=checkbox]),textarea'))focusTypingInput(owner);else owner?.focus?.({preventScroll:true});}
+
 let extraCleanup=null, navigationVersion=0,composerBaseLayout=null,composerMode=null,lastEnglishLayout='us';
 const profileSessionId=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
 const coreComposers=new Set();
@@ -43,15 +76,16 @@ function ensureComposerMode(){
  if(composerBaseLayout!==base){composerBaseLayout=base;lastEnglishLayout=englishLayout;composerMode={layout:appSettings.layout,latinMode:false,latinLayout:englishLayout};}
  return composerMode;
 }
-function updateComposerMode(next){composerMode={...next};const layout=next.latinMode?next.latinLayout:next.layout;$('#language').textContent=({'2':'한글-2',korean2:'한글-2','3':'한글-3',korean3:'한글-3','3-no-shift':'한글-NS',korean3NoShift:'한글-NS',us:'영문-미',dvorak:'영문-드',hiragana:'일어-히',katakana:'일어-카'})[layout]||settingsStatus(appSettings);}
+function updateComposerMode(next){composerMode={...next};refreshKeyboardLabels();const layout=next.latinMode?next.latinLayout:next.layout;$('#language').textContent=({'2':'한글-2',korean2:'한글-2','3':'한글-3',korean3:'한글-3','3-no-shift':'한글-NS',korean3NoShift:'한글-NS',us:'영문-미',dvorak:'영문-드',hiragana:'일어-히',katakana:'일어-카'})[layout]||settingsStatus(appSettings);}
 function resetNativeComposerMode(){composerBaseLayout=null;updateComposerMode(ensureComposerMode());}
-function attachComposer(element,options={}){const userInput=options.onInput||(()=>{}),controller=bindComposer(element,{commitOnBlur:false,...options,...ensureComposerMode(),onInput:result=>{touchCoreIdle();if(result.modeChanged)updateComposerMode(result.mode);userInput(result);}});coreComposers.add(controller);return controller;}
+function attachComposer(element,options={}){const userInput=options.onInput||(()=>{}),controller=bindComposer(element,{commitOnBlur:false,nativePreview:true,hybridInput:true,onNativeReturn:()=>dispatchNativeReturn(element),...options,...ensureComposerMode(),onInput:result=>{touchCoreIdle();if(result.modeChanged)updateComposerMode(result.mode);userInput(result);}});coreComposers.add(controller);return controller;}
 function sound(type){return playOriginalSound(type,appSettings.sound);}
 function storePracticeRecord(entry,glyphRecords=null){entry={...entry,date:localRecordDate()};if(['words','sentences','long','exam'].includes(entry.mode))appendOriginalSpeedHistory(originalSpeedHistory,{weight:entry.correct,speed:entry.cpm,accuracy:entry.accuracy,seconds:(entry.elapsedMs||0)/1000,date:entry.date},storage);if(entry.mode==='exam')examRecords=saveOriginalExamRecord(examRecords,entry,storage);if(entry.originalKeyStats)appendOriginalKeyProfile(originalKeyProfile,entry.originalKeyStats,storage,glyphRecords);progress=saveProgress(storage,progress,{profileSessionId,...entry});}
 
 function clearCoreComposers(){for(const composer of coreComposers)composer.destroy();coreComposers.clear();gameComposer=null;}
 function clearExtra(){if(extraCleanup){extraCleanup();extraCleanup=null;}}
-function stopCurrentActivity(){coreIdle=null;if(mode==='long'&&workspace.querySelector('.long-dialog'))saveLongProgress();clearExtra();clearCoreComposers();clearInterval(gameTimer);gameTimer=null;gameActive=false;composing=false;}
+function releaseProgramKeys(){keyboardBridge?.releaseAll();keyboardView?.releaseAll();}
+function stopCurrentActivity(){releaseProgramKeys();coreIdle=null;if(settingsController){settingsController.destroy();settingsController=null;}if(mode==='long'&&workspace.querySelector('.long-dialog'))saveLongProgress();clearExtra();clearCoreComposers();clearInterval(gameTimer);gameTimer=null;gameActive=false;composing=false;}
 
 const appClockStart=performance.now();
 const names = Object.fromEntries(MODES.map(m=>[m.id,m.title]));
@@ -64,7 +98,7 @@ let examRecords=loadOriginalExamRecords(storage,progress);
 const esc = text => String(text).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const menuItems = [['home','한컴타자'],['keys','자리연습'],['words','낱말연습'],['textmenu','글연습'],['play','놀이'],['stats','통계'],['help','도움말']];
 $('#menu').innerHTML=menuItems.map(([id,label])=>`<button data-mode="${id}">${label}</button>`).join('');
-$('#menu').addEventListener('click',e=>{const id=e.target.dataset.mode;if(mode==='home'&&openMenuId&&id&&openMenuId!==id)openMenu(id)});
+$('#menu').addEventListener('click',e=>{const id=e.target.dataset.mode;if(mode==='home'&&openMenuId&&id){if(openMenuId!==id)openMenu(id);else document.querySelector('.dropdown-menu')?.focus({preventScroll:true});}});
 function navigate(next){navigationVersion++;stopCurrentActivity();closeMenu();workspace.removeAttribute('aria-busy');$('#status').style.color='';$('.classic').classList.remove('game-mode');$('#menu').style.display='flex';$('.titlebar>span').textContent='한컴타자연습';mode=next;composing=false;finished=false;session=null;$('#status').textContent='메뉴를 선택하세요';$('#menu').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
 if(mode==='home')home();else if(mode==='keys'||mode==='words')startKeys();else if(mode==='long'){selectedLongId=LONG_TEXTS.find(text=>text.language===currentLanguage)?.id||selectedLongId;showLongSelect();}else if(names[mode])startLesson();else if(mode==='textmenu'||mode==='stats'){const id=mode;mode='home';home();openMenu(id);}else if(mode==='play')workspace.innerHTML='';else if(mode==='about')showWelcome();else help();}
 function home(){workspace.innerHTML='';$('#status').textContent='좌우 화살표로 항목을 선택한 후 Enter를 누르세요.';$('#menu').querySelectorAll('button').forEach(b=>b.classList.remove('active'));openMenu(mainMenuId,mainMenuIndex);}
@@ -85,25 +119,17 @@ function guardRepeatDialogClick(event){
  dialog.querySelector(`[data-choice="${dialog.dataset.selectedChoice||'0'}"]`)?.focus({preventScroll:true});return true;
 }
 workspace.addEventListener('click',e=>{if(guardRepeatDialogClick(e))return;if(e.target.classList.contains('dialog-close')&&e.target.dataset.go==='home'){dispatchExternalKey('Escape');return;}if(e.target.dataset.go)navigate(e.target.dataset.go)});
-document.addEventListener('keydown',e=>{if(mode==='exited')return;if(e.defaultPrevented||e.isComposing||composing||e.keyCode===229)return;if(extraCleanup||mode==='settings')return;if(mode==='home'&&workspace.querySelector('.welcome-original')&&!['Shift','Control','Alt','Meta','CapsLock','NumLock','ScrollLock'].includes(e.key)){e.preventDefault();showStageDialog();return;}if((openMenuId||mode==='home')&&e.altKey&&['KeyH','KeyX'].includes(e.code)){e.preventDefault();endApplication();return;}if(mode==='about'){if(!['Shift','Control','Alt','Meta','CapsLock','NumLock','ScrollLock'].includes(e.key)){e.preventDefault();navigate('home');openMenu('help',1)}return;}if(e.key==='F1'){e.preventDefault();if(openMenuId||mode==='home')navigate('help');return}if(mode==='help'&&e.code==='Space'){e.preventDefault();helpPage++;if(helpPage>=ORIGINAL_HELP.pages.length)navigate('home');else renderHelp();return}if(mode==='long'&&!finished&&workspace.querySelector('.long-dialog')&&(e.key==='PageDown'||e.key==='PageUp')){e.preventDefault();changeLongPage(e.key==='PageDown'?1:-1);return}if(e.key==='Escape'){e.preventDefault();if(mode==='play'&&gamePhase!=='select'){if(gamePhase==='ended')dismissGameOver();else selectGame(gameKind);}else if(mode==='keys'&&!finished)leaveKeyPractice();else if(mode==='words'&&!finished){if(wordPhase==='warmup')startWordStudy();else leaveTextPractice();}else if(mode==='long'&&!finished){if($('.long-select')){navigate('home');openMenu('textmenu',1);}else {saveLongProgress();showLongSelect()}}else if(mode==='sentences'&&!finished)leaveTextPractice();else if(mode==='help'){navigate('home');openMenu('help',0);}else navigate('home')}else if(mode==='home'&&['ArrowLeft','ArrowRight','Enter'].includes(e.key)){e.preventDefault();openMenu('home')}});
+document.addEventListener('keydown',e=>{if(outsideProgramEvent(e)||mode==='exited')return;if(e.defaultPrevented||e.isComposing||composing||e.keyCode===229)return;if(extraCleanup||mode==='settings')return;if(mode==='home'&&openMenuId&&e.target===$('#close')&&['Enter',' '].includes(e.key))return;if(mode==='home'&&workspace.querySelector('.welcome-original')&&!['Shift','Control','Alt','Meta','CapsLock','NumLock','ScrollLock'].includes(e.key)){e.preventDefault();showStageDialog();return;}if((openMenuId||mode==='home')&&e.altKey&&['KeyH','KeyX'].includes(e.code)){e.preventDefault();endApplication();return;}if(mode==='about'){if(!['Shift','Control','Alt','Meta','CapsLock','NumLock','ScrollLock'].includes(e.key)){e.preventDefault();navigate('home');openMenu('help',1)}return;}if(e.key==='F1'){e.preventDefault();if(openMenuId||mode==='home')navigate('help');return}if(mode==='help'&&e.code==='Space'){e.preventDefault();helpPage++;if(helpPage>=ORIGINAL_HELP.pages.length)navigate('home');else renderHelp();return}if(mode==='long'&&!finished&&workspace.querySelector('.long-dialog')&&(e.key==='PageDown'||e.key==='PageUp')){e.preventDefault();changeLongPage(e.key==='PageDown'?1:-1);return}if(e.key==='Escape'){e.preventDefault();if(mode==='play'&&gamePhase!=='select'){if(gamePhase==='ended')dismissGameOver();else selectGame(gameKind);}else if(mode==='keys'&&!finished)leaveKeyPractice();else if(mode==='words'&&!finished){if(wordPhase==='warmup')startWordStudy();else leaveTextPractice();}else if(mode==='long'&&!finished){if($('.long-select')){navigate('home');openMenu('textmenu',1);}else {saveLongProgress();showLongSelect()}}else if(mode==='sentences'&&!finished)leaveTextPractice();else if(mode==='help'){navigate('home');openMenu('help',0);}else navigate('home')}else if(mode==='home'&&['ArrowLeft','ArrowRight','Enter'].includes(e.key)){e.preventDefault();openMenu('home')}});
 document.addEventListener('click',event=>{if(guardRepeatDialogClick(event))return;if(!$('.classic').contains(event.target)||event.target.closest?.('.dropdown-menu'))return;if(mode==='about'){event.preventDefault();navigate('home');openMenu('help',1);}else if(mode==='home'&&workspace.querySelector('.welcome-original')){event.preventDefault();showStageDialog();}},true);
-$('#close').onclick=()=>{if(mode==='home'&&openMenuId)endApplication();};$('#focus-input').onclick=()=>{if(mode==='exited'){window.location.reload();return;}if(!$('#typing')&&!$('#key-input')&&!$('#game-input')&&!workspace.querySelector('textarea:not([readonly])'))navigate('keys');($('#key-input')||$('#typing')||$('#game-input')||workspace.querySelector('textarea:not([readonly])'))?.focus({preventScroll:true})};$('#help-toggle').onclick=()=>$('#outside-help').hidden=!$('#outside-help').hidden;$('#fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await $('.classic').requestFullscreen()}catch{$('#outside-help').hidden=false;$('#outside-help').textContent='이 브라우저에서는 전체 화면을 지원하지 않습니다. 가로 화면으로 돌리면 더 크게 볼 수 있어요.'}};
+$('#close').onclick=()=>{if(mode==='home'&&openMenuId)endApplication();};$('#focus-input').onclick=()=>{if(mode==='exited'){window.location.reload();return;}setKeyboardVisible(!keyboardVisible);};$('#keyboard-input-mode').onchange=event=>setInputMethod(event.target.value);$('#native-keyboard-focus').onclick=()=>setInputMethod('native');$('#help-toggle').onclick=()=>$('#outside-help').hidden=!$('#outside-help').hidden;$('#fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await $('.classic').requestFullscreen()}catch{$('#outside-help').hidden=false;$('#outside-help').textContent='이 브라우저에서는 전체 화면을 지원하지 않습니다. 가로 화면으로 돌리면 더 크게 볼 수 있어요.'}};
 let lastScreenFocus=null;
 document.addEventListener('focusin',event=>{if($('.classic').contains(event.target))lastScreenFocus=event.target;});
 $('#control-toggle').addEventListener('pointerdown',event=>event.preventDefault());
 $('#control-toggle').onclick=()=>{const controls=$('#external-controls');controls.hidden=!controls.hidden;$('#control-toggle').setAttribute('aria-expanded',String(!controls.hidden));};
 $('#external-controls').addEventListener('pointerdown',event=>event.preventDefault());
 $('#external-controls').addEventListener('click',event=>{const key=event.target.dataset.controlKey;if(key!==undefined)dispatchExternalKey(key);});
-function dispatchExternalKey(key){
- const active=document.activeElement,target=$('.classic').contains(active)?active:lastScreenFocus?.isConnected?lastScreenFocus:workspace.querySelector('textarea:not([readonly]),input,[tabindex],button')||workspace;
- const code=key===' '?'Space':key;const fields={key,code,bubbles:true,cancelable:true};
- const makeEvent=type=>{if(window.KeyboardEvent)return new window.KeyboardEvent(type,fields);const event=new window.Event(type,fields);Object.assign(event,{key,code});return event;};
- const event=makeEvent('keydown');target.dispatchEvent(event);
- // Synthetic keyboard events have no trusted browser default activation.
- // Keep the original handler path, then mirror native button/checkbox activation.
- if(!event.defaultPrevented&&((key==='Enter'||key===' ')&&target.tagName==='BUTTON'||key===' '&&target.tagName==='INPUT'&&target.type==='checkbox'))target.click();
- target.dispatchEvent(makeEvent('keyup'));
-}
+function dispatchExternalKey(key){const code=key===' '?'Space':key;keyboardBridge?.keyDown({code,key});keyboardBridge?.keyUp({code});}
+
 function resize(){const w=$('.app-wrap').clientWidth;const scale=Math.min(1,w/640);$('#frame-box').style.transform=`scale(${scale})`;$('#frame-box').style.marginBottom=`${480*scale-480}px`;}
 window.addEventListener('resize',resize);setInterval(()=>{$('#clock').textContent=formatOriginalElapsedClock(performance.now()-appClockStart);if(session&&!finished&&session.startedAt!==null)paint();checkCoreIdle()},1000);
 
@@ -116,7 +142,7 @@ let sessionKeyStats={},sessionPhysicalKeyStats={},lastKeyTime=0;
 function startKeys(initialPoolPosition=0){resetNativeComposerMode();armCoreIdle(()=>{if(mode==='keys')leaveKeyPractice();else leaveTextPractice();});wordPhase='warmup';wordCompleted=0;wordRepeatCount=0;clearCoreComposers();sessionKeyStats={};sessionPhysicalKeyStats={};lastKeyTime=performance.now();keyUsesPhysical=false;keyCount=0;keyCorrect=0;keyRecorded=false;keyDrill=mode==='keys'?createKeyDrill(stageDefinition(),{stage:selectedStage,repeat:appSettings.repeat,position:initialPoolPosition}):null;keyTarget=keyDrill?mapCharacter(requestedKey(keyDrill)):stagePool()[0];keyStarted=performance.now();session=null;finished=false;keySequence=mode==='words'?Array.from({length:10},()=>stagePool()[originalRandomIndex(stagePool().length,originalRandom)]):[];if(mode==='words')keyTarget=keySequence[0];
 workspace.innerHTML=`<section class="key-dialog ${mode==='words'?'word-dialog':''}"><h1>${mode==='words'?'낱말연습':'자리연습'} <span id="key-score"><span class="key-accuracy">[정확도:  0%]</span> <span class="key-count">[횟수:100]</span></span><button class="dialog-close" data-go="home">×</button></h1><div class="key-target" id="key-target">${esc(keyTarget)}</div><div class="full-keyboard">${keyboardRows().map((row,r)=>`<div class="keyboard-row row-${r}">${row.map((k,column)=>`<span data-key="${esc(k)}" data-physical="${esc(physicalKeyboardRows()[r][column])}" data-key-row="${r}" data-key-column="${column}" class="physical-key ${k.length>1?'wide':''} ${k===' '?'space':''}">${k===' '?'':esc(k)}</span>`).join('')}</div>`).join('')}</div><div class="fingers">${Array.from({length:8},(_,i)=>`<i data-finger="${i}" class="${i===0?'lit':''}"></i>`).join('')}</div><input id="key-input" class="key-input" aria-label="표적 글쇠를 입력하세요" autocomplete="off" autocapitalize="off"></section>`;
 keyPaint=initializeKeyPaint(createKeyPaintState(appSettings.layout,physicalKeyboardRows()),stageDefinition(),selectedStage,mode==='words',keyTarget);
-$('#status').textContent='네모 속에 들어있는 글쇠를 누르세요';highlightKeys();if(mode==='words')$('#key-score').textContent='[횟수:  5]';const input=$('#key-input');input.focus({preventScroll:true});preventBulkInput(input);input.oncompositionstart=()=>composing=true;input.oncompositionend=()=>{composing=false;if(input.value&&!keyUsesPhysical)keyPress(input.value);input.value=''};input.oninput=e=>{if(composing||e.isComposing)return;if(input.value&&!keyUsesPhysical)keyPress(input.value);input.value=''};input.onkeydown=e=>{if(e.ctrlKey||e.metaKey||e.altKey)return;const physical=physicalCharacter(e);if(physical){e.preventDefault();keyUsesPhysical=true;keyPress(physical,physicalAscii(e));return}if(e.isComposing||composing||e.keyCode===229)return;if(KEYMAP[e.key.toLowerCase()]){e.preventDefault();keyPress(KEYMAP[e.key.toLowerCase()])}else if(['Backspace','Enter','Tab','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End','PageUp','PageDown','Insert','Delete'].includes(e.key)||/^F(?:[1-9]|10)$/.test(e.key)){e.preventDefault();keyPress(e.key)}};
+$('#status').textContent='네모 속에 들어있는 글쇠를 누르세요';highlightKeys();if(mode==='words')$('#key-score').textContent='[횟수:  5]';const input=$('#key-input');focusTypingInput(input);preventBulkInput(input);const keyInputController=bindKeyPracticeInput(input,{hybridInput:true,physicalCharacter,physicalAscii,onAttempt:keyPress,onComposition:value=>{composing=value;}});coreComposers.add(keyInputController);
 }
 // Render the original ordered cap paints, including retained labels and home rings.
 function highlightKeys(){const guide=originalKeyGuide(appSettings.layout,keyTarget);document.querySelectorAll('.key-dialog .physical-key').forEach(key=>{const paint=keyPaint.cells.get(`${key.dataset.keyRow}:${key.dataset.keyColumn}`);key.dataset.nativePaint=paint.paint;key.classList.toggle('wide',paint.physical.length>1);key.classList.toggle('native-ordinary-key',paint.ordinary);key.classList.toggle('active-key',paint.paint==='active');key.classList.toggle('native-stippled-key',paint.paint==='stipple');key.classList.toggle('native-gray-corner',paint.paint==='stipple'&&paint.cornerGray);key.classList.toggle('native-home-ring',paint.homeRing);key.textContent=paint.physical===' '?'':paint.label;});if(mode==='words')$('#key-target').innerHTML=keySequence.map((c,i)=>`<span class="${i<wordCompleted%10?'warmup-consumed':''}" style="color:${i===wordCompleted%10?'#55ffff':'#000'}">${esc(c)}</span>`).join(' ');document.querySelectorAll('.fingers:not(.clock-ghost-fingers) i').forEach((finger,index)=>finger.classList.toggle('lit',keyPaint.fingers.has(index)));if(keyPaint.fingers.has(-1)&&!workspace.querySelector('.clock-ghost-fingers')){const ghost=document.createElement('div');ghost.className='fingers clock-ghost-fingers';ghost.setAttribute('aria-hidden','true');ghost.innerHTML='<i class="lit"></i>';workspace.querySelector('.key-dialog').append(ghost);}}
@@ -167,7 +193,7 @@ function leaveKeyPractice(){const previous=mode;saveKeyResult(false);navigate('h
 function finishKeyDrill(){coreIdle=null;finished=true;const entry=saveKeyResult(false);const passed=entry.accuracy>=appSettings.targetAccuracy&&(mode==='keys'||entry.cpm>=appSettings.targetSpeed);showRepeatDialog(passed,entry);}
 // The native inactive-title redraw writes only the title, not its counters.
 function deactivatePracticeHeader(){workspace.querySelectorAll('.key-dialog h1>span,.sentence-dialog h1>span').forEach(counter=>{counter.hidden=true;});}
-function showRepeatDialog(canAdvance,entry){
+function showRepeatDialog(canAdvance,entry){releaseProgramKeys();
  deactivatePracticeHeader();
  const currentMode=mode,choices=canAdvance?['계속','다음','그만']:['계속','그만'];let index=0;
  const dialog=document.createElement('section');dialog.className='repeat-dialog stage-dialog';dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');
@@ -176,7 +202,7 @@ function showRepeatDialog(canAdvance,entry){
  const focusChoice=()=>{dialog.dataset.selectedChoice=String(index);buttons[index].focus({preventScroll:true});};
  const choose=()=>{const choice=choices[index],nextPoolPosition=(keyDrill?.position??-1)+1;recordAdvancement(entry,entry.elapsedMs);dialog.remove();if(choice==='그만'){navigate('home');openMenu(currentMode);}else{if(choice==='다음')selectedStage=(selectedStage+1)%progressionInfo().stages.filter(s=>s.mode===currentMode).length;startKeys(nextPoolPosition<stageDefinition().physicalKeys.length?nextPoolPosition:0);}};
  dialog.onclick=e=>{if(e.target.dataset.repeatStop){index=choices.length-1;choose();}else if(e.target.dataset.choice!==undefined){const next=Number(e.target.dataset.choice);if(next===index)choose();else{index=next;focusChoice();}}};
- dialog.onkeydown=e=>{if(['Escape','Enter',' ','ArrowLeft','ArrowRight','Home','End','PageUp','PageDown'].includes(e.key)){e.preventDefault();e.stopPropagation();}if(e.key==='Escape'){index=choices.length-1;choose();}else if(e.key==='Enter'||e.key===' '){choose();}else if(e.key==='ArrowLeft'||['ArrowRight','Home','End','PageUp','PageDown'].includes(e.key)){index=(index+(e.key==='ArrowLeft'?-1:1)+choices.length)%choices.length;focusChoice();}};
+ dialog.onkeydown=e=>{if(activateFocusedDialogClose(e,dialog))return;if(['Escape','Enter',' ','ArrowLeft','ArrowRight','Home','End','PageUp','PageDown'].includes(e.key)){e.preventDefault();e.stopPropagation();}if(e.key==='Escape'){index=choices.length-1;choose();}else if(e.key==='Enter'||e.key===' '){choose();}else if(e.key==='ArrowLeft'||['ArrowRight','Home','End','PageUp','PageDown'].includes(e.key)){index=(index+(e.key==='ArrowLeft'?-1:1)+choices.length)%choices.length;focusChoice();}};
  focusChoice();$('#status').textContent='좌우 화살표로 항목을 선택한 후 Enter를 누르세요.';
 }
 
@@ -208,13 +234,14 @@ workspace.innerHTML=`<section class="sentence-dialog ${mode==='words'?'word-stud
   if(!session||finished)return;
   const now=performance.now(),analysis=analyzePracticeInput(session.target,input.value,appSettings.layout);
   session=updateSession(session,analysis.acceptedText,now);
+  if(result.nativeComposing){paintSentence();return;}
   trackPracticeAcceptance(result,analysis,sentenceComposer,textTiming,session.startedAt,now);
   const accepted=analyzePracticeInput(session.target,sentenceComposer.state.committed,appSettings.layout).complete;
   if(accepted)coreIdle=null;else if(!coreIdle)armCoreIdle(leaveTextPractice);
   if(analysis.overflow){input.value=analysis.acceptedText;finishTextPracticeLine();return;}
   paintSentence();
  }});
- paintSentence();input.focus({preventScroll:true});$('#status').textContent='글을 따라 입력하세요.';
+ paintSentence();focusTypingInput(input);$('#status').textContent='글을 따라 입력하세요.';
 }
 function trackPracticeAcceptance(result,analysis,controller,timing,startedAt,now=performance.now()){
  const outcome=acceptPracticeInput({result,analysis,controller,timing,startedAt,now});
@@ -246,7 +273,7 @@ function finishTextPracticeLine(){
  else renderTextPracticeLine();
 }
 function leaveTextPractice(){const previous=mode;navigate('home');openMenu(previous==='words'?'words':'textmenu',previous==='words'?selectedStage:0);}
-function showTextRepeatDialog(entry){coreIdle=null;deactivatePracticeHeader();
+function showTextRepeatDialog(entry){releaseProgramKeys();coreIdle=null;deactivatePracticeHeader();
  const currentMode=mode,canNext=currentMode==='words'&&entry.accuracy>=appSettings.targetAccuracy&&entry.cpm>=appSettings.targetSpeed;
  const choices=canNext?['계속','다음','그만']:['계속','그만'];let index=0;
  const dialog=document.createElement('section');dialog.className='repeat-dialog stage-dialog';dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');
@@ -255,7 +282,7 @@ function showTextRepeatDialog(entry){coreIdle=null;deactivatePracticeHeader();
  const focusChoice=()=>{dialog.dataset.selectedChoice=String(index);buttons[index].focus({preventScroll:true});};
  const choose=()=>{resetNativeComposerMode();recordAdvancement(entry,entry.elapsedMs);const choice=choices[index];dialog.remove();if(choice==='그만')leaveTextPractice();else if(choice==='다음'){selectedStage=(selectedStage+1)%progressionInfo().stages.filter(s=>s.mode==='words').length;startKeys();}else currentMode==='words'?startWordStudy(true,false):startSentence(true,false);};
  dialog.onclick=e=>{if(e.target.dataset.repeatStop){index=choices.length-1;choose();}else if(e.target.dataset.choice!==undefined){const next=Number(e.target.dataset.choice);if(next===index)choose();else{index=next;focusChoice();}}};
- dialog.onkeydown=e=>{if(['Escape','Enter',' ','ArrowLeft','ArrowRight','Home','End','PageUp','PageDown'].includes(e.key)){e.preventDefault();e.stopPropagation();}if(e.key==='Escape'){index=choices.length-1;choose();}else if(e.key==='Enter'||e.key===' ')choose();else if(['ArrowLeft','ArrowRight','Home','End','PageUp','PageDown'].includes(e.key)){index=(index+(e.key==='ArrowLeft'?-1:1)+choices.length)%choices.length;focusChoice();}};
+ dialog.onkeydown=e=>{if(activateFocusedDialogClose(e,dialog))return;if(['Escape','Enter',' ','ArrowLeft','ArrowRight','Home','End','PageUp','PageDown'].includes(e.key)){e.preventDefault();e.stopPropagation();}if(e.key==='Escape'){index=choices.length-1;choose();}else if(e.key==='Enter'||e.key===' ')choose();else if(['ArrowLeft','ArrowRight','Home','End','PageUp','PageDown'].includes(e.key)){index=(index+(e.key==='ArrowLeft'?-1:1)+choices.length)%choices.length;focusChoice();}};
  focusChoice();$('#status').textContent='좌우 화살표로 항목을 선택한 후 Enter를 누르세요.';
 }
 function makeStudyWords(){const layout=({'2':'korean2','3':'korean3','3-no-shift':'korean3NoShift'})[appSettings.layout]||appSettings.layout;return originalWordLine(gameWords(),layout,selectedStage,originalRandom.nextInt);}
@@ -286,7 +313,7 @@ function createLongInput(){
   if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End','Delete','Tab'].includes(e.key)){e.preventDefault();e.stopImmediatePropagation();}
  };
  longComposer=attachComposer(longInput,{layout:appSettings.layout,onInput:result=>{
-  const now=performance.now();if(longStarted===null)longStarted=now;if(longLines[longIndex]===''){if(result.committed){longBlankAccepted=true;longComposer.reset('');longInput.value='';coreIdle=null;}return;}const analysis=analyzePracticeInput(longLines[longIndex],longInput.value,appSettings.layout);longTyped[longIndex]=analysis.acceptedText;
+  const now=performance.now();if(longStarted===null)longStarted=now;if(result.nativeComposing){longTyped[longIndex]=longInput.value;const render=workspace.querySelector(`[data-long-render="${longIndex}"]`);if(render)render.innerHTML=longRenderMarkup(longIndex);return;}if(longLines[longIndex]===''){if(result.committed){longBlankAccepted=true;longComposer.reset('');longInput.value='';coreIdle=null;}return;}const analysis=analyzePracticeInput(longLines[longIndex],longInput.value,appSettings.layout);longTyped[longIndex]=analysis.acceptedText;
   trackPracticeAcceptance(result,analysis,longComposer,longTiming,longStarted,now);
   if(analyzePracticeInput(longLines[longIndex],longComposer.state.committed,appSettings.layout).complete)coreIdle=null;else if(!coreIdle)armCoreIdle(showLongSelect);
   if(analysis.overflow){longInput.value=analysis.acceptedText;finishLongLine();return;}
@@ -306,7 +333,7 @@ function paintLong(){
  if(longIndex>=longLines.length){finishLong();return;}
  workspace.innerHTML=`<section class="long-dialog"><h1>긴글 연습(p. ${String(longPage+1).padStart(2,' ')})<button class="dialog-close" data-go="home">×</button></h1><div class="long-lines">${longLines.slice(longPage*5,longPage*5+5).map((text,i)=>{const n=longPage*5+i;return `<div class="long-line"><div>${esc(text)}</div><div class="practice-input-wrap" data-long-wrap="${n}"><div class="practice-typed-render" data-long-render="${n}" aria-hidden="true">${longRenderMarkup(n)}</div>${n!==longIndex?`<textarea data-line="${n}" readonly tabindex="-1" aria-label="${n+1}번째 줄 입력">${esc(longTyped[n]||'')}</textarea>`:''}</div></div>`;}).join('')}</div></section>`;
  if(!longInput)createLongInput();const row=workspace.querySelector(`[data-long-wrap="${longIndex}"]`);longInput.hidden=!row;(row||workspace).append(longInput);
- if(row)longInput.focus({preventScroll:true});else{workspace.tabIndex=-1;workspace.focus({preventScroll:true});}$('#status').textContent='PgUp/PgDn 글쇠를 누르면 페이지가 변경됩니다.';
+ if(row)focusTypingInput(longInput);else{workspace.tabIndex=-1;workspace.focus({preventScroll:true});}$('#status').textContent='PgUp/PgDn 글쇠를 누르면 페이지가 변경됩니다.';
 }
 function finishLongLine(){
  const analysis=analyzePracticeInput(longLines[longIndex],longTyped[longIndex]||longInput.value,appSettings.layout);if(!analysis.complete||(longLines[longIndex]===''&&!longBlankAccepted))return;
@@ -330,6 +357,7 @@ let gameTimer=null,gameColumns=[],gameX=40,gameY=47,gameDirection=1,gameHits=0,g
 let rainState=null,invadersState=null,rainLife=ENERGY_CAPACITY,gameInputText='',gameKeyQueue=[];
 const rainSpawnMemory=createRainSpawnMemory(),gameWordMemory=createGameWordMemory();
 function prepareGame(kind,continuing=false){
+ releaseProgramKeys();closeMenu();
  if(!continuing)resetNativeComposerMode();coreIdle=null;clearInterval(gameTimer);clearCoreComposers();gameTimer=null;mode='play';gameKind=kind;gameActive=false;gamePhase='intro';gameInputText='';gameEffectUntil=0;$('#status').style.color='';
  if(!continuing){gameKeyQueue=[];gameSaved=false;gameScore=INITIAL_SCORE;gameHits=0;gameMisses=0;rainLife=ENERGY_CAPACITY;}
  $('#menu').style.display='none';$('.classic').classList.add('game-mode');$('.titlebar>span').textContent=`한컴타자연습 (놀이마당 ${String(gameStage).padStart(2,' ')})`;
@@ -343,19 +371,20 @@ function prepareGame(kind,continuing=false){
   else if((rainState?.awaitingNext||invadersState?.awaitingNext)&&!e.ctrlKey&&!e.metaKey&&!e.altKey){e.preventDefault();e.stopImmediatePropagation();nextGameStage();}
   else if(gameActive&&(e.key==='Enter'||e.code==='Space'||e.key===' ')){e.preventDefault();e.stopImmediatePropagation();const controller=gameComposer;controller.commit({notify:true,event:e});if(gameComposer===controller)submitGameWord();}
  };
- gameComposer=attachComposer(input,{layout:appSettings.layout,onInput:()=>{
+ gameComposer=attachComposer(input,{layout:appSettings.layout,onInput:result=>{
   if(!gameActive||gameInputBusy())return;
+  if(result.nativeComposing){gameInputText=input.value;paintGameInput();return;}
   const controller=gameComposer,{submitted,remaining}=acceptGameCommittedInput(controller.state.committed);
   controller.replaceCommitted(remaining);gameInputText=input.value;paintGameInput();
   for(const word of submitted){if(gameComposer!==controller||!gameActive)break;submitGameWord(word);}
  }});
- preventBulkInput(input);$('#game-start').onclick=beginGame;input.focus({preventScroll:true});$('#status').style.color='';$('#status').textContent='사이띄개를 누르세요.';
+ preventBulkInput(input);$('#game-start').onclick=beginGame;focusTypingInput(input);$('#status').style.color='';$('#status').textContent='사이띄개를 누르세요.';
 }
 function setupInvaders(continuing=false){prepareGame('invaders',continuing);rainState=null;invadersState=createInvadersStage(gameStage,gameWords(),{random:originalRandom,language:currentLanguage,wordMemory:gameWordMemory});}
 function setupRain(continuing=false){prepareGame('rain',continuing);invadersState=null;gameColumns=[];rainState=createRainStage(gameStage,gameWords(),{energy:rainLife,spawnMemory:rainSpawnMemory,random:originalRandom,language:currentLanguage,wordMemory:gameWordMemory});}
 
 function beginGame(){
- if(gamePhase!=='intro')return;armCoreIdle(()=>selectGame(gameKind));gamePhase='running';gameActive=true;$('#game-start').hidden=true;$('#game-start').classList.remove('game-intro');$('#game-hud').hidden=false;$('#game-field').hidden=false;$('#game-input').readOnly=false;paintGameInput();$('#game-input').focus({preventScroll:true});$('#status').textContent='';
+ if(gamePhase!=='intro')return;armCoreIdle(()=>selectGame(gameKind));gamePhase='running';gameActive=true;$('#game-start').hidden=true;$('#game-start').classList.remove('game-intro');$('#game-hud').hidden=false;$('#game-field').hidden=false;$('#game-input').readOnly=false;paintGameInput();focusTypingInput($('#game-input'));$('#status').textContent='';
  gameNextMove=performance.now()+(gameKind==='rain'?0:invadersState.interval*BIOS_TICK_MS);paintGame();gameTimer=setInterval(updateGame,16);
 }
 function beginInvaders(){beginGame();}function beginRain(){beginGame();}
@@ -420,7 +449,7 @@ function saveGameRecord(){
 function showGameEffect(label,until=0){$('#status').textContent=label;$('#status').style.color='#55ffff';gameEffectUntil=until;}
 function dismissGameOver(){const kind=gameKind,backgroundHTML=workspace.innerHTML;saveGameRecord();handleMenuAction('gameScores',()=>selectGame(kind),{backgroundHTML});}
 function endInvaders(){
- coreIdle=null;clearInterval(gameTimer);gameTimer=null;gameActive=false;gamePhase='ended';const overlay=$('#game-start');overlay.hidden=false;overlay.className='game-start game-ended';overlay.textContent='놀이가 끝났습니다.';overlay.onclick=dismissGameOver;const input=$('#game-input');input.readOnly=true;gameComposer?.reset('');input.value='';paintGameInput();input.focus({preventScroll:true});$('#status').style.color='';$('#status').textContent='사이띄개를 누르세요.';
+ coreIdle=null;clearInterval(gameTimer);gameTimer=null;gameActive=false;gamePhase='ended';const overlay=$('#game-start');overlay.hidden=false;overlay.className='game-start game-ended';overlay.textContent='놀이가 끝났습니다.';overlay.onclick=dismissGameOver;const input=$('#game-input');input.readOnly=true;gameComposer?.reset('');input.value='';paintGameInput();focusTypingInput(input);$('#status').style.color='';$('#status').textContent='사이띄개를 누르세요.';
 }
 
 
@@ -435,7 +464,7 @@ function stagePool(){return stageDefinition().physicalKeys.map(mapCharacter);}
 const MENU_ACTIONS={home:[['환경 설정','settings'],['끝','exit']],keys:STAGE_LABELS.map((s,i)=>[s,'keys:'+i]),words:STAGE_LABELS.slice(0,8).map((s,i)=>[s,'words:'+i]),textmenu:[['짧은글 연습','sentences'],['긴글 연습','long'],['낙 서 장','notepad'],['타자 검정','exam'],['타자 검정 결과','examResults']],play:[['침 략 자','invaders'],['산 성 비','rain'],['점수보기','gameScores']],stats:[['타자 속도','stats-speed'],['글쇠별 타수','stats-keys'],['글쇠별 속도','stats-keySpeed'],['글쇠별 정확도','stats-keyAccuracy'],['손가락 빠르기','stats-fingers']],help:[['도 움 말','help'],['한컴타자연습 정보','about']]};
 let openMenuId=null,openMenuIndex=0,mainMenuId='home',mainMenuIndex=0;const menuSelections={};
 function closeMenu(){document.querySelector('.dropdown-menu')?.remove();$('.classic').classList.remove('menu-open');$('#menu').querySelectorAll('button').forEach(b=>b.classList.remove('open'));openMenuId=null;}
-function openMenu(id,selectedIndex=menuSelections[id]??0){if(workspace.querySelector('.repeat-dialog'))return;if(id==='keys'||id==='words')MENU_ACTIONS[id]=progressionInfo().stages.filter(s=>s.mode===id).map(s=>[s.label,id+':'+s.subIndex]);if(!Number.isInteger(selectedIndex)||selectedIndex<0||selectedIndex>=MENU_ACTIONS[id].length)selectedIndex=0;closeMenu();openMenuId=id;openMenuIndex=selectedIndex;mainMenuId=id;mainMenuIndex=selectedIndex;menuSelections[id]=selectedIndex;const order=menuItems.findIndex(([m])=>m===id),x=[3,91,179,267,339,395,451][order];const menu=document.createElement('div');menu.className='dropdown-menu';menu.style.left=x+'px';menu.setAttribute('role','menu');menu.tabIndex=0;menu.innerHTML=MENU_ACTIONS[id].map(([label,action],i)=>`<div role="menuitem" class="${i===selectedIndex?'chosen':''}" data-action="${action}">${label}</div>`).join('');$('.classic').append(menu);$('.classic').classList.add('menu-open');$(`#menu [data-mode="${id}"]`).classList.add('open');menu.onclick=e=>{if(e.target.dataset.action){openMenuIndex=MENU_ACTIONS[id].findIndex(item=>item[1]===e.target.dataset.action);mainMenuIndex=openMenuIndex;menuSelections[id]=openMenuIndex;handleMenuAction(e.target.dataset.action)}};menu.onkeydown=e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Home','End','PageUp','PageDown','Enter',' ','Escape'].includes(e.key))e.preventDefault();if(['ArrowDown','ArrowUp','Home','End','PageUp','PageDown'].includes(e.key)){openMenuIndex=['Home','PageUp'].includes(e.key)?0:['End','PageDown'].includes(e.key)?MENU_ACTIONS[id].length-1:(openMenuIndex+(e.key==='ArrowDown'?1:-1)+MENU_ACTIONS[id].length)%MENU_ACTIONS[id].length;mainMenuIndex=openMenuIndex;menuSelections[id]=openMenuIndex;Array.from(menu.children).forEach((c,i)=>c.classList.toggle('chosen',i===openMenuIndex))}else if(e.key==='Enter'||e.key===' ')handleMenuAction(MENU_ACTIONS[id][openMenuIndex][1]);else if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const next=(order+(e.key==='ArrowRight'?1:-1)+menuItems.length)%menuItems.length;openMenu(menuItems[next][0])}};menu.focus({preventScroll:true});$('#status').textContent='좌우 화살표로 항목을 선택한 후 Enter를 누르세요.';}
+function openMenu(id,selectedIndex=menuSelections[id]??0){if(workspace.querySelector('.repeat-dialog'))return;releaseProgramKeys();if(id==='keys'||id==='words')MENU_ACTIONS[id]=progressionInfo().stages.filter(s=>s.mode===id).map(s=>[s.label,id+':'+s.subIndex]);if(!Number.isInteger(selectedIndex)||selectedIndex<0||selectedIndex>=MENU_ACTIONS[id].length)selectedIndex=0;closeMenu();openMenuId=id;openMenuIndex=selectedIndex;mainMenuId=id;mainMenuIndex=selectedIndex;menuSelections[id]=selectedIndex;const order=menuItems.findIndex(([m])=>m===id),x=[3,91,179,267,339,395,451][order];const menu=document.createElement('div');menu.className='dropdown-menu';menu.style.left=x+'px';menu.setAttribute('role','menu');menu.tabIndex=0;menu.innerHTML=MENU_ACTIONS[id].map(([label,action],i)=>`<div role="menuitem" class="${i===selectedIndex?'chosen':''}" data-action="${action}">${label}</div>`).join('');$('.classic').append(menu);$('.classic').classList.add('menu-open');$(`#menu [data-mode="${id}"]`).classList.add('open');menu.onclick=e=>{if(e.target.dataset.action){openMenuIndex=MENU_ACTIONS[id].findIndex(item=>item[1]===e.target.dataset.action);mainMenuIndex=openMenuIndex;menuSelections[id]=openMenuIndex;handleMenuAction(e.target.dataset.action)}};menu.onkeydown=e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Home','End','PageUp','PageDown','Enter',' ','Escape'].includes(e.key))e.preventDefault();if(['ArrowDown','ArrowUp','Home','End','PageUp','PageDown'].includes(e.key)){openMenuIndex=['Home','PageUp'].includes(e.key)?0:['End','PageDown'].includes(e.key)?MENU_ACTIONS[id].length-1:(openMenuIndex+(e.key==='ArrowDown'?1:-1)+MENU_ACTIONS[id].length)%MENU_ACTIONS[id].length;mainMenuIndex=openMenuIndex;menuSelections[id]=openMenuIndex;Array.from(menu.children).forEach((c,i)=>c.classList.toggle('chosen',i===openMenuIndex))}else if(e.key==='Enter'||e.key===' ')handleMenuAction(MENU_ACTIONS[id][openMenuIndex][1]);else if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const next=(order+(e.key==='ArrowRight'?1:-1)+menuItems.length)%menuItems.length;openMenu(menuItems[next][0])}};menu.focus({preventScroll:true});$('#status').textContent='좌우 화살표로 항목을 선택한 후 Enter를 누르세요.';}
 async function handleMenuAction(action,returnTo=null,options={}){
  const request=++navigationVersion;
  stopCurrentActivity();closeMenu();session=null;
@@ -447,11 +476,11 @@ async function handleMenuAction(action,returnTo=null,options={}){
  if(action.includes(':')){const [next,stage]=action.split(':');selectedStage=Number(stage);navigate(next);return;}
  if(action==='settings'){
   mode='settings';const module=await import('./settings.js');if(!isCurrent())return;
-  module.renderSettings(workspace,appSettings,next=>{
-   if(!isCurrent())return;appSettings=next;currentLanguage=next.language;
+  settingsController=module.renderSettings(workspace,appSettings,next=>{
+   if(!isCurrent())return;appSettings=next;currentLanguage=next.language;refreshKeyboardLabels();
    try{storage.setItem('retro-typing-settings-v1',JSON.stringify(next));}catch{}
    $('#language').textContent=settingsStatus(next);navigate('home');openMenu('home',0);
-  },()=>{if(isCurrent()){navigate('home');openMenu('home',0);}});return;
+  },()=>{if(isCurrent()){navigate('home');openMenu('home',0);}},{focusTypingInput});return;
  }
  if(action==='invaders'||action==='rain'){navigate('play');selectGame(action);return;}
  if(action==='exit'){endApplication();return;}
@@ -459,7 +488,7 @@ async function handleMenuAction(action,returnTo=null,options={}){
  if(['notepad','exam','examResults','gameScores'].includes(action)||action.startsWith('stats-')){
   if(action==='notepad'||action==='exam')resetNativeComposerMode();mode=action;const module=await import('./extras.js');if(!isCurrent())return;
   extraCleanup=module.renderExtras(workspace,action,{
-   backgroundHTML:options.backgroundHTML,language:currentLanguage,settings:appSettings,progress,gameRecords,examRecords,longTexts:LONG_TEXTS,profileSessionId,originalKeyProfile,originalSpeedHistory,composerMode:{...ensureComposerMode()},onComposerMode:updateComposerMode,
+   focusTypingInput,onNativeReturn:dispatchNativeReturn,onInputOwnerChange:releaseProgramKeys,backgroundHTML:options.backgroundHTML,language:currentLanguage,settings:appSettings,progress,gameRecords,examRecords,longTexts:LONG_TEXTS,profileSessionId,originalKeyProfile,originalSpeedHistory,composerMode:{...ensureComposerMode()},onComposerMode:updateComposerMode,
    onPageReport:entry=>{if(!isCurrent())return;appendOriginalSpeedHistory(originalSpeedHistory,{weight:entry.correct,speed:entry.cpm,accuracy:entry.accuracy,seconds:(entry.elapsedMs||0)/1000,date:localRecordDate()},storage);recordAdvancement({mode:'exam',...entry},entry.elapsedMs||0);},onHistorySample:sample=>{if(isCurrent())appendOriginalSpeedHistory(originalSpeedHistory,sample,storage);},onKeyStats:(stats,records)=>{if(isCurrent())appendOriginalKeyProfile(originalKeyProfile,stats,storage,records);},onSound:sound,keyboardRows:keyboardRows(),onClose:()=>{if(!isCurrent())return;if(returnTo){returnTo();return;}navigate('home');const parent=action.startsWith('stats-')?'stats':action==='gameScores'?'play':'textmenu';openMenu(parent,Math.max(0,MENU_ACTIONS[parent].findIndex(item=>item[1]===action)));},
    onRecord:entry=>{if(!isCurrent())return;entry={layout:appSettings.layout,language:currentLanguage,...entry};storePracticeRecord(entry);recordAdvancement(entry,entry.elapsedMs||0);},
    onStatus:text=>{if(isCurrent())$('#status').textContent=text;}
@@ -468,6 +497,9 @@ async function handleMenuAction(action,returnTo=null,options={}){
  navigate(action);
 }
 try { appSettings=normalizeSettings(JSON.parse(storage.getItem('retro-typing-settings-v1')||'{}'));currentLanguage=appSettings.language;$('#language').textContent=settingsStatus(appSettings); } catch {}
+keyboardBridge=createKeyboardInputBridge({document,surface:workspace,getOwner:currentInputOwner,getEpoch:()=>navigationVersion,isVirtualMode:()=>inputMethod!=='native',onKeyState:(code,down)=>keyboardView?.setPressed(code,down),onModifiers:state=>keyboardView?.setModifiers(state)});
+keyboardView=createVirtualKeyboard($('#virtual-keyboard'),{onKeyDown:packet=>keyboardBridge.keyDown(packet),onKeyUp:packet=>keyboardBridge.keyUp(packet),onReleaseAll:()=>keyboardBridge.releaseAll(),onVisibilityChange:reflectKeyboardVisibility,getSoundEnabled:()=>true});
+refreshKeyboardLabels();setKeyboardVisible(true);
 resize();showWelcome();const bootVersion=navigationVersion;pauseFor('boot').then(()=>{if(navigationVersion===bootVersion)showStageDialog();});
 
 function sentenceTexts(){return PRACTICE_TEXTS.sentences[currentLanguage]||PRACTICE_TEXTS.sentences.ko;}
@@ -490,7 +522,16 @@ $('#external-import').onchange=async event=>{
 
 function progressionForLayout(layout){const name=({'2':'korean2','3':'korean3','3-no-shift':'korean3NoShift'})[layout]||layout;return ORIGINAL_PROGRESSION[name]||ORIGINAL_PROGRESSION.korean2;}
 function progressionInfo(){return progressionForLayout(appSettings.layout);}
-function showStageDialog(){navigationVersion++;stopCurrentActivity();closeMenu();mode='stage';const progression=progressionInfo();let step=1;try{step=Number(storage.getItem('retro-typing-stage-'+appSettings.layout))||1}catch{}step=Math.max(1,Math.min(progression.total,step));const stage=progression.stages[step-1];workspace.innerHTML=`<section class="stage-dialog"><h1>연습단계 선택<button class="dialog-close" data-go="home">×</button></h1><div class="stage-copy">오늘은 총 ${progression.total} 단계에서　${step} 번째 단계로<br>${stage.mode==='keys'?'자리연습':stage.mode==='words'?'낱말연습':'글연습'}의 '${stage.label}'를 연습 할 차례입니다.<span class="stage-question">연습을 하시겠습니까?</span></div><button id="stage-yes" class="stage-answer">예</button><button id="stage-no" class="stage-answer">아니오</button></section>`;$('#stage-yes').onclick=()=>{selectedStage=stage.subIndex;if(stage.mode==='test')handleMenuAction('exam');else navigate(stage.mode==='short'?'sentences':stage.mode)};$('#stage-no').onclick=()=>{navigate('home');openMenu('home',0);};$('#stage-yes').focus({preventScroll:true});$('.stage-dialog').onkeydown=e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();(document.activeElement===$('#stage-yes')?$('#stage-no'):$('#stage-yes')).focus({preventScroll:true})}};$('#status').textContent='좌우 화살표로 항목을 선택한 후 Enter를 누르세요.';}
+function showStageDialog(){
+ navigationVersion++;stopCurrentActivity();closeMenu();mode='stage';const progression=progressionInfo();let step=1;try{step=Number(storage.getItem('retro-typing-stage-'+appSettings.layout))||1}catch{}step=Math.max(1,Math.min(progression.total,step));const stage=progression.stages[step-1];
+ workspace.innerHTML=`<section class="stage-dialog" data-selected-choice="0"><h1>연습단계 선택<button class="dialog-close" data-go="home">×</button></h1><div class="stage-copy">오늘은 총 ${progression.total} 단계에서　${step} 번째 단계로<br>${stage.mode==='keys'?'자리연습':stage.mode==='words'?'낱말연습':'글연습'}의 '${stage.label}'를 연습 할 차례입니다.<span class="stage-question">연습을 하시겠습니까?</span></div><button id="stage-yes" class="stage-answer">예</button><button id="stage-no" class="stage-answer">아니오</button></section>`;
+ const dialog=workspace.querySelector('.stage-dialog'),answers=[...dialog.querySelectorAll('.stage-answer')];let selected=0;
+ const choose=()=>{if(selected===1){navigate('home');openMenu('home',0);}else{selectedStage=stage.subIndex;if(stage.mode==='test')handleMenuAction('exam');else navigate(stage.mode==='short'?'sentences':stage.mode);}};
+ const focusChoice=()=>{dialog.dataset.selectedChoice=String(selected);answers[selected].focus({preventScroll:true});};
+ answers.forEach((button,index)=>{button.onpointerdown=event=>event.preventDefault();button.onfocus=()=>{selected=index;dialog.dataset.selectedChoice=String(index);};button.onclick=()=>{if(index===selected)choose();else{selected=index;focusChoice();}};});
+ dialog.onkeydown=event=>{if(activateFocusedDialogClose(event,dialog))return;if(['ArrowLeft','ArrowRight','Home','End','PageUp','PageDown','Enter',' ','Escape'].includes(event.key)){event.preventDefault();event.stopPropagation();if(event.key==='Escape'){selected=1;choose();}else if(event.key==='Enter'||event.key===' ')choose();else{selected=1-selected;focusChoice();}}};
+ focusChoice();$('#status').textContent='좌우 화살표로 항목을 선택한 후 Enter를 누르세요.';
+}
 
 const runTextTotals={};
 function recordAdvancement(entry,elapsedMs){
@@ -520,7 +561,7 @@ function saveNativeProfileOnExit(){
  closeOriginalKeyProfile(originalKeyProfile,storage);
 }
 function endApplication(){
- navigationVersion++;stopCurrentActivity();closeMenu();saveNativeProfileOnExit();mode='exited';workspace.innerHTML='';$('#frame-box').hidden=true;
+ navigationVersion++;stopCurrentActivity();closeMenu();saveNativeProfileOnExit();mode='exited';keyboardBridge?.releaseAll();keyboardView?.setVisible(false);$('#keyboard-input-mode').disabled=true;$('#native-keyboard-focus').disabled=true;workspace.innerHTML='';$('#frame-box').hidden=true;
  $('#external-controls').hidden=true;$('#control-toggle').setAttribute('aria-expanded','false');$('#control-toggle').disabled=true;$('#external-import').disabled=true;
  $('#outside-help').hidden=false;$('#outside-help').textContent='연습을 마쳤습니다. 기록을 저장했습니다. 다시 시작하려면 아래 버튼을 누르세요.';
  $('#focus-input').textContent='다시 시작';$('#focus-input').focus({preventScroll:true});

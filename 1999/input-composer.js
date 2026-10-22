@@ -60,6 +60,15 @@ export function physicalKey(event,layout=null){
  }
  return k;
 }
+/** In the hybrid adapter, real IME evidence owns native text even when the
+ * browser reports a physical-looking code. Explicit virtual packets retain
+ * physical intent. A software ':' on Semicolon without Shift is native text,
+ * not evidence that the user typed ';'. Layout letter remapping stays physical. */
+export function isNativeInputKey(event,activeNative=false){
+ if(event.virtualKeyboard||event.source==='virtual')return false;
+ if(activeNative||event.isComposing||event.keyCode===229||event.key==='Process')return true;
+ return hasPhysicalKey(event)&&/^[\x20-\x7e]$/.test(event.key||'')&&!/^[A-Za-z ]$/.test(event.key)&&physicalKey(event,'us')!==event.key;
+}
 export function feedKey(state,event){
  const isSpace=event.code==='Space'||event.key===' ',japanese=['hiragana','katakana'].includes(state.layout),nativeLayout=state.layout.startsWith('korean')||japanese;
  if(isSpace&&!event.altKey&&!event.metaKey&&!event.isComposing&&event.keyCode!==229&&((event.shiftKey&&!event.ctrlKey&&nativeLayout)||(event.ctrlKey&&!event.shiftKey&&japanese))){
@@ -115,14 +124,14 @@ export function feedKey(state,event){
 }
 
 /** Bind a textarea/input to original physical-key composition.
- * A real OS composition with no reliable physical key codes is a mobile
- * adaptation. Physical-origin OS composition echoes never become new text.
+ * hybridInput owns real OS composition by lifecycle/text evidence even when
+ * key codes exist. The false default retains historical raw-key emulation.
  * Call reset after programmatic edits; caret moves commit the current syllable.
  */
-export function bindComposer(textarea,{layout='2',latinMode=false,latinLayout='us',onInput=()=>{},handleEnter=false,commitOnBlur=true}={}){
+export function bindComposer(textarea,{layout='2',latinMode=false,latinLayout='us',onInput=()=>{},handleEnter=false,commitOnBlur=true,nativePreview=false,hybridInput=false,onNativeReturn=null}={}){
  BINDINGS.get(textarea)?.destroy();
  let state=createComposer(layout,textarea.value),suffix='',disposed=false;state.latinMode=Boolean(latinMode);state.latinLayout=latinLayout==='dvorak'?'dvorak':'us';
- let physicalComposition=false,activeComposition=false,lastPhysicalAt=-Infinity,suppressInputValue=null,physicalEcho=null;
+ let physicalComposition=false,activeComposition=false,lastPhysicalAt=-Infinity,suppressInputValue=null,physicalEcho=null,fallbackEcho=null,interruptedNative=null,lastNativeData=null,handledReturn=null;
  const fullText=()=>composerText(state)+suffix;
  const restore=()=>{textarea.value=fullText();const caret=composerText(state).length;textarea.setSelectionRange(caret,caret);};
  const sync=()=>{if(textarea.value!==fullText()){state=resetComposer(state,textarea.value);suffix='';}};
@@ -133,10 +142,28 @@ export function bindComposer(textarea,{layout='2',latinMode=false,latinLayout='u
   // Native/mobile text does not reveal how many physical strokes produced it.
   acceptedKeystrokes:r.modeChanged?0:native||!physical?null:physicalKey(event)===null?0:1
  });
+ const matchesInterrupted=event=>interruptedNative&&(textarea.value===interruptedNative.value||interruptedNative.data!=null&&event?.data===interruptedNative.data);
+ const finalizeNativeBeforeVirtual=event=>{
+  if(disposed||!hybridInput||!activeComposition||physicalComposition)return;
+  // Runs before app keydown via the bridge; never rewrites live native DOM.
+  interruptedNative={value:textarea.value,data:lastNativeData};sync();state=commitComposer(state);activeComposition=false;
+  onInput(describe(result(state,false),event,{native:true}));
+ };
  const onKey=event=>{
+  if(!disposed&&event.key==='Enter'&&event.defaultPrevented){const token={};handledReturn=token;Promise.resolve().then(()=>{if(handledReturn===token)handledReturn=null;});}
   if(disposed||textarea.readOnly||textarea.disabled||event.defaultPrevented)return;
+  if(hybridInput&&(event.virtualKeyboard||event.source==='virtual')){finalizeNativeBeforeVirtual(event);if(disposed)return;}
+  if(hybridInput&&isNativeInputKey(event,activeComposition&&!physicalComposition)){lastPhysicalAt=-Infinity;physicalComposition=false;physicalEcho=null;fallbackEcho=null;suppressInputValue=null;interruptedNative=null;return;}
   const physical=hasPhysicalKey(event)||['Backspace','Enter','NumpadEnter'].includes(event.code);
-  physicalEcho=null;
+  // Keep the known-working software Latin keyboard -> original app layout
+  // path, but never consume native Hangul/kana jamo as literal physical keys.
+  const latinFallback=(!event.code||event.code==='Unidentified')&&/^[\x20-\x7e]$/.test(event.key||'')&&!activeComposition&&!event.isComposing&&event.keyCode!==229;
+  if(!physical&&!latinFallback){
+   if(hybridInput&&event.key?.length===1){physicalEcho=null;fallbackEcho=null;suppressInputValue=null;interruptedNative=null;}
+   if(activeComposition||event.isComposing||event.keyCode===229||event.key?.length===1)return;
+  }
+  if(activeComposition&&!physicalComposition&&!hasPhysicalKey(event))return;
+  physicalEcho=null;fallbackEcho=null;
   if(physicalComposition)restore();else sync();
   // Let the IME consume its confirmation Enter. The app can use the exported
   // guard from an earlier-registered keydown handler as well.
@@ -148,33 +175,53 @@ export function bindComposer(textarea,{layout='2',latinMode=false,latinLayout='u
   if(start!==composerText(state).length||hasSelection){
    suffix=textarea.value.slice(end);state=resetComposer(state,textarea.value.slice(0,start));
   }
-  const inputEvent=physical?{key:event.code==='Backspace'?'Backspace':event.key,code:event.code,shiftKey:event.shiftKey,capsLock:event.capsLock??event.getModifierState?.('CapsLock'),ctrlKey:event.ctrlKey,altKey:event.altKey,metaKey:event.metaKey,isComposing:false,keyCode:0}:event;
+  const inputEvent=physical?{key:event.code==='Backspace'?'Backspace':event.key,code:event.code,shiftKey:event.shiftKey,capsLock:event.capsLock??event.getModifierState?.('CapsLock'),ctrlKey:event.ctrlKey,altKey:event.altKey,metaKey:event.metaKey,isComposing:false,keyCode:0}:hybridInput&&latinFallback&&!event.shiftKey&&!['us','dvorak'].includes(state.latinMode?state.latinLayout:state.layout)&&/^[A-Z]$/.test(event.key)?{key:event.key.toLowerCase(),code:event.code,shiftKey:false,ctrlKey:event.ctrlKey,altKey:event.altKey,metaKey:event.metaKey}:event;
+  const rawValue=textarea.value.slice(0,start)+(event.key?.length===1?event.key:'')+textarea.value.slice(end);
   const r=hasSelection&&event.key==='Backspace'?result(state,true):feedKey(state,inputEvent);
   if(!r.handled)return;
-  if(physical){lastPhysicalAt=Date.now();if(activeComposition||event.isComposing||event.keyCode===229||event.key==='Process')physicalComposition=true;}
-  event.preventDefault();state=r.state;restore();onInput(describe(r,event,{physical}));
+  if(event.keyboardBridgeEvent){lastPhysicalAt=-Infinity;physicalComposition=false;}else if(physical||latinFallback){lastPhysicalAt=Date.now();if(activeComposition||event.isComposing||event.keyCode===229||event.key==='Process')physicalComposition=true;}
+  event.preventDefault();state=r.state;restore();if(latinFallback)fallbackEcho={raw:event.key,value:rawValue,accepted:fullText()};onInput(describe(r,event,{physical}));
  };
- const compositionStart=()=>{physicalEcho=null;activeComposition=true;physicalComposition=Date.now()-lastPhysicalAt<100;};
- const beforeInput=event=>{if(physicalComposition&&(event.isComposing||event.inputType?.includes('Composition')))event.preventDefault();};
+ const compositionStart=()=>{if(disposed)return;physicalEcho=null;fallbackEcho=null;interruptedNative=null;lastNativeData=null;activeComposition=true;physicalComposition=!hybridInput&&Date.now()-lastPhysicalAt<100;if(hybridInput){lastPhysicalAt=-Infinity;state=commitComposer(state);}};
+ const beforeInput=event=>{if(disposed)return;
+  if(hybridInput&&!handleEnter&&['insertLineBreak','insertParagraph'].includes(event.inputType)&&onNativeReturn){
+   event.preventDefault();if(activeComposition||event.isComposing||handledReturn)return;
+   const token={};handledReturn=token;Promise.resolve().then(()=>{if(handledReturn===token)handledReturn=null;});
+   onNativeReturn(event);return;
+  }
+  if(physicalComposition&&(event.isComposing||event.inputType?.includes('Composition')))event.preventDefault();};
  const composition=event=>{
-  if(physicalComposition||Date.now()-lastPhysicalAt<100){restore();physicalEcho={data:event?.data,at:Date.now()};}
+  if(disposed)return;
+  activeComposition=false;
+  if(matchesInterrupted(event)){physicalEcho=interruptedNative.terminalInputSeen?null:{value:interruptedNative.value,data:interruptedNative.data,at:Date.now()};restore();interruptedNative=null;suppressInputValue=textarea.value;return;}
+  if(!hybridInput&&(physicalComposition||Date.now()-lastPhysicalAt<100)){physicalEcho={value:textarea.value,data:event?.data,at:Date.now()};restore();}
   else{sync();onInput(describe(result(state,false),event,{native:true}));}
   suppressInputValue=textarea.value;activeComposition=false;physicalComposition=false;lastPhysicalAt=-Infinity;
  };
  const external=event=>{
-  if(event.isComposing)return;
-  if(physicalEcho&&Date.now()-physicalEcho.at<100&&(event.inputType?.includes('Composition')||(event.inputType==='insertText'&&event.data===physicalEcho.data))){restore();physicalEcho=null;suppressInputValue=null;return;}
+  if(disposed)return;
+  if(interruptedNative&&(textarea.value===interruptedNative.value||textarea.value===fullText()&&interruptedNative.data!=null&&event.data===interruptedNative.data)){if(!event.isComposing)interruptedNative.terminalInputSeen=true;restore();return;}
+  if(interruptedNative&&!event.isComposing)interruptedNative=null;
+  if(event.isComposing||activeComposition){
+   lastNativeData=event.data??lastNativeData;
+   if(nativePreview&&!physicalComposition)onInput({...describe(result(state,false),event,{native:true}),text:textarea.value,composing:event.data??'',nativeComposing:true});
+   return;
+  }
+  if(fallbackEcho){const echo=fallbackEcho;fallbackEcho=null;if((event.data===undefined||event.data===echo.raw)&&(textarea.value===echo.value||textarea.value===echo.accepted+echo.raw)){restore();return;}}
+  // Echo ownership is exact-buffer scoped, not merely same data in a time window.
+  if(physicalEcho&&textarea.value===physicalEcho.value&&Date.now()-physicalEcho.at<100&&(event.inputType?.includes('Composition')||(event.inputType==='insertText'&&event.data===physicalEcho.data))){restore();physicalEcho=null;suppressInputValue=null;return;}
   physicalEcho=null;
-  if(suppressInputValue===textarea.value){suppressInputValue=null;return;}
+  if(suppressInputValue===textarea.value){suppressInputValue=null;if(textarea.value!==fullText())restore();return;}
   suppressInputValue=null;
   if(physicalComposition){restore();return;}
   sync();onInput(describe(result(state,false),event,{native:true}));
  };
  const blur=()=>{if(commitOnBlur&&!activeComposition)state=commitComposer(state);};
- const listeners={compositionstart:compositionStart,keydown:onKey,beforeinput:beforeInput,compositionend:composition,input:external,blur};
+ const resetInputOwnership=()=>{physicalComposition=false;lastPhysicalAt=-Infinity;physicalEcho=null;fallbackEcho=null;suppressInputValue=null;};
+ const listeners={keyboardvirtualinput:finalizeNativeBeforeVirtual,keyboardinputmodechange:resetInputOwnership,compositionstart:compositionStart,keydown:onKey,beforeinput:beforeInput,compositionend:composition,input:external,blur};
  for(const [name,listener]of Object.entries(listeners))textarea.addEventListener(name,listener);
  const controller={
-  get state(){return state;},get isComposing(){return activeComposition;},
+  get state(){return state;},get isComposing(){return activeComposition;},resetInputOwnership,
   // Accept a matching updated cell without resetting IME ownership/echo state.
   // No callback: callers may invoke this synchronously from onInput.
   commit({notify=false,event=null}={}){const before=state;if(!disposed)state=commitComposer(state);const r={...result(state,false,state.committed!==before.committed?4:0),text:fullText()};if(notify&&!disposed&&r.compositionStatus===4)onInput(describe(r,event,{physical:true}));return r;},
@@ -182,7 +229,7 @@ export function bindComposer(textarea,{layout='2',latinMode=false,latinLayout='u
   // requeued physical key is already composing the next cell. Keep that cell,
   // its undo history and IME ownership instead of reset(text), which loses it.
   replaceCommitted(text){if(disposed)return;state={...state,committed:String(text),history:state.history.map(old=>({...old,committed:String(text)}))};restore();},
-  reset(text=textarea.value,newLayout){state=newLayout===undefined?resetComposer(state,text):createComposer(newLayout,text);suffix='';activeComposition=false;physicalComposition=false;lastPhysicalAt=-Infinity;suppressInputValue=null;physicalEcho=null;textarea.value=text;},
+  reset(text=textarea.value,newLayout){state=newLayout===undefined?resetComposer(state,text):createComposer(newLayout,text);suffix='';activeComposition=false;physicalComposition=false;lastPhysicalAt=-Infinity;suppressInputValue=null;physicalEcho=null;fallbackEcho=null;interruptedNative=null;lastNativeData=null;textarea.value=text;},
   destroy(){if(disposed)return;disposed=true;for(const [name,listener]of Object.entries(listeners))textarea.removeEventListener(name,listener);if(BINDINGS.get(textarea)===controller)BINDINGS.delete(textarea);}
  };
  BINDINGS.set(textarea,controller);return controller;

@@ -1,47 +1,29 @@
 {
   "snapshotDate": "2026-10-22",
-  "scope": "Selected authored tests/tooling from the reviewed border-paint candidate. Not the full private QA collection.",
+  "scope": "Selected authored tests/tooling through the 2026-10-22 16:51 keyboard-first checkpoint, not the full private QA collection.",
   "files": [
-    {
-      "path": "tests/warmup-clock-paint.test.mjs",
-      "sourceSha256": "ce29973eda44ede0e359e0878bbadd78ff3dd62f095a1666cc3e5c68864cd256",
-      "publishedSha256": "e3921cb67bdfa2c4b1e568c76402c6081003b81fb4818209b45f36b9f0694ef0",
-      "adaptation": "Explicit resource gate; test bodies retained."
-    },
-    {
-      "path": "qa/warmup-clock-integration.test.mjs",
-      "sourceSha256": "46987871ae06064d9fe419693bb507e3d970f4872a547fa55f1f40cd09dd212f",
-      "publishedSha256": "daa5011caa3d9660e6cd7944bf02c26e7032ffbf9c30e90fed7d6dcf97b24a6e",
-      "adaptation": "Explicit resource gate; test bodies retained."
-    },
     {
       "path": "qa/best-speed-lifetime.test.mjs",
       "sourceSha256": "11b1e7dd8b2fd48e0dbdc004e9caf43f803b80585793400aff693556a65f69af",
       "publishedSha256": "3c45ebc4e36d11b591a811426e4cb7a85dbc4dc62f35c85fecae6bcdd7beac6c",
-      "adaptation": "Explicit resource gate; test bodies retained."
+      "adaptation": "Explicit resource gate; test bodies retained; normal linkedom package import where applicable."
     },
     {
       "path": "qa/completion-paint-regression.test.mjs",
       "sourceSha256": "e26f70a557d7642013a2d60f8dcc4a02b4db49d730fbbde67de456e89004312d",
       "publishedSha256": "54cce5d81929ec43891c9bb52b47d0614c0a33373b5b1920c5fd74e787dbf2aa",
-      "adaptation": "Explicit resource gate; test bodies retained."
+      "adaptation": "Explicit resource gate; test bodies retained; normal linkedom package import where applicable."
     },
     {
-      "path": "qa/warmup-rollover-regression.test.mjs",
-      "sourceSha256": "c8797fef42fbb3f38399a0f6fe52020ad7e3aa3b32a2792b8d8df0b41e9bda93",
-      "publishedSha256": "d57051179f21e9ccca9718f999d5e2c826a2181647822fa3de28babf5697fb5e",
-      "adaptation": "Explicit resource gate; test bodies retained."
+      "path": "qa/dom-harness.mjs",
+      "sourceSha256": "065dba756c43ecf8ab2923acafbb523e166642340c0b922937bdf2610558b184",
+      "publishedSha256": "28b13db303f194074fe948d3948010f789b2029a8eb6c29ad813a4f03add907f",
+      "adaptation": "Normal linkedom package import."
     },
     {
-      "path": "qa/modal-raster-regression.test.mjs",
-      "sourceSha256": "ef5a9d9e018c455bda6e3895b45cfcc332b1afa122421391dbbd6c1883b6f3de",
-      "publishedSha256": "6a28409ef9fbffbb79fdf29529df7c5b27bd0d322157c78ac5bdc980928e7bb0",
-      "adaptation": "Explicit resource gate. Modal source additionally fixes the local edition root and skips the intentionally omitted title bitmap check."
-    },
-    {
-      "path": "qa/native-history-replay.test.mjs",
-      "sourceSha256": "186ee8f6295d3c406e2322333333a058d6bcaac56a1606eff36e25371965de5f",
-      "publishedSha256": "186ee8f6295d3c406e2322333333a058d6bcaac56a1606eff36e25371965de5f",
+      "path": "qa/extend-raw-ank-font.py",
+      "sourceSha256": "00a5ec8ffcb11b94dfceff8dfc0d4bfd50b7536505db4cedf8a93ee785d45295",
+      "publishedSha256": "00a5ec8ffcb11b94dfceff8dfc0d4bfd50b7536505db4cedf8a93ee785d45295",
       "adaptation": "None. Numeric-only fixture or authored source; no original resource bytes."
     },
     {
@@ -51,9 +33,27 @@
       "adaptation": "None. Numeric-only fixture or authored source; no original resource bytes."
     },
     {
-      "path": "qa/extend-raw-ank-font.py",
-      "sourceSha256": "00a5ec8ffcb11b94dfceff8dfc0d4bfd50b7536505db4cedf8a93ee785d45295",
-      "publishedSha256": "00a5ec8ffcb11b94dfceff8dfc0d4bfd50b7536505db4cedf8a93ee785d45295",
+      "path": "qa/keyboard-app-integration.test.mjs",
+      "sourceSha256": "a7ec3960c7ad7554272d65894a1f812bee67b6a1e0110e5d7b82e1eff7cc9dab",
+      "publishedSha256": "936abf8f9995d66601dad888c16d9b9f5bfbf00b90548c1b2e54c1da761bc052",
+      "adaptation": "Explicit resource gate; test bodies retained; normal linkedom package import where applicable."
+    },
+    {
+      "path": "qa/keyboard-close-regression.test.mjs",
+      "sourceSha256": "076b9aa20adec6e7a4451c5ef2e708b480ae3a618268442ba2beac29378f08cb",
+      "publishedSha256": "04303d905bc99b773a8e07cfa83fb1bd7b6789ad1f40a36a25581ab031db05ba",
+      "adaptation": "Explicit resource gate; test bodies retained; normal linkedom package import where applicable."
+    },
+    {
+      "path": "qa/modal-raster-regression.test.mjs",
+      "sourceSha256": "ef5a9d9e018c455bda6e3895b45cfcc332b1afa122421391dbbd6c1883b6f3de",
+      "publishedSha256": "6a28409ef9fbffbb79fdf29529df7c5b27bd0d322157c78ac5bdc980928e7bb0",
+      "adaptation": "Explicit resource gate; normal linkedom package import where applicable. Modal test fixes the local root and retains an explicit omitted-title-bitmap skip."
+    },
+    {
+      "path": "qa/native-history-replay.test.mjs",
+      "sourceSha256": "186ee8f6295d3c406e2322333333a058d6bcaac56a1606eff36e25371965de5f",
+      "publishedSha256": "186ee8f6295d3c406e2322333333a058d6bcaac56a1606eff36e25371965de5f",
       "adaptation": "None. Numeric-only fixture or authored source; no original resource bytes."
     },
     {
@@ -61,6 +61,54 @@
       "sourceSha256": "208d163c45ec6e87b8aef963e78831d0bf7d43960a3fb480df312299715b4138",
       "publishedSha256": "208d163c45ec6e87b8aef963e78831d0bf7d43960a3fb480df312299715b4138",
       "adaptation": "None. Numeric-only fixture or authored source; no original resource bytes."
+    },
+    {
+      "path": "qa/warmup-clock-integration.test.mjs",
+      "sourceSha256": "46987871ae06064d9fe419693bb507e3d970f4872a547fa55f1f40cd09dd212f",
+      "publishedSha256": "daa5011caa3d9660e6cd7944bf02c26e7032ffbf9c30e90fed7d6dcf97b24a6e",
+      "adaptation": "Explicit resource gate; test bodies retained; normal linkedom package import where applicable."
+    },
+    {
+      "path": "qa/warmup-rollover-regression.test.mjs",
+      "sourceSha256": "c8797fef42fbb3f38399a0f6fe52020ad7e3aa3b32a2792b8d8df0b41e9bda93",
+      "publishedSha256": "d57051179f21e9ccca9718f999d5e2c826a2181647822fa3de28babf5697fb5e",
+      "adaptation": "Explicit resource gate; test bodies retained; normal linkedom package import where applicable."
+    },
+    {
+      "path": "tests/hybrid-native-input.test.mjs",
+      "sourceSha256": "1f057cc145bf3167c96143ba337977a21da5d4bcc6e61a27df719fc64c500503",
+      "publishedSha256": "9316f81ef7e74db1aed71e6103236966242bb860b7a83a7f373f40100bbb415d",
+      "adaptation": "Explicit resource gate; test bodies retained; normal linkedom package import where applicable."
+    },
+    {
+      "path": "tests/keyboard-input-bridge.test.mjs",
+      "sourceSha256": "9c879f01cf299c11c2a838caa51850c34159ccfc114cf40e5caccd25f9cb63cb",
+      "publishedSha256": "bbb6063db239e4064d0092ba318aa9f33fe14d97cfe33b4755ee8a8fc8e116cc",
+      "adaptation": "Explicit resource gate; test bodies retained; normal linkedom package import where applicable."
+    },
+    {
+      "path": "tests/metric-endpoint-paint.test.mjs",
+      "sourceSha256": "075ec1d354c76f669dce5d8aa61ac5b8a69c92db944d7854db50a9945b121db1",
+      "publishedSha256": "979a766e54dfd9e7fb4c5d4bba6480c896829c7afa230f1ed7e7a976140534e9",
+      "adaptation": "Fixed local edition root; CSS assertion bodies retained."
+    },
+    {
+      "path": "tests/virtual-keyboard-pan.test.mjs",
+      "sourceSha256": "f7cb8fdc509d82247c9275a1c062a062e9032b0e031d2bf21520c9040ac60958",
+      "publishedSha256": "9120a025a9e560e2ab70ea6f9858716a6faeb14b3fd3141b41fb479d2d27f44d",
+      "adaptation": "Explicit resource gate; test bodies retained; normal linkedom package import where applicable."
+    },
+    {
+      "path": "tests/virtual-keyboard.test.mjs",
+      "sourceSha256": "73911381a02630d46d00cd76b17a72b2896db2b4f0dd02688ea318ec3ca6ec80",
+      "publishedSha256": "86cf2f54ec69f1e8c4a2c0134122606e21baa299a6b834f6733763dfd6e9e7f7",
+      "adaptation": "Explicit resource gate; test bodies retained; normal linkedom package import where applicable."
+    },
+    {
+      "path": "tests/warmup-clock-paint.test.mjs",
+      "sourceSha256": "ce29973eda44ede0e359e0878bbadd78ff3dd62f095a1666cc3e5c68864cd256",
+      "publishedSha256": "e3921cb67bdfa2c4b1e568c76402c6081003b81fb4818209b45f36b9f0694ef0",
+      "adaptation": "Explicit resource gate; test bodies retained; normal linkedom package import where applicable."
     }
   ]
 }

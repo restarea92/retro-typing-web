@@ -295,7 +295,7 @@
 .clock-ghost-fingers i::before,.clock-ghost-fingers i::after{display:none}
 
 /* Native paint order: 1bef8 focus pixels, aae8 recessed edges, b0b2 icon. */
-.key-dialog .key-target{border-color:transparent;background-origin:border-box;background-clip:border-box;background-image:linear-gradient(#fff,#fff),linear-gradient(#fff,#fff),linear-gradient(#656565,#656565),linear-gradient(#656565,#656565);background-size:1px 100%,100% 1px,1px 100%,100% 1px;background-position:right top,left bottom,left top,left top;background-repeat:no-repeat}
+.key-dialog .key-target,.bar-track,.speed-panel,.result-panel{border-color:transparent;background-origin:border-box;background-clip:border-box;background-image:linear-gradient(#fff,#fff),linear-gradient(#fff,#fff),linear-gradient(#656565,#656565),linear-gradient(#656565,#656565);background-size:1px 100%,100% 1px,1px 100%,100% 1px;background-position:right top,left bottom,left top,left top;background-repeat:no-repeat}
 /* The keyboard component begins one row below the verified32×16 composite. */
 .classic:has(.repeat-dialog) .sentence-dialog h1,.classic:has(.repeat-dialog) .key-dialog h1{background-image:linear-gradient(#000,#000);background-size:13px 1px;background-position:22px 17px;background-repeat:no-repeat}
 /* f283 erases completed32px slots; a624 anchors16px ASCII at the same x. */
@@ -304,3 +304,6 @@
 /* Native10c8c uses a raised32×18 frame around the unchanged30×16 fill. */
 .bar-track b{position:relative}
 .bar-track b:after{content:'';position:absolute;inset:-1px;background-image:linear-gradient(#656565,#656565),linear-gradient(#656565,#656565),linear-gradient(#fff,#fff),linear-gradient(#fff,#fff);background-size:1px 100%,100% 1px,1px 100%,100% 1px;background-position:right top,left bottom,left top,left top;background-repeat:no-repeat;pointer-events:none}
+
+/* Native inner raised frame: the later dark right/bottom lines own shared corners. */
+.speed-panel,.result-panel{box-shadow:inset -1px -1px #656565,inset 1px 1px #fff}

@@ -1,12 +1,12 @@
 {
   "snapshotDate": "2026-10-22",
-  "provenance": "1999 recovered production runtime with the reviewed 2026-10-22 completion, warmup clock-paint, retained best-speed, and final border-paint successor. This is a sanitized source candidate, not a full historical development workspace or a complete runtime release.",
-  "verificationScope": "Resource-independent public tests and source checks only. Resource-dependent tests are explicitly skipped by default; see TESTING.md. No all-game, native input, or pixel acceptance claim.",
+  "provenance": "1999 limited keyboard-first preview checkpoint, frozen 2026-10-22 16:51 UTC. Authored WebGL keyboard, input transport and hybrid native-composition integration accompany earlier completion and paint fixes. Sanitized source only; original assets and data modules are omitted.",
+  "verificationScope": "Public default tests and source checks only. Resource-dependent keyboard/input tests are explicitly skipped by default. WebGL source presence does not prove rendered 3D, touch/iOS or audible sound acceptance. See TESTING.md.",
   "files": [
     {
       "path": "app.js",
-      "sourceSha256": "562b8d3992ff12703b3c1e20d6ad400177b638aa5a148eee95302dc032f90a1b",
-      "publishedSha256": "562b8d3992ff12703b3c1e20d6ad400177b638aa5a148eee95302dc032f90a1b",
+      "sourceSha256": "bb892915944003b76fd06c87fbd621c4d6f76fd46aceb3e5f79693b69006b667",
+      "publishedSha256": "bb892915944003b76fd06c87fbd621c4d6f76fd46aceb3e5f79693b69006b667",
       "removedEmbeddedAssets": 0
     },
     {
@@ -35,8 +35,8 @@
     },
     {
       "path": "extras.js",
-      "sourceSha256": "36593f4f9bfa57a6a5d2028d9024646985cba3141d4d39040ae1f8acd41db7dd",
-      "publishedSha256": "36593f4f9bfa57a6a5d2028d9024646985cba3141d4d39040ae1f8acd41db7dd",
+      "sourceSha256": "07f61431212dc0fbd1b927e99b3b409cf8fbbbccc968a22ede2a20fa0cfc93af",
+      "publishedSha256": "07f61431212dc0fbd1b927e99b3b409cf8fbbbccc968a22ede2a20fa0cfc93af",
       "removedEmbeddedAssets": 0
     },
     {
@@ -65,14 +65,26 @@
     },
     {
       "path": "index.html",
-      "sourceSha256": "9417112d9a8fbfe5d0fe925d9b3fb5588f64b994ed85e43b80c8bfb0f548b337",
-      "publishedSha256": "9417112d9a8fbfe5d0fe925d9b3fb5588f64b994ed85e43b80c8bfb0f548b337",
+      "sourceSha256": "cd8b842849ea80e3b895c77e10c0460c4097476af0c0a94dfa4812aaf5d54448",
+      "publishedSha256": "cd8b842849ea80e3b895c77e10c0460c4097476af0c0a94dfa4812aaf5d54448",
       "removedEmbeddedAssets": 0
     },
     {
       "path": "input-composer.js",
-      "sourceSha256": "86aa3b333269e64810f30822f5675ebba0ddbcdd7ecd9568eb6ee9a406767923",
-      "publishedSha256": "86aa3b333269e64810f30822f5675ebba0ddbcdd7ecd9568eb6ee9a406767923",
+      "sourceSha256": "e5799e7aa72fc44f1b77e00742b2141f5313ccf7c67f7d5c7883d7c31740006d",
+      "publishedSha256": "e5799e7aa72fc44f1b77e00742b2141f5313ccf7c67f7d5c7883d7c31740006d",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "key-practice-input.js",
+      "sourceSha256": "511cd5dfe159d416be30b2f56c1771f1c66f33e0b4a18604adab7bf562fa7c6a",
+      "publishedSha256": "511cd5dfe159d416be30b2f56c1771f1c66f33e0b4a18604adab7bf562fa7c6a",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "keyboard-input-bridge.js",
+      "sourceSha256": "ad0117007e15e48222593ac17b428e83c110003e1472ca664c38b0cee8ec1002",
+      "publishedSha256": "ad0117007e15e48222593ac17b428e83c110003e1472ca664c38b0cee8ec1002",
       "removedEmbeddedAssets": 0
     },
     {
@@ -167,14 +179,14 @@
     },
     {
       "path": "settings.js",
-      "sourceSha256": "34f89289c29df2dcfb790bfab680c44bcd2c134ef0842bc95f498a483a48d9f4",
-      "publishedSha256": "34f89289c29df2dcfb790bfab680c44bcd2c134ef0842bc95f498a483a48d9f4",
+      "sourceSha256": "ed652393b74cdd9fd9abcbdb68a0809761543d8124c473b0dab64c1bbbd4068e",
+      "publishedSha256": "ed652393b74cdd9fd9abcbdb68a0809761543d8124c473b0dab64c1bbbd4068e",
       "removedEmbeddedAssets": 0
     },
     {
       "path": "styles.css",
-      "sourceSha256": "a95f86f006b769dc4d6de0283c07ca5bc54a2dfc9f5df93075e993ba2c6acac3",
-      "publishedSha256": "9bcf9143fad5ef2efa6f3e47c23025c69cd24980a0b874ad227cdd7a3e41b5b8",
+      "sourceSha256": "0365ca2d7f08fbcf13a361b51129dbe3f658ba52ba9fb1d232d655f5d13db768",
+      "publishedSha256": "b9aa995801dd75c4b3837caad89c9ad220413d4355c60df6d4b2f8b29b839ded",
       "removedEmbeddedAssets": 21
     },
     {
@@ -182,7 +194,26 @@
       "sourceSha256": "813ada4872a557ebb1987d3ed8e9f0300f1f327afa17b9c47b7a50f2bba4fc98",
       "publishedSha256": "813ada4872a557ebb1987d3ed8e9f0300f1f327afa17b9c47b7a50f2bba4fc98",
       "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "virtual-keyboard-layout.js",
+      "sourceSha256": "68e19540353d84ef531040cd343ae64abdcb6f253b1dbb9bced4bd8e1a743404",
+      "publishedSha256": "68e19540353d84ef531040cd343ae64abdcb6f253b1dbb9bced4bd8e1a743404",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "virtual-keyboard-view.js",
+      "sourceSha256": "3b758e3b6914cf36a27c53bff65f523370c265433627750704bc80a3c5988066",
+      "publishedSha256": "3b758e3b6914cf36a27c53bff65f523370c265433627750704bc80a3c5988066",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "virtual-keyboard.css",
+      "sourceSha256": "3adc193a63d5b7b9ca67ebc1aa36f2b99474c283d57d321e4513b1cae4068379",
+      "publishedSha256": "3adc193a63d5b7b9ca67ebc1aa36f2b99474c283d57d321e4513b1cae4068379",
+      "removedEmbeddedAssets": 0
     }
   ],
-  "previousPublishedAppSha256": "37fa513ce74e2083a53c5de3c52ffdddd21df919d42a13ac05fd52ae97360783"
+  "previousPublishedAppSha256": "562b8d3992ff12703b3c1e20d6ad400177b638aa5a148eee95302dc032f90a1b",
+  "sourceRuntimeManifestSha256": "e9e403a1bb8cbfc661b1947608aa05208cdd04e1bf49ecfae998288dde078b88"
 }

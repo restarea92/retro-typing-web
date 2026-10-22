@@ -1,6 +1,6 @@
 {
   "snapshotDate": "2026-10-22",
-  "scope": "Selected authored tests/tooling through the 2026-10-22 17:10 main-focus checkpoint, not the full private QA collection.",
+  "scope": "Selected authored tests/tooling through the 2026-10-22 17:39 native-input/header checkpoint, not the full private QA collection.",
   "files": [
     {
       "path": "qa/best-speed-lifetime.test.mjs",
@@ -34,9 +34,9 @@
     },
     {
       "path": "qa/keyboard-app-integration.test.mjs",
-      "sourceSha256": "a7ec3960c7ad7554272d65894a1f812bee67b6a1e0110e5d7b82e1eff7cc9dab",
-      "publishedSha256": "936abf8f9995d66601dad888c16d9b9f5bfbf00b90548c1b2e54c1da761bc052",
-      "adaptation": "Explicit resource gate; test bodies retained; normal linkedom package import where applicable."
+      "sourceSha256": "d3e314ad30372ce43456218eefb6f06c67c8af0473b8529a7bf3c23b31c0d9c4",
+      "publishedSha256": "067ddabf3df2bdc734a78d13513427a7b0b6a34c9b17072db89593dd205c8fbb",
+      "adaptation": "Explicit resource gate for app/harness imports; normal LinkeDOM package import and fixed local app path where applicable; test bodies retained."
     },
     {
       "path": "qa/keyboard-close-regression.test.mjs",
@@ -51,6 +51,18 @@
       "adaptation": "Explicit resource gate for LinkeDOM and app dependency imports; fixed local app path; test bodies retained."
     },
     {
+      "path": "qa/main-header-regression.test.mjs",
+      "sourceSha256": "a8d9e262e86f2a867e675292e78ac236a6c78cd7a9aa9469844545c8e16e56f0",
+      "publishedSha256": "57b04b6d6be4b9e1964d7282b6448c0e16128ac4ea5d792c990d595d6f430f1b",
+      "adaptation": "Explicit resource gate for app/harness imports; normal LinkeDOM package import and fixed local app path where applicable; test bodies retained."
+    },
+    {
+      "path": "qa/main-welcome-lifecycle.test.mjs",
+      "sourceSha256": "1adf85e5586117b96b2ebda6192fc098ebef387091e84d1f9ce2f4815c5fdf71",
+      "publishedSha256": "3f8d3ae1562c08ab5f72f9658a138c8ece9b6ffe6c0a31aecd41be19847a11bd",
+      "adaptation": "Explicit resource gate for app/harness imports; normal LinkeDOM package import and fixed local app path where applicable; test bodies retained."
+    },
+    {
       "path": "qa/modal-raster-regression.test.mjs",
       "sourceSha256": "ef5a9d9e018c455bda6e3895b45cfcc332b1afa122421391dbbd6c1883b6f3de",
       "publishedSha256": "6a28409ef9fbffbb79fdf29529df7c5b27bd0d322157c78ac5bdc980928e7bb0",
@@ -61,6 +73,12 @@
       "sourceSha256": "186ee8f6295d3c406e2322333333a058d6bcaac56a1606eff36e25371965de5f",
       "publishedSha256": "186ee8f6295d3c406e2322333333a058d6bcaac56a1606eff36e25371965de5f",
       "adaptation": "None. Numeric-only fixture or authored source; no original resource bytes."
+    },
+    {
+      "path": "qa/native-keyboard-policy.test.mjs",
+      "sourceSha256": "25398ef914ccea2aea42d1bf73f3c519a53e098bfff99aac9cd685a6228df825",
+      "publishedSha256": "8599c2b39f6d7b7e512b08bcc24334af00562835306e59be4029240117e811d7",
+      "adaptation": "Explicit resource gate for app/harness imports; normal LinkeDOM package import and fixed local app path where applicable; test bodies retained."
     },
     {
       "path": "qa/test-raw-ank-font.py",

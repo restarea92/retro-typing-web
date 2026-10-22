@@ -1,12 +1,12 @@
 {
   "snapshotDate": "2026-10-22",
-  "provenance": "1999 limited main-focus preview checkpoint, frozen 2026-10-22 17:10 UTC. Only app.js changes from the 16:51 keyboard-first runtime. Inert main-frame clicks restore existing menu/startup-choice focus without navigation or selection changes. Original resources remain omitted.",
-  "verificationScope": "Public default tests and source checks only. Resource-dependent main-focus and keyboard/input tests are explicitly skipped by default. WebGL source presence does not prove rendered 3D, touch/iOS or audible sound acceptance. See TESTING.md.",
+  "provenance": "1999 native-input/header preview checkpoint, frozen 2026-10-22 17:39 UTC. Only app.js and index.html change from the 17:10 main-focus runtime. The optional virtual keyboard is hidden/inert with renderer and stylesheet inactive; native composition and physical input remain. Original resources remain omitted.",
+  "verificationScope": "Public default tests and source checks only. Resource-dependent focus, header, lifecycle and input-policy tests are explicitly skipped by default. Bounded desktop checks are not iPhone/Safari, full-main or full-application acceptance. See TESTING.md.",
   "files": [
     {
       "path": "app.js",
-      "sourceSha256": "a9b88e65f9df97b6a09c52a8d8891e91dc2e45d2ef8976532b1ec1fb3d489fb7",
-      "publishedSha256": "a9b88e65f9df97b6a09c52a8d8891e91dc2e45d2ef8976532b1ec1fb3d489fb7",
+      "sourceSha256": "30999d4ad2165efb8b8b386c642cbaa825d8f132b99aa4d376c3869e66ecaac0",
+      "publishedSha256": "30999d4ad2165efb8b8b386c642cbaa825d8f132b99aa4d376c3869e66ecaac0",
       "removedEmbeddedAssets": 0
     },
     {
@@ -65,8 +65,8 @@
     },
     {
       "path": "index.html",
-      "sourceSha256": "cd8b842849ea80e3b895c77e10c0460c4097476af0c0a94dfa4812aaf5d54448",
-      "publishedSha256": "cd8b842849ea80e3b895c77e10c0460c4097476af0c0a94dfa4812aaf5d54448",
+      "sourceSha256": "6bc92ddde236302e86b27f5d1f1c7d1a0b32642a1a012724a7c35aab253f3aeb",
+      "publishedSha256": "6bc92ddde236302e86b27f5d1f1c7d1a0b32642a1a012724a7c35aab253f3aeb",
       "removedEmbeddedAssets": 0
     },
     {
@@ -214,6 +214,6 @@
       "removedEmbeddedAssets": 0
     }
   ],
-  "previousPublishedAppSha256": "bb892915944003b76fd06c87fbd621c4d6f76fd46aceb3e5f79693b69006b667",
-  "sourceRuntimeManifestSha256": "c751d005f46906e9e50fd5d67cd8bba75dd0c2d8a9f28a5c7723544165f5922f"
+  "previousPublishedAppSha256": "a9b88e65f9df97b6a09c52a8d8891e91dc2e45d2ef8976532b1ec1fb3d489fb7",
+  "sourceRuntimeManifestSha256": "207fea9901843e89f94344c3ab273424f885c3c938ec93a826beaadb1cb4d9fb"
 }

@@ -1,6 +1,5 @@
 import { bindKeyPracticeInput } from './key-practice-input.js';
 import { createKeyboardInputBridge } from './keyboard-input-bridge.js';
-import { createVirtualKeyboard } from './virtual-keyboard-view.js';
 import { originalKeyGuide } from './original-key-guide.js';
 import { createKeyPaintState, paintKeyGlyph, paintWarmupClockCue, initializeKeyPaint } from './original-key-paint.js';
 import { createOriginalRandom, originalRandomIndex } from './original-random.js';
@@ -33,7 +32,7 @@ import { MODES, LESSONS, KEY_ROWS } from './data.js';
 const $ = s => document.querySelector(s);
 const workspace = $('#workspace');
 workspace.tabIndex=-1;
-let keyboardBridge=null,keyboardView=null,keyboardVisible=true,inputMethod='virtual',settingsController=null;
+let keyboardBridge=null,keyboardView=null,keyboardVisible=false,inputMethod='native',settingsController=null;
 function focusTypingInput(element){if(!element)return;return keyboardBridge?keyboardBridge.focusTypingInput(element,{preventScroll:true}):element.focus({preventScroll:true});}
 function dispatchNativeReturn(element){if(!element?.isConnected)return;for(const type of ['keydown','keyup']){const fields={key:'Enter',code:'Enter',bubbles:true,cancelable:true};let event;if(window.KeyboardEvent)event=new window.KeyboardEvent(type,fields);else{event=new window.Event(type,{bubbles:true,cancelable:true});Object.assign(event,{key:'Enter',code:'Enter'});}Object.defineProperty(event,'nativeTextControl',{value:true});element.dispatchEvent(event);}}
 function outsideProgramEvent(event){return Boolean(event.target?.closest?.('.helpers,#external-controls,#virtual-keyboard-panel'));}
@@ -42,7 +41,7 @@ function currentInputOwner(){
  const active=document.activeElement,focusedClose=active?.matches?.('.dialog-close')?active:null;
  const repeat=workspace.querySelector('.repeat-dialog');if(repeat)return focusedClose&&repeat.contains(focusedClose)?focusedClose:repeat.querySelector(`[data-choice="${repeat.dataset.selectedChoice||'0'}"]`)||repeat;
  const stage=workspace.querySelector('.stage-dialog');if(stage)return focusedClose&&stage.contains(focusedClose)?focusedClose:stage.querySelectorAll('.stage-answer')[Number(stage.dataset.selectedChoice)||0];
- if(openMenuId)return mode==='home'&&active===$('#close')?active:document.querySelector('.dropdown-menu');
+ if(openMenuId)return mode==='home'&&(active===$('#close')||active?.matches?.('#menu button[data-mode]'))?active:document.querySelector('.dropdown-menu');
  if(mode==='settings'&&settingsController)return settingsController.getInputOwner();
  const modal=workspace.querySelector('.extra-exam-result-modal,.extra-notepad-result');if(modal)return modal;
  const list=workspace.querySelector('[role=listbox]');if(list)return list;
@@ -56,6 +55,16 @@ function activateFocusedDialogClose(event,dialog){
  const close=event.target?.closest?.('.dialog-close');
  if(!close||!dialog.contains(close)||!['Enter',' '].includes(event.key))return false;
  event.preventDefault();event.stopImmediatePropagation();close.click();return true;
+}
+// A deliberately focused active header is a real accessible button. Enter and
+// Space keep its browser/bridge default; navigation keys return to the existing
+// semantic menu without inventing a new key event or a Home-menu fallback.
+function handleFocusedMainHeaderKey(event){
+ if(mode!=='home'||!openMenuId||!event.target?.closest?.('#menu button[data-mode]'))return false;
+ if(['Enter',' '].includes(event.key))return true;
+ if(!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Home','End','PageUp','PageDown','Escape'].includes(event.key))return false;
+ const menu=document.querySelector('.dropdown-menu');if(!menu)return false;
+ menu.focus({preventScroll:true});menu.onkeydown?.(event);return true;
 }
 // Native main/prompt input is owned by the current menu/answer, not by an
 // inert title or desktop pixel. Recover DOM focus without changing that state.
@@ -78,9 +87,17 @@ function restoreMainFrameFocus(event){
  if(owner?.isConnected&&document.activeElement!==owner)owner.focus({preventScroll:true});
 }
 function refreshKeyboardLabels(){keyboardView?.setLayout(ensureComposerMode().latinMode?ensureComposerMode().latinLayout:ensureComposerMode().layout);}
-function reflectKeyboardVisibility(visible){keyboardVisible=Boolean(visible);$('#focus-input').setAttribute('aria-expanded',String(keyboardVisible));$('#focus-input').textContent=keyboardVisible?'가상 키보드 숨기기':'가상 키보드 보이기';}
-function setKeyboardVisible(visible){reflectKeyboardVisibility(visible);keyboardView?.setVisible(keyboardVisible);if(!keyboardVisible)keyboardBridge?.releaseAll();}
-function setInputMethod(next){if(!['virtual','native','hardware'].includes(next))return;inputMethod=next;releaseProgramKeys();keyboardBridge?.resetInputOwnership();$('#keyboard-input-mode').value=next;const owner=currentInputOwner();if(owner?.matches?.('input:not([type=checkbox]),textarea'))focusTypingInput(owner);else owner?.focus?.({preventScroll:true});}
+// The optional visual keyboard is paused by user request. Its files remain
+// available for a reversible restoration, but no renderer or audio is started.
+function reflectKeyboardVisibility(){keyboardVisible=false;$('#virtual-keyboard-panel').hidden=true;}
+function setKeyboardVisible(){reflectKeyboardVisibility();keyboardBridge?.releaseAll();}
+function setInputMethod(){
+ inputMethod='native';releaseProgramKeys();keyboardBridge?.resetInputOwnership();
+ $('#keyboard-input-mode').value='native';
+ const owner=currentInputOwner();
+ if(owner?.matches?.('input:not([type=checkbox]),textarea')&&!owner.disabled&&!owner.readOnly)focusTypingInput(owner);
+}
+
 
 let extraCleanup=null, navigationVersion=0,composerBaseLayout=null,composerMode=null,lastEnglishLayout='us';
 const profileSessionId=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
@@ -139,10 +156,10 @@ function guardRepeatDialogClick(event){
  dialog.querySelector(`[data-choice="${dialog.dataset.selectedChoice||'0'}"]`)?.focus({preventScroll:true});return true;
 }
 workspace.addEventListener('click',e=>{if(guardRepeatDialogClick(e))return;if(e.target.classList.contains('dialog-close')&&e.target.dataset.go==='home'){dispatchExternalKey('Escape');return;}if(e.target.dataset.go)navigate(e.target.dataset.go)});
-document.addEventListener('keydown',e=>{if(outsideProgramEvent(e)||mode==='exited')return;if(e.defaultPrevented||e.isComposing||composing||e.keyCode===229)return;if(extraCleanup||mode==='settings')return;if(mode==='home'&&openMenuId&&e.target===$('#close')&&['Enter',' '].includes(e.key))return;if(mode==='home'&&workspace.querySelector('.welcome-original')&&!['Shift','Control','Alt','Meta','CapsLock','NumLock','ScrollLock'].includes(e.key)){e.preventDefault();showStageDialog();return;}if((openMenuId||mode==='home')&&e.altKey&&['KeyH','KeyX'].includes(e.code)){e.preventDefault();endApplication();return;}if(mode==='about'){if(!['Shift','Control','Alt','Meta','CapsLock','NumLock','ScrollLock'].includes(e.key)){e.preventDefault();navigate('home');openMenu('help',1)}return;}if(e.key==='F1'){e.preventDefault();if(openMenuId||mode==='home')navigate('help');return}if(mode==='help'&&e.code==='Space'){e.preventDefault();helpPage++;if(helpPage>=ORIGINAL_HELP.pages.length)navigate('home');else renderHelp();return}if(mode==='long'&&!finished&&workspace.querySelector('.long-dialog')&&(e.key==='PageDown'||e.key==='PageUp')){e.preventDefault();changeLongPage(e.key==='PageDown'?1:-1);return}if(e.key==='Escape'){e.preventDefault();if(mode==='play'&&gamePhase!=='select'){if(gamePhase==='ended')dismissGameOver();else selectGame(gameKind);}else if(mode==='keys'&&!finished)leaveKeyPractice();else if(mode==='words'&&!finished){if(wordPhase==='warmup')startWordStudy();else leaveTextPractice();}else if(mode==='long'&&!finished){if($('.long-select')){navigate('home');openMenu('textmenu',1);}else {saveLongProgress();showLongSelect()}}else if(mode==='sentences'&&!finished)leaveTextPractice();else if(mode==='help'){navigate('home');openMenu('help',0);}else navigate('home')}else if(mode==='home'&&['ArrowLeft','ArrowRight','Enter'].includes(e.key)){e.preventDefault();openMenu('home')}});
+document.addEventListener('keydown',e=>{if(outsideProgramEvent(e)||mode==='exited')return;if(e.defaultPrevented||e.isComposing||composing||e.keyCode===229)return;if(extraCleanup||mode==='settings')return;if(handleFocusedMainHeaderKey(e))return;if(mode==='home'&&openMenuId&&e.target===$('#close')&&['Enter',' '].includes(e.key))return;if(mode==='home'&&workspace.querySelector('.welcome-original')&&!['Shift','Control','Alt','Meta','CapsLock','NumLock','ScrollLock'].includes(e.key)){e.preventDefault();showStageDialog();return;}if((openMenuId||mode==='home')&&e.altKey&&['KeyH','KeyX'].includes(e.code)){e.preventDefault();endApplication();return;}if(mode==='about'){if(!['Shift','Control','Alt','Meta','CapsLock','NumLock','ScrollLock'].includes(e.key)){e.preventDefault();navigate('home');openMenu('help',1)}return;}if(e.key==='F1'){e.preventDefault();if(openMenuId||mode==='home')navigate('help');return}if(mode==='help'&&e.code==='Space'){e.preventDefault();helpPage++;if(helpPage>=ORIGINAL_HELP.pages.length)navigate('home');else renderHelp();return}if(mode==='long'&&!finished&&workspace.querySelector('.long-dialog')&&(e.key==='PageDown'||e.key==='PageUp')){e.preventDefault();changeLongPage(e.key==='PageDown'?1:-1);return}if(e.key==='Escape'){e.preventDefault();if(mode==='play'&&gamePhase!=='select'){if(gamePhase==='ended')dismissGameOver();else selectGame(gameKind);}else if(mode==='keys'&&!finished)leaveKeyPractice();else if(mode==='words'&&!finished){if(wordPhase==='warmup')startWordStudy();else leaveTextPractice();}else if(mode==='long'&&!finished){if($('.long-select')){navigate('home');openMenu('textmenu',1);}else {saveLongProgress();showLongSelect()}}else if(mode==='sentences'&&!finished)leaveTextPractice();else if(mode==='help'){navigate('home');openMenu('help',0);}else navigate('home')}else if(mode==='home'&&['ArrowLeft','ArrowRight','Enter'].includes(e.key)){e.preventDefault();openMenu('home')}});
 document.addEventListener('click',event=>{if(guardRepeatDialogClick(event))return;if(!$('.classic').contains(event.target)||event.target.closest?.('.dropdown-menu'))return;if(mode==='about'){event.preventDefault();navigate('home');openMenu('help',1);}else if(mode==='home'&&workspace.querySelector('.welcome-original')){event.preventDefault();showStageDialog();}},true);
 $('.classic').addEventListener('click',restoreMainFrameFocus);
-$('#close').onclick=()=>{if(mode==='home'&&openMenuId)endApplication();};$('#focus-input').onclick=()=>{if(mode==='exited'){window.location.reload();return;}setKeyboardVisible(!keyboardVisible);};$('#keyboard-input-mode').onchange=event=>setInputMethod(event.target.value);$('#native-keyboard-focus').onclick=()=>setInputMethod('native');$('#help-toggle').onclick=()=>$('#outside-help').hidden=!$('#outside-help').hidden;$('#fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await $('.classic').requestFullscreen()}catch{$('#outside-help').hidden=false;$('#outside-help').textContent='이 브라우저에서는 전체 화면을 지원하지 않습니다. 가로 화면으로 돌리면 더 크게 볼 수 있어요.'}};
+$('#close').onclick=()=>{if(mode==='home'&&openMenuId)endApplication();};$('#focus-input').onclick=()=>{if(mode==='exited'){window.location.reload();return;}setInputMethod();};$('#native-keyboard-focus').onclick=()=>setInputMethod('native');$('#help-toggle').onclick=()=>$('#outside-help').hidden=!$('#outside-help').hidden;$('#fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await $('.classic').requestFullscreen()}catch{$('#outside-help').hidden=false;$('#outside-help').textContent='이 브라우저에서는 전체 화면을 지원하지 않습니다. 가로 화면으로 돌리면 더 크게 볼 수 있어요.'}};
 let lastScreenFocus=null;
 document.addEventListener('focusin',event=>{if($('.classic').contains(event.target))lastScreenFocus=event.target;});
 $('#control-toggle').addEventListener('pointerdown',event=>event.preventDefault());
@@ -519,8 +536,8 @@ async function handleMenuAction(action,returnTo=null,options={}){
 }
 try { appSettings=normalizeSettings(JSON.parse(storage.getItem('retro-typing-settings-v1')||'{}'));currentLanguage=appSettings.language;$('#language').textContent=settingsStatus(appSettings); } catch {}
 keyboardBridge=createKeyboardInputBridge({document,surface:workspace,getOwner:currentInputOwner,getEpoch:()=>navigationVersion,isVirtualMode:()=>inputMethod!=='native',onKeyState:(code,down)=>keyboardView?.setPressed(code,down),onModifiers:state=>keyboardView?.setModifiers(state)});
-keyboardView=createVirtualKeyboard($('#virtual-keyboard'),{onKeyDown:packet=>keyboardBridge.keyDown(packet),onKeyUp:packet=>keyboardBridge.keyUp(packet),onReleaseAll:()=>keyboardBridge.releaseAll(),onVisibilityChange:reflectKeyboardVisibility,getSoundEnabled:()=>true});
-refreshKeyboardLabels();setKeyboardVisible(true);
+// No virtual-keyboard module import or factory call while the feature is paused.
+refreshKeyboardLabels();setKeyboardVisible(false);
 resize();showWelcome();const bootVersion=navigationVersion;pauseFor('boot').then(()=>{if(navigationVersion===bootVersion)showStageDialog();});
 
 function sentenceTexts(){return PRACTICE_TEXTS.sentences[currentLanguage]||PRACTICE_TEXTS.sentences.ko;}

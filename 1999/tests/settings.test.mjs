@@ -1,0 +1,13 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { DEFAULT_SETTINGS, normalizeSettings, settingsStatus, LAYOUTS, OBSERVED_KOREAN_KEY_GROUPS, OBSERVED_KOREAN_WORD_GROUPS } from '../settings.js';
+test('original defaults match observed environment dialog',()=>assert.deepEqual(DEFAULT_SETTINGS,{language:'ko',layout:'2',sound:true,repeat:false,targetSpeed:150,targetAccuracy:90,layoutsByLanguage:{ko:'2',en:'us',ja:'hiragana'}}));
+test('language change rejects stale incompatible keyboard',()=>{assert.equal(normalizeSettings({language:'en',layout:'2'}).layout,'us');assert.equal(normalizeSettings({language:'ja',layout:'us'}).layout,'hiragana')});
+test('all supported original layout choices survive normalization',()=>{for(const [language,options]of Object.entries(LAYOUTS))for(const {value:layout}of options)assert.equal(normalizeSettings({language,layout}).layout,layout)});
+test('invalid persisted data stays finite and bounded',()=>{const s=normalizeSettings({language:'xx',layout:'xx',targetSpeed:Infinity,targetAccuracy:-5});assert.equal(s.language,'ko');assert.equal(s.layout,'2');assert.equal(s.targetSpeed,400);assert.equal(s.targetAccuracy,60)});
+test('original status shorthand matches language and keyboard',()=>{assert.equal(settingsStatus({language:'ko',layout:'3-no-shift'}),'한글-NS');assert.equal(settingsStatus({language:'en',layout:'us'}),'영문-미');assert.equal(settingsStatus({language:'en',layout:'dvorak'}),'영문-드');assert.equal(settingsStatus({language:'ja',layout:'katakana'}),'일어-카')});
+test('observed Korean menu counts distinct from progression stages',()=>{assert.equal(OBSERVED_KOREAN_KEY_GROUPS.length,10);assert.equal(OBSERVED_KOREAN_WORD_GROUPS.length,8)});
+
+test('original numeric bounds clamp zero and both endpoints',()=>{for(const [speed,accuracy,expectedSpeed,expectedAccuracy] of [[0,0,80,60],[79,59,80,60],[80,60,80,60],[400,100,400,100],[401,101,400,100]]){const s=normalizeSettings({targetSpeed:speed,targetAccuracy:accuracy});assert.equal(s.targetSpeed,expectedSpeed);assert.equal(s.targetAccuracy,expectedAccuracy)}});
+
+test('remembered language layouts migrate old settings and remain independent',()=>{const old=normalizeSettings({language:'en',layout:'dvorak'});assert.deepEqual(old.layoutsByLanguage,{ko:'2',en:'dvorak',ja:'hiragana'});const switched=normalizeSettings({...old,language:'ja',layout:undefined,layoutsByLanguage:{ko:'3',en:'dvorak',ja:'katakana'}});assert.equal(switched.layout,'katakana');assert.deepEqual(switched.layoutsByLanguage,{ko:'3',en:'dvorak',ja:'katakana'});const invalid=normalizeSettings({layoutsByLanguage:{ko:'bad',en:'bad',ja:'bad'}});assert.deepEqual(invalid.layoutsByLanguage,{ko:'2',en:'us',ja:'hiragana'})});

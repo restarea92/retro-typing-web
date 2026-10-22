@@ -3,9 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "verify": "node scripts/verify-source.mjs",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs 1999/tests/*.test.js 1999/tests/*.test.mjs 1999/qa/game-stage-coverage.test.mjs",
+    "test:resource-runtime": "node scripts/run-resource-tests.mjs",
+    "build:1997": "node scripts/build-runtime.mjs 1997",
+    "build:1999": "node scripts/build-runtime.mjs 1999"
+  },
+  "devDependencies": {
+    "linkedom": "0.18.14"
   }
 }

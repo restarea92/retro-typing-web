@@ -1,0 +1,3 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {originalLogoDelay}from'../presentation.js';import {BIOS_TICK_MS}from'../original-metrics.js';
+test('startup logo waits to strict31st BIOS tick boundary',()=>{for(const now of [0,1,100,1234.5,999999]){const wait=originalLogoDelay(now);assert.ok(wait>30*BIOS_TICK_MS-1e-7);assert.ok(wait<=31*BIOS_TICK_MS+1e-7);assert.ok(Math.abs((now+wait)/BIOS_TICK_MS-(Math.floor(now/BIOS_TICK_MS)+31))<1e-7);}});
+test('presentation delay exports remain separate from input timing',async()=>{const {PRESENTATION_TIMING}=await import('../presentation.js');assert.equal(PRESENTATION_TIMING.subsequentExercise,0);assert.equal(PRESENTATION_TIMING.firstLoad,31*BIOS_TICK_MS);});

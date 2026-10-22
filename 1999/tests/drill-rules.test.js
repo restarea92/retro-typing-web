@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {createKeyDrill,requestedKey,remainingKeyRounds,pressKeyDrill,fingerHomeKey} from '../drill-rules.js';
+const pool={physicalKeys:['a',';','s','l','d','k','f','j'],keyIndices:[26,35,27,34,28,33,29,32]};
+test('wrong key retains target and partial repeat count',()=>{let s=createKeyDrill(pool,{repeat:true});s=pressKeyDrill(s,'a');s=pressKeyDrill(s,'1');assert.equal(s.correct,1);assert.equal(s.incorrect,1);assert.equal(s.phaseCorrect,1);assert.equal(requestedKey(s),'a');assert.equal(remainingKeyRounds(s),100)});
+test('counter tracks full pool rounds not keystrokes',()=>{let s=createKeyDrill(pool);for(const key of pool.physicalKeys)s=pressKeyDrill(s,key,()=>0);assert.equal(s.completedTargets,8);assert.equal(remainingKeyRounds(s),99);assert.equal(s.correct,8);assert.equal(requestedKey(s),'a')});
+test('first round sequential, subsequent random',()=>{let s=createKeyDrill(pool);s=pressKeyDrill(s,'a');assert.equal(requestedKey(s),';');for(const key of pool.physicalKeys.slice(1))s=pressKeyDrill(s,key,()=>0.5);assert.equal(requestedKey(s),'d')});
+test('later stages require target then physical finger home',()=>{let s=createKeyDrill({physicalKeys:['q'],keyIndices:[13]},{stage:1,rounds:1});s=pressKeyDrill(s,'q');assert.equal(requestedKey(s),'a');assert.equal(s.completedTargets,0);s=pressKeyDrill(s,'a');assert.equal(s.finished,true);assert.equal(s.correct,2)});
+test('repeat setting requires four correct presses in each phase',()=>{let s=createKeyDrill({physicalKeys:['t'],keyIndices:[17]},{stage:2,rounds:1,repeat:true});for(let i=0;i<4;i++)s=pressKeyDrill(s,'t');assert.equal(requestedKey(s),'f');for(let i=0;i<4;i++)s=pressKeyDrill(s,'f');assert.equal(s.correct,8);assert.equal(s.finished,true);assert.equal(pressKeyDrill(s,'x'),s)});
+test('original home mapping clamps outer columns and maps both index fingers',()=>{assert.equal(fingerHomeKey(17),'f');assert.equal(fingerHomeKey(18),'j');assert.equal(fingerHomeKey(25),';');assert.equal(fingerHomeKey(65),'a')});

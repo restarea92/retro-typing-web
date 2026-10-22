@@ -1,0 +1,7 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {analyzePracticeInput,createPracticeTiming,updatePracticeTiming} from '../text-practice.js';
+import {BIOS_TICK_MS} from '../original-metrics.js';
+const t=n=>n*BIOS_TICK_MS;
+test('live composing updates do not become accepted chart records',()=>{const state=createPracticeTiming(0);updatePracticeTiming(state,analyzePracticeInput('각','가'),' ',t(2));assert.equal(state.records.length,1);const pending=createPracticeTiming(0);updatePracticeTiming(pending,analyzePracticeInput('각','가'),'',t(2));assert.equal(pending.records.length,0);updatePracticeTiming(pending,analyzePracticeInput('각','각'),'각',t(5));assert.equal(pending.records[0].elapsedTicks,5);assert.equal(pending.records[0].correct,true);});
+test('Backspace record rollback retains deleted glyph acceptance baseline',()=>{const state=createPracticeTiming(0);updatePracticeTiming(state,analyzePracticeInput('abc','a'),'a',t(2));updatePracticeTiming(state,analyzePracticeInput('abc','ab'),'ab',t(5));updatePracticeTiming(state,analyzePracticeInput('abc','a'),'a',t(10));assert.equal(state.records.length,1);updatePracticeTiming(state,analyzePracticeInput('abc','ab'),'ab',t(12));assert.equal(state.records[1].elapsedTicks,7);});
+test('completion-wait duration never changes accepted glyph timing',()=>{const state=createPracticeTiming(0);const a=analyzePracticeInput('a','a');updatePracticeTiming(state,a,'a',t(2));updatePracticeTiming(state,a,'a',t(80));assert.equal(state.records[0].elapsedTicks,2);});

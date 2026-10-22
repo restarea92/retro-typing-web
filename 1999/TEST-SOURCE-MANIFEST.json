@@ -1,6 +1,6 @@
 {
   "snapshotDate": "2026-10-22",
-  "scope": "Selected authored tests/tooling through the 2026-10-22 16:51 keyboard-first checkpoint, not the full private QA collection.",
+  "scope": "Selected authored tests/tooling through the 2026-10-22 17:10 main-focus checkpoint, not the full private QA collection.",
   "files": [
     {
       "path": "qa/best-speed-lifetime.test.mjs",
@@ -43,6 +43,12 @@
       "sourceSha256": "076b9aa20adec6e7a4451c5ef2e708b480ae3a618268442ba2beac29378f08cb",
       "publishedSha256": "04303d905bc99b773a8e07cfa83fb1bd7b6789ad1f40a36a25581ab031db05ba",
       "adaptation": "Explicit resource gate; test bodies retained; normal linkedom package import where applicable."
+    },
+    {
+      "path": "qa/main-focus-regression.test.mjs",
+      "sourceSha256": "1d220f8f3a6cbdf295eec4ac1afdd7d0a9e4547053f13d4454c3ed2444ac6990",
+      "publishedSha256": "ec046c845bbe8f96140a7329e48c7d7273bdd8a850e8a89e4a5e3a82bc300c81",
+      "adaptation": "Explicit resource gate for LinkeDOM and app dependency imports; fixed local app path; test bodies retained."
     },
     {
       "path": "qa/modal-raster-regression.test.mjs",

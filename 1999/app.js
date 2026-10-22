@@ -57,6 +57,26 @@ function activateFocusedDialogClose(event,dialog){
  if(!close||!dialog.contains(close)||!['Enter',' '].includes(event.key))return false;
  event.preventDefault();event.stopImmediatePropagation();close.click();return true;
 }
+// Native main/prompt input is owned by the current menu/answer, not by an
+// inert title or desktop pixel. Recover DOM focus without changing that state.
+// This is deliberately a frame-click repair, not a global focus trap.
+function restoreMainFrameFocus(event){
+ const frame=$('.classic'),target=event.target;
+ if(event.defaultPrevented||(event.button!==undefined&&event.button!==0)||!frame.contains(target)||workspace.hasAttribute('aria-busy'))return;
+ const control=target.closest?.('button,a[href],input,select,textarea,[contenteditable]:not([contenteditable="false"]),[role="button"],[role="menuitem"],[tabindex]:not([tabindex="-1"])');
+ let owner=null;
+ if(mode==='stage'){
+  const dialog=workspace.querySelector('.stage-dialog');
+  if(!dialog||(control&&dialog.contains(control)))return;
+  const selected=Number(dialog.dataset.selectedChoice);
+  if(!Number.isInteger(selected))return;
+  owner=dialog.querySelectorAll('.stage-answer')[selected];
+ }else if(mode==='home'&&openMenuId){
+  if(control)return;
+  owner=frame.querySelector('.dropdown-menu');
+ }
+ if(owner?.isConnected&&document.activeElement!==owner)owner.focus({preventScroll:true});
+}
 function refreshKeyboardLabels(){keyboardView?.setLayout(ensureComposerMode().latinMode?ensureComposerMode().latinLayout:ensureComposerMode().layout);}
 function reflectKeyboardVisibility(visible){keyboardVisible=Boolean(visible);$('#focus-input').setAttribute('aria-expanded',String(keyboardVisible));$('#focus-input').textContent=keyboardVisible?'가상 키보드 숨기기':'가상 키보드 보이기';}
 function setKeyboardVisible(visible){reflectKeyboardVisibility(visible);keyboardView?.setVisible(keyboardVisible);if(!keyboardVisible)keyboardBridge?.releaseAll();}
@@ -121,6 +141,7 @@ function guardRepeatDialogClick(event){
 workspace.addEventListener('click',e=>{if(guardRepeatDialogClick(e))return;if(e.target.classList.contains('dialog-close')&&e.target.dataset.go==='home'){dispatchExternalKey('Escape');return;}if(e.target.dataset.go)navigate(e.target.dataset.go)});
 document.addEventListener('keydown',e=>{if(outsideProgramEvent(e)||mode==='exited')return;if(e.defaultPrevented||e.isComposing||composing||e.keyCode===229)return;if(extraCleanup||mode==='settings')return;if(mode==='home'&&openMenuId&&e.target===$('#close')&&['Enter',' '].includes(e.key))return;if(mode==='home'&&workspace.querySelector('.welcome-original')&&!['Shift','Control','Alt','Meta','CapsLock','NumLock','ScrollLock'].includes(e.key)){e.preventDefault();showStageDialog();return;}if((openMenuId||mode==='home')&&e.altKey&&['KeyH','KeyX'].includes(e.code)){e.preventDefault();endApplication();return;}if(mode==='about'){if(!['Shift','Control','Alt','Meta','CapsLock','NumLock','ScrollLock'].includes(e.key)){e.preventDefault();navigate('home');openMenu('help',1)}return;}if(e.key==='F1'){e.preventDefault();if(openMenuId||mode==='home')navigate('help');return}if(mode==='help'&&e.code==='Space'){e.preventDefault();helpPage++;if(helpPage>=ORIGINAL_HELP.pages.length)navigate('home');else renderHelp();return}if(mode==='long'&&!finished&&workspace.querySelector('.long-dialog')&&(e.key==='PageDown'||e.key==='PageUp')){e.preventDefault();changeLongPage(e.key==='PageDown'?1:-1);return}if(e.key==='Escape'){e.preventDefault();if(mode==='play'&&gamePhase!=='select'){if(gamePhase==='ended')dismissGameOver();else selectGame(gameKind);}else if(mode==='keys'&&!finished)leaveKeyPractice();else if(mode==='words'&&!finished){if(wordPhase==='warmup')startWordStudy();else leaveTextPractice();}else if(mode==='long'&&!finished){if($('.long-select')){navigate('home');openMenu('textmenu',1);}else {saveLongProgress();showLongSelect()}}else if(mode==='sentences'&&!finished)leaveTextPractice();else if(mode==='help'){navigate('home');openMenu('help',0);}else navigate('home')}else if(mode==='home'&&['ArrowLeft','ArrowRight','Enter'].includes(e.key)){e.preventDefault();openMenu('home')}});
 document.addEventListener('click',event=>{if(guardRepeatDialogClick(event))return;if(!$('.classic').contains(event.target)||event.target.closest?.('.dropdown-menu'))return;if(mode==='about'){event.preventDefault();navigate('home');openMenu('help',1);}else if(mode==='home'&&workspace.querySelector('.welcome-original')){event.preventDefault();showStageDialog();}},true);
+$('.classic').addEventListener('click',restoreMainFrameFocus);
 $('#close').onclick=()=>{if(mode==='home'&&openMenuId)endApplication();};$('#focus-input').onclick=()=>{if(mode==='exited'){window.location.reload();return;}setKeyboardVisible(!keyboardVisible);};$('#keyboard-input-mode').onchange=event=>setInputMethod(event.target.value);$('#native-keyboard-focus').onclick=()=>setInputMethod('native');$('#help-toggle').onclick=()=>$('#outside-help').hidden=!$('#outside-help').hidden;$('#fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await $('.classic').requestFullscreen()}catch{$('#outside-help').hidden=false;$('#outside-help').textContent='이 브라우저에서는 전체 화면을 지원하지 않습니다. 가로 화면으로 돌리면 더 크게 볼 수 있어요.'}};
 let lastScreenFocus=null;
 document.addEventListener('focusin',event=>{if($('.classic').contains(event.target))lastScreenFocus=event.target;});

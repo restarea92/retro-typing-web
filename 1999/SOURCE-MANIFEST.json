@@ -1,12 +1,12 @@
 {
   "snapshotDate": "2026-10-22",
-  "provenance": "1999 limited keyboard-first preview checkpoint, frozen 2026-10-22 16:51 UTC. Authored WebGL keyboard, input transport and hybrid native-composition integration accompany earlier completion and paint fixes. Sanitized source only; original assets and data modules are omitted.",
-  "verificationScope": "Public default tests and source checks only. Resource-dependent keyboard/input tests are explicitly skipped by default. WebGL source presence does not prove rendered 3D, touch/iOS or audible sound acceptance. See TESTING.md.",
+  "provenance": "1999 limited main-focus preview checkpoint, frozen 2026-10-22 17:10 UTC. Only app.js changes from the 16:51 keyboard-first runtime. Inert main-frame clicks restore existing menu/startup-choice focus without navigation or selection changes. Original resources remain omitted.",
+  "verificationScope": "Public default tests and source checks only. Resource-dependent main-focus and keyboard/input tests are explicitly skipped by default. WebGL source presence does not prove rendered 3D, touch/iOS or audible sound acceptance. See TESTING.md.",
   "files": [
     {
       "path": "app.js",
-      "sourceSha256": "bb892915944003b76fd06c87fbd621c4d6f76fd46aceb3e5f79693b69006b667",
-      "publishedSha256": "bb892915944003b76fd06c87fbd621c4d6f76fd46aceb3e5f79693b69006b667",
+      "sourceSha256": "a9b88e65f9df97b6a09c52a8d8891e91dc2e45d2ef8976532b1ec1fb3d489fb7",
+      "publishedSha256": "a9b88e65f9df97b6a09c52a8d8891e91dc2e45d2ef8976532b1ec1fb3d489fb7",
       "removedEmbeddedAssets": 0
     },
     {
@@ -214,6 +214,6 @@
       "removedEmbeddedAssets": 0
     }
   ],
-  "previousPublishedAppSha256": "562b8d3992ff12703b3c1e20d6ad400177b638aa5a148eee95302dc032f90a1b",
-  "sourceRuntimeManifestSha256": "e9e403a1bb8cbfc661b1947608aa05208cdd04e1bf49ecfae998288dde078b88"
+  "previousPublishedAppSha256": "bb892915944003b76fd06c87fbd621c4d6f76fd46aceb3e5f79693b69006b667",
+  "sourceRuntimeManifestSha256": "c751d005f46906e9e50fd5d67cd8bba75dd0c2d8a9f28a5c7723544165f5922f"
 }

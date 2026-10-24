@@ -1,12 +1,12 @@
 {
-  "snapshotDate": "2026-10-22",
+  "snapshotDate": "2026-10-24",
   "provenance": "1999 native-event preview checkpoint, frozen 2026-10-22 18:23 UTC. Only app.js, input-composer.js and key-practice-input.js change from the 17:39 native-input/header runtime. Expiring compatibility echoes and selected-layout handoff are repaired. The 100 ms boundary is a compatibility heuristic, not device evidence. Virtual keyboard remains inactive; original resources remain omitted.",
   "verificationScope": "Public default tests and source checks only. Resource-dependent native-event, layout, focus, header, lifecycle and input-policy cases are explicitly skipped by default. Bounded desktop checks are not actual OS IME, iPhone/Safari or full-application acceptance. See TESTING.md.",
   "files": [
     {
       "path": "app.js",
-      "sourceSha256": "5be794f0debcaccb4224e56683eb569ca5fa62cdb48e9597b7bd76a9b40eca29",
-      "publishedSha256": "5be794f0debcaccb4224e56683eb569ca5fa62cdb48e9597b7bd76a9b40eca29",
+      "sourceSha256": "a94216aa21a558946cc4b3ffee9f4fea361f33ebcee3a7a28d42eaf35c845d4c",
+      "publishedSha256": "a94216aa21a558946cc4b3ffee9f4fea361f33ebcee3a7a28d42eaf35c845d4c",
       "removedEmbeddedAssets": 0
     },
     {
@@ -65,8 +65,8 @@
     },
     {
       "path": "index.html",
-      "sourceSha256": "6bc92ddde236302e86b27f5d1f1c7d1a0b32642a1a012724a7c35aab253f3aeb",
-      "publishedSha256": "6bc92ddde236302e86b27f5d1f1c7d1a0b32642a1a012724a7c35aab253f3aeb",
+      "sourceSha256": "cc8ecd1773998011b843063e46860f2a3b3655848c349ab708878ad4e4a0b4f1",
+      "publishedSha256": "cc8ecd1773998011b843063e46860f2a3b3655848c349ab708878ad4e4a0b4f1",
       "removedEmbeddedAssets": 0
     },
     {
@@ -212,8 +212,21 @@
       "sourceSha256": "3adc193a63d5b7b9ca67ebc1aa36f2b99474c283d57d321e4513b1cae4068379",
       "publishedSha256": "3adc193a63d5b7b9ca67ebc1aa36f2b99474c283d57d321e4513b1cae4068379",
       "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "display.js",
+      "sourceSha256": "0a90251599159e7dbf7236f9418c4e1b0df183c114ec916ecc6b387d84f14566",
+      "publishedSha256": "0a90251599159e7dbf7236f9418c4e1b0df183c114ec916ecc6b387d84f14566",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "display.css",
+      "sourceSha256": "5c8b8d175599d5442b663e38af2a07ae87d87750ae11569f559e1faea91f6c0c",
+      "publishedSha256": "5c8b8d175599d5442b663e38af2a07ae87d87750ae11569f559e1faea91f6c0c",
+      "removedEmbeddedAssets": 0
     }
   ],
   "previousPublishedAppSha256": "30999d4ad2165efb8b8b386c642cbaa825d8f132b99aa4d376c3869e66ecaac0",
-  "sourceRuntimeManifestSha256": "f37ae768a3e18658895491e1e8642c21fca865e0cf1a29216840133cd95025ea"
+  "sourceRuntimeManifestSha256": "f37ae768a3e18658895491e1e8642c21fca865e0cf1a29216840133cd95025ea",
+  "displayUpdate": "Fullscreen viewport and opt-out CRT display simulation added. Preserves the 640 x 480 program coordinate system. No original resources are added to the public archive. Runtime assets are kept separate."
 }

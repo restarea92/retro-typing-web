@@ -53,3 +53,11 @@ npm test
 ## 권리와 관계
 
 이 프로젝트는 비공식 재현 작업이며 한글과컴퓨터의 공식 제품이나 지원 서비스가 아닙니다. 제3자 자료에 대한 이용 허가를 부여하지 않습니다. 저장소 생성 시 별도의 LICENSE 파일은 추가하지 않았습니다.
+
+## 2026-10-24 display update
+
+1999 fullscreen now targets an outer viewport rather than the 640×480 program itself. It scales uniformly to viewport height, centers horizontally, and clips the sides on narrow screens rather than relaying out the original UI. Wide displays retain side bars. Windowed mode keeps its existing fit-down behavior.
+
+CRT display defaults on and has persistent on/off controls outside the original screen and within fullscreen. A restrained highlight bloom preserves the sharp source; source-row scanlines track the display scale, while RGB phosphor stripes track output device pixels. Low-density displays attenuate masks to avoid aliasing. This is a lightweight DOM/SVG/CSS simulation, not a full analog CRT signal model or a claim of CRT-Royale equivalence. CRT off removes all added filters and masks.
+
+Validation separates pure geometry/preference tests, simulated-DOM input regressions, and real browser/device evidence. Actual iPhone/DOS verification is not implied. The original-resource modules and assets remain excluded from this public source tree.

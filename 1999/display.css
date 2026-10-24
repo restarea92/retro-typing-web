@@ -1,0 +1,24 @@
+/* Fullscreen belongs to a viewport, never to the original program surface. */
+#display-viewport{position:relative;width:100%;height:480px;overflow:hidden;overflow:clip;isolation:isolate;background:#000}
+#display-viewport #frame-box{position:absolute;top:0;left:0;width:640px;height:480px;transform-origin:0 0}
+#display-viewport .classic{width:640px!important;height:480px!important;min-width:640px;min-height:480px}
+#display-viewport:fullscreen{width:100vw;height:100vh!important;max-width:none;margin:0;padding:0;border:0;background:#000;overflow:hidden;overflow:clip}
+#display-viewport::backdrop{background:#000}
+.crt-filter-definitions{position:absolute;width:0;height:0;overflow:hidden;pointer-events:none}
+.crt-enabled .classic{filter:url(#crt-phosphor-bloom)}
+.crt-overlay{display:none;position:absolute;top:0;pointer-events:none;z-index:50}
+.crt-enabled .crt-overlay{display:block}
+/* 480 source scanlines track source scaling; phosphor triads track device pixels.
+   Attenuated at low output resolution to avoid aliases obscuring the glyphs. */
+.crt-overlay:before,.crt-overlay:after{content:"";position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply}
+.crt-overlay:before{background:linear-gradient(to bottom,transparent 35%,rgba(0,0,0,.5) 82%,rgba(0,0,0,.85) 100%);background-size:100% var(--scanline-period);opacity:var(--scanline-opacity)}
+.crt-overlay:after{background:repeating-linear-gradient(to right,#f66 0 var(--mask-pixel),#6f6 var(--mask-pixel) calc(var(--mask-pixel)*2),#66f calc(var(--mask-pixel)*2) calc(var(--mask-pixel)*3));opacity:var(--mask-opacity)}
+.fullscreen-display-controls{display:none;position:absolute;right:12px;bottom:4px;z-index:100;gap:8px;opacity:.65;transition:opacity .15s}
+#display-viewport:fullscreen .fullscreen-display-controls{display:flex}
+.fullscreen-display-controls:hover,.fullscreen-display-controls:focus-within{opacity:1}
+.fullscreen-display-controls button{font:13px sans-serif;padding:7px 10px;border:1px solid #8d959c;border-radius:4px;background:#24282b;color:#fff}
+@media(prefers-reduced-motion:reduce){.fullscreen-display-controls{transition:none}}
+@media(forced-colors:active){.crt-enabled .classic{filter:none}.crt-overlay{display:none!important}}
+#display-viewport:has(#frame-box[hidden]) .crt-overlay{display:none}
+
+.helpers>div{flex-wrap:wrap}

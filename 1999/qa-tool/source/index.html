@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>1999 비교 작업대</title>
+  <link rel="stylesheet" href="./qa.css">
+  <script src="./vendor/d3.min.js" defer></script>
+  <script type="module" src="./main.js"></script>
+</head>
+<body>
+<main id="qa-root" class="workbench">
+  <header class="topbar">
+    <div class="identity"><span class="brand-mark" aria-hidden="true">↔</span><h1>1999 비교 작업대</h1><span class="title-detail">같은 입력, 두 개의 실행 화면</span></div>
+    <a class="standalone-link" href="../" target="_blank" rel="noopener">단독 실행 <span aria-hidden="true">↗</span></a>
+  </header>
+  <div id="global-error" class="error-banner" role="alert" hidden></div>
+  <section class="comparison" aria-label="원본과 웹 실행 화면">
+    <article id="dos-pane" class="screen-pane">
+      <header class="pane-heading"><div><span class="screen-number">01</span><h2>원본 DOS</h2><span id="dos-status" class="readiness" data-state="waiting">파일 대기</span></div><label class="file-button" for="dos-file">DOS 파일 열기<input id="dos-file" type="file" accept=".jsdos,.zip" class="visually-hidden"></label></header>
+      <div id="dos-shell" class="screen-shell"><div id="dos-host" class="screen-surface" aria-label="원본 DOS 실행기"><iframe id="dos-frame" title="원본 DOS 실행 화면" src="./dos-player.html" allow="autoplay"></iframe></div><div id="dos-empty" class="empty-screen"><span class="file-symbol" aria-hidden="true">⌁</span><strong>원본을 이 브라우저에서 열어 주세요</strong><span>선택한 DOS 파일은 서버로 전송하지 않습니다.</span></div></div>
+      <footer class="pane-footer"><span id="dos-file-name">로컬 DOS 번들 · .jsdos / .zip</span><span>640 × 480</span></footer>
+    </article>
+    <article id="web-pane" class="screen-pane">
+      <header class="pane-heading"><div><span class="screen-number">02</span><h2>웹 재현</h2><span id="web-status" class="readiness" data-state="waiting">불러오는 중</span></div><button id="reload-web" type="button" class="text-button">새로고침</button></header>
+      <div id="web-shell" class="screen-shell"><iframe id="web-frame" class="screen-surface" title="1999 웹 재현 실행 화면" src="../?qa=1" allow="autoplay"></iframe></div>
+      <footer class="pane-footer"><span>화면 비교용 CRT OFF</span><span>640 × 480</span></footer>
+    </article>
+  </section>
+  <section id="input-workspace" class="input-workspace" aria-label="공통 입력 브리지">
+    <svg id="connection-lines" aria-hidden="true"></svg>
+    <div id="bridge-node" class="bridge-node">
+      <div class="bridge-title"><span id="bridge-light" class="connection-light"></span><strong>공통 입력</strong><span id="bridge-status">일시 정지</span></div>
+      <div class="bridge-controls"><span class="both-label">양쪽 화면</span><button id="bridge-toggle" type="button" class="primary-button" aria-pressed="false" disabled>입력 연결</button><button id="release-all" type="button">모든 키 해제</button></div>
+    </div>
+    <section id="keyboard-node" class="keyboard-node" aria-label="키보드와 입력 표시">
+      <div class="input-monitor-row"><label for="input-monitor">웹 입력 / 마지막 키</label><input id="input-monitor" readonly autocomplete="off" spellcheck="false" placeholder="웹 입력값 · 입력란이 비면 마지막 키 표시" aria-label="웹 입력 / 마지막 키"><button id="toggle-mode" type="button" class="mode-button" title="Shift + Space를 양쪽에 전달"><span id="mode-status">한글</span><span>한/영 전환 (Shift+Space)</span></button></div>
+      <div id="virtual-keyboard" class="virtual-keyboard" aria-label="가상 키보드"></div>
+      <div class="keyboard-caption"><span id="last-input">키 입력을 기다리는 중</span><span>한/영: Shift + Space · 포커스 이탈 시 키 해제</span></div>
+    </section>
+  </section>
+  <section class="log-section" aria-label="입력 기록">
+    <details id="log-details"><summary><span>입력 기록 <span id="event-count">0</span></span><span id="pointer-status">X — · Y —</span></summary><div class="log-toolbar"><span>정상 입력 순서만 기록합니다.</span><div><button id="export-log" type="button">내보내기</button><label class="file-button" for="import-log">가져오기<input id="import-log" type="file" accept=".json,application/json" class="visually-hidden"></label><button id="replay-log" type="button">재생</button><button id="stop-replay" type="button" hidden>재생 중지</button><button id="clear-log" type="button">비우기</button></div></div><pre id="event-log" aria-label="최근 입력 기록">아직 기록된 입력이 없습니다.</pre></details>
+  </section>
+  <details class="sequence-section"><summary>에이전트 입력 / SDK</summary><p>동일한 정상 입력 API를 실행합니다. 게임 상태나 점수를 변경하지 않습니다.</p><p id="sequence-status" role="status">양쪽 준비 후 입력 연결을 켜세요.</p><label for="sequence-input">입력 시퀀스 JSON</label><textarea id="sequence-input" spellcheck="false" rows="4">[{"type":"keyDown","code":"Space"},{"type":"wait","ms":80},{"type":"keyUp","code":"Space"}]</textarea><div><button id="run-sequence" type="button">시퀀스 실행</button><button id="cancel-sequence" type="button">중지 / 키 해제</button><span>API: window.hancomQA</span></div></details>
+  <footer class="workbench-notes"><span class="seed-warning">난수·시간 미동기화</span><p>같은 입력을 전달하지만 두 프로그램의 난수와 실행 시각은 아직 동기화하지 않습니다. 브라우저 입력 전달은 OS 하드웨어·IME의 완전한 복제가 아닙니다.</p><a href="./README.md" target="_blank" rel="noopener">API / 사용 안내</a></footer>
+</main>
+</body>
+</html>

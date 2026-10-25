@@ -1,0 +1,101 @@
+{
+  "scope": "Code-only QA tool; original game assets and fetched third-party binaries excluded.",
+  "files": [
+    {
+      "path": "source/README.md",
+      "sha256": "fec46f7ffa093b5419907461db3fcf5a1a083ee38fc9b272349c701dca763131"
+    },
+    {
+      "path": "source/bundle-local.js",
+      "sha256": "bda396278d204c3da488a13bfb5d0bcea0a8c2d09ec7cc0143bc1962a254719e"
+    },
+    {
+      "path": "source/dos-adapter.js",
+      "sha256": "c89f696b97ed182ad5e35b90a357b065091c54c65f79f3e071c364fbd734f764"
+    },
+    {
+      "path": "source/dos-player.html",
+      "sha256": "7eb2f25bdc75ed65c7465041db1c3749ceb46b8606ad7b7fa7e11d0e5ee10713"
+    },
+    {
+      "path": "source/dos-player.js",
+      "sha256": "6a963b679a0f776f38888f52c21dae819654a5e7989d5c713d2abb801109a28c"
+    },
+    {
+      "path": "source/fetch-vendor.mjs",
+      "sha256": "c9f925ba7c4cf93c991b3840d86bd920cbb59f9f24b46a40c1a4fa9163b43dd1"
+    },
+    {
+      "path": "source/index.html",
+      "sha256": "affaeb819bc210b5a52b1d4b3e04d8da0bb631905ddf2ed951dc70cd3ee885c9"
+    },
+    {
+      "path": "source/input-core.js",
+      "sha256": "8c729c3fa57b3e40643db8c0bbac5eba8a74c7a36481e3e704ef12759ec95bef"
+    },
+    {
+      "path": "source/input-core.test.mjs",
+      "sha256": "806b30a97bf0e8a2d03f761ab8e32e2ad8c80211ff19eb8792a3b9599b2a21dc"
+    },
+    {
+      "path": "source/main.js",
+      "sha256": "56057527cf737e1e5fca9dc1e3dc45e9dae3dea28680618d14c4f99362c71410"
+    },
+    {
+      "path": "source/package.json",
+      "sha256": "e837dde7a7f5c51838293b4dfc60bdc22dcf29986da01e561758150a63fed7cc"
+    },
+    {
+      "path": "source/prepare-runtime.mjs",
+      "sha256": "51e8e24dfcf84b0078d23f1f046ecb685814318b4b620bde585067231a36f892"
+    },
+    {
+      "path": "source/qa.css",
+      "sha256": "dbd218e7b5ff52aa61b6f71e692251705e7f9b88645e1c7a88c08c422bd6b96b"
+    },
+    {
+      "path": "source/vendor-sources.json",
+      "sha256": "4d8b66cd1e5f364878a515acd37caed1710c12a6f8b82be3a6d30ce3180ce283"
+    },
+    {
+      "path": "source/visual.js",
+      "sha256": "42183fda8f75c07334b88b3cd2b7ad178a1161b12444a0f48d2d4361cbbd6272"
+    },
+    {
+      "path": "source/web-adapter.js",
+      "sha256": "bacc1863152f8fd3bb7867ae748933834fa2cf1451ab4ad0bf7b9b5cd98b2898"
+    },
+    {
+      "path": "source/web-hook.js",
+      "sha256": "54bcc26eb7ef409d5edfee69c10ba636a6e8ad2402680107f434b780606e1721"
+    },
+    {
+      "path": "tests/bundle-local.test.mjs",
+      "sha256": "32a7dc5c9c27041d79391e0f4b8129374573939051f6899f822396511943415e"
+    },
+    {
+      "path": "tests/dos-adapter.test.mjs",
+      "sha256": "c6625698a9a2e6bec117f24d8a23d0aec811ca71487c82562c4768072b526926"
+    },
+    {
+      "path": "tests/dos-libzip-fixture.private.mjs",
+      "sha256": "f079bc0884e571a5669fbad30ae31c46aeeab5206063a0aa0e90ca979dfabcd2"
+    },
+    {
+      "path": "tests/input-core.test.mjs",
+      "sha256": "9327d911c9d5a0466bfc7e420740564399b61b84c055879d9378e5b62e6a51cf"
+    },
+    {
+      "path": "tests/main-integration.test.mjs",
+      "sha256": "0e7eaada269576b9014a54462560eb300a087dae59340f06946077c7dc9284a5"
+    },
+    {
+      "path": "tests/package.json",
+      "sha256": "40c03bf7b1682c3a4602f70e4c8c3af77befc75ae9f28503b7f1ede5bc342888"
+    },
+    {
+      "path": "tests/web-adapter.test.mjs",
+      "sha256": "af7fd0302ec4f98ec34ecc6fad793ea490fa1a273003e805fad1fc7659da56ae"
+    }
+  ]
+}

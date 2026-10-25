@@ -69,3 +69,11 @@ Validation separates pure geometry/preference tests, simulated-DOM input regress
 ## 2026-10-26 CRT development default
 
 New or unstored CRT preferences now start off so pixel comparisons use the unfiltered image. Explicitly saved on/off choices and both toggle controls are preserved. Missing, blocked or invalid storage also falls back to off; merely loading the page does not overwrite preferences. Re-enabling CRT by default after development remains a future decision, not an automatic change. Fixed 640×480 layout and scaling behavior are unchanged by this patch.
+
+## Manual dual-screen QA tool
+
+`1999/qa-tool/` contains the separate DOS/web comparison tool source. The runtime route is `/qa/`; ordinary visits do not load its opt-in adapter. D3 draws only the connections and keyboard visualization. Human controls and `window.hancomQA` use the same normal key and pointer transport; no game state or random seed setter is provided. Random sequences and clocks are not synchronized.
+
+The original DOS executable/bundle is never included. Users select their own ZIP or `.jsdos` file locally in the browser. The published source also omits vendor binaries: `node 1999/qa-tool/source/fetch-vendor.mjs` retrieves pinned open-source dependencies and verifies their hashes. Use `prepare-runtime.mjs` with an existing complete, lawfully usable 1999 runtime to assemble a separate private output folder. See `1999/qa-tool/source/README.md` for usage and limitations.
+
+Run `npm run test:qa-tool` after installing the declared LinkeDOM development dependency. Automated adapter tests are not proof of OS hardware/IME equivalence or full native behavior parity.

@@ -629,3 +629,13 @@ function endApplication(){
 }
 window.addEventListener('pagehide',event=>{if(!event.persisted)saveNativeProfileOnExit();});
 function selectGame(kind){resetNativeComposerMode();stopCurrentActivity();closeMenu();gameStage=Math.min(10,Math.max(1,gameStage));$('.titlebar>span').textContent='한컴타자연습';mode='play';gamePhase='select';$('#status').style.color='';$('#menu').style.display='flex';$('.classic').classList.remove('game-mode');renderGameSelector(workspace,kind,stage=>{gameStage=stage;kind==='rain'?setupRain():setupInvaders()},()=>{navigate('home');openMenu('play',kind==='rain'?1:0);},gameStage);}
+
+// Explicit opt-in QA adapter. Normal production visits do not load this module.
+if (typeof URLSearchParams !== 'undefined' && new URLSearchParams(window.location?.search || '').get('qa') === '1') {
+ import('./qa/web-adapter.js').then(({installQaWebAdapter})=>installQaWebAdapter({
+  bridge:keyboardBridge,
+  getOwner:currentInputOwner,
+  getState:()=>({mode,languageCode:currentLanguage,layout:appSettings.layout,composer:composerMode?{...composerMode}:null}),
+  document
+ })).catch(error=>console.error('QA input adapter failed to load:',error));
+}

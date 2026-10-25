@@ -46,4 +46,7 @@ for (const edition of ['1997', '1999']) {
     if (digest !== file.publishedSha256) throw new Error(`Manifest hash mismatch: ${edition}/${file.path}`);
   }
 }
+const qaRoot=join(root,'1999','qa-tool');
+const qaManifest=JSON.parse(await readFile(join(qaRoot,'QA-TOOL-MANIFEST.json'),'utf8'));
+for(const file of qaManifest.files){const digest=createHash('sha256').update(await readFile(join(qaRoot,file.path))).digest('hex');if(digest!==file.sha256)throw new Error(`QA tool hash mismatch: ${file.path}`);}
 console.log(`Verified ${count} public-source files; ${syntax} JavaScript syntax checks. This is not full runtime or rights verification.`);

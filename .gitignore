@@ -39,3 +39,6 @@ screenshots/
 **/original-keyboard-maps.js
 **/original-progression.js
 **/original-word-stage-rules.js
+
+# Pinned open-source QA dependencies are fetched and hash-verified locally.
+1999/qa-tool/source/vendor/

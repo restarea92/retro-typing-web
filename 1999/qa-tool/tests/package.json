@@ -1,0 +1,1 @@
+{"name":"hancom-dual-qa-independent-tests","private":true,"type":"module","scripts":{"test":"node --test *.test.mjs"},"devDependencies":{"linkedom":"0.18.14"}}

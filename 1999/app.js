@@ -44,7 +44,7 @@ function currentInputOwner(){
  const stage=workspace.querySelector('.stage-dialog');if(stage)return focusedClose&&stage.contains(focusedClose)?focusedClose:stage.querySelectorAll('.stage-answer')[Number(stage.dataset.selectedChoice)||0];
  if(openMenuId)return mode==='home'&&(active===$('#close')||active?.matches?.('#menu button[data-mode]'))?active:document.querySelector('.dropdown-menu');
  if(mode==='settings'&&settingsController)return settingsController.getInputOwner();
- const modal=workspace.querySelector('.extra-exam-result-modal,.extra-notepad-result');if(modal)return modal;
+ const modal=workspace.querySelector('.long-result-dialog,.extra-exam-result-modal,.extra-notepad-result');if(modal)return focusedClose&&modal.contains(focusedClose)?focusedClose:modal;
  const list=workspace.querySelector('[role=listbox]');if(list)return list;
  const input=workspace.querySelector('#key-input,#typing,#game-input,textarea:not([readonly])');if(input)return input;
  return workspace.contains(active)&&active!==workspace?active:workspace;
@@ -107,7 +107,7 @@ const originalRandom=createOriginalRandom(1);
 let coreIdle=null;
 function armCoreIdle(onTimeout,started=true){coreIdle={...createOriginalIdle({started}),onTimeout};}
 function touchCoreIdle(){if(coreIdle)touchOriginalIdle(coreIdle);}
-function checkCoreIdle(){if(!coreIdle||!originalIdleExpired(coreIdle))return;const timeout=coreIdle.onTimeout;coreIdle=null;timeout();}
+function checkCoreIdle(){if(mode==='play'&&(rainState?.awaitingNext||invadersState?.awaitingNext))return;if(!coreIdle||!originalIdleExpired(coreIdle))return;const timeout=coreIdle.onTimeout;coreIdle=null;timeout();}
 document.addEventListener('keydown',event=>{if(!['Shift','Control','Alt','Meta','CapsLock','NumLock','ScrollLock'].includes(event.key))touchCoreIdle();},true);
 function ensureComposerMode(){
  const englishLayout=['us','dvorak'].includes(appSettings.layout)?appSettings.layout:(appSettings.layoutsByLanguage?.en||lastEnglishLayout),base=appSettings.layout+'|'+englishLayout;
@@ -328,9 +328,9 @@ function showTextRepeatDialog(entry){releaseProgramKeys();coreIdle=null;deactiva
 function makeStudyWords(){const layout=({'2':'korean2','3':'korean3','3-no-shift':'korean3NoShift'})[appSettings.layout]||appSettings.layout;return originalWordLine(gameWords(),layout,selectedStage,originalRandom.nextInt);}
 
 const longRememberedPages=[];let longTextOrdinal=0;
-let longLines=[],longTyped=[],longIndex=0,longPage=0,longStarted=null,longSavedThrough=0,longResults=[],longInput=null,longComposer=null,longTiming=null,longBlankAccepted=false;
+let longLines=[],longTyped=[],longIndex=0,longPage=0,longStarted=null,longSavedThrough=0,longResults=[],longInput=null,longComposer=null,longTiming=null,longBlankAccepted=false,longResultPending=false;
 function startLong(){
- resetNativeComposerMode();session=null;finished=false;clearCoreComposers();longStarted=null;longTyped=[];longResults=[];longInput=null;longComposer=null;
+ resetNativeComposerMode();session=null;finished=false;longResultPending=false;clearCoreComposers();longStarted=null;longTyped=[];longResults=[];longInput=null;longComposer=null;
  longLines=wrapLongText(imported||LONG_TEXTS.find(t=>t.id===selectedLongId)?.text||LESSONS.long[0]);
  longTextOrdinal=Math.max(0,LONG_TEXTS.filter(t=>t.language===currentLanguage).findIndex(t=>t.id===selectedLongId));
  longPage=imported?0:(longRememberedPages[longTextOrdinal]||0);if(longPage>=Math.ceil(longLines.length/5))longPage=0;
@@ -360,13 +360,18 @@ function createLongInput(){
   const render=workspace.querySelector(`[data-long-render="${longIndex}"]`);if(render)render.innerHTML=longRenderMarkup(longIndex);
  }});
 }
+function enterLongPage(page){
+ clearCoreComposers();longInput=null;longComposer=null;longStarted=null;longResultPending=false;
+ longPage=page;longIndex=page*5;longSavedThrough=longIndex;
+ // Native remembers the page ordinal, never the answers from a previous visit.
+ for(let index=longIndex;index<Math.min(longLines.length,longIndex+5);index++){longTyped[index]='';longResults[index]=undefined;}
+ paintLong();
+}
 function changeLongPage(delta){
+ if(longResultPending)return;
  const next=Math.max(0,longPage+delta);
  if(next>=Math.ceil(longLines.length/5)){if(!imported)longRememberedPages[longTextOrdinal]=0;showLongSelect();return;}
- clearCoreComposers();longInput=null;longComposer=null;longStarted=null;
- longPage=next;longIndex=next*5;longSavedThrough=longIndex;
- for(let index=longIndex;index<Math.min(longLines.length,longIndex+5);index++){longTyped[index]='';longResults[index]=undefined;}
- longPage=Math.floor(longIndex/5);paintLong();
+ enterLongPage(next);
 }
 function paintLong(){
  if(!imported)longRememberedPages[longTextOrdinal]=longPage;
@@ -379,9 +384,25 @@ function finishLongLine(){
  const analysis=analyzePracticeInput(longLines[longIndex],longTyped[longIndex]||longInput.value,appSettings.layout);if(!analysis.complete||(longLines[longIndex]===''&&!longBlankAccepted))return;
  const now=performance.now(),records=finalizePracticeTiming(longComposer,longTiming,analysis,longStarted,now);
  const ticks=longStarted===null?0:originalElapsedTicks(longStarted,now);longTyped[longIndex]=analysis.acceptedText;longResults[longIndex]={correctUnits:analysis.correctUnits,targetUnits:analysis.targetUnits,elapsedTicks:ticks,records};longIndex++;
- if(longIndex%5===0||longIndex>=longLines.length)saveLongProgress();clearCoreComposers();longInput=null;longComposer=null;longStarted=null;longPage=Math.floor(longIndex/5);
- if(longIndex>=longLines.length)finishLong();else paintLong();
+ const pageComplete=longIndex%5===0||longIndex>=longLines.length;
+ if(longInput){longInput.readOnly=true;longInput.onkeydown=null;}
+ const render=workspace.querySelector(`[data-long-render="${longIndex-1}"]`);if(render)render.innerHTML=longRenderMarkup(longIndex-1);
+ clearCoreComposers();longInput=null;longComposer=null;longStarted=null;
+ if(pageComplete){const entry=saveLongProgress();showLongPageResult(entry);}
+ else paintLong();
 }
+function showLongPageResult(entry){
+ releaseProgramKeys();coreIdle=null;longResultPending=true;workspace.querySelector('.long-dialog').inert=true;
+ const values=[['쓰 인 글 수',(entry?.entered||0)+' 타'],['정   타   수',(entry?.correct||0)+' 타'],['연 습 시 간',((entry?.elapsedMs||0)/1000).toFixed(1)+' 초'],['빠   르   기',(entry?.cpm||0)+' 타/분'],['정   확   도',(entry?.accuracy||0)+' %']];
+ const dialog=document.createElement('section');dialog.className='long-result-dialog';dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-label','결과');dialog.tabIndex=-1;
+ dialog.innerHTML='<h1>결과<button class="dialog-close" aria-label="닫기">×</button></h1><dl>'+values.map(([label,value])=>`<dt>${label} :</dt><dd>${esc(value)}</dd>`).join('')+'</dl>';
+ let dismissed=false;
+ const dismiss=exit=>{if(dismissed)return;dismissed=true;releaseProgramKeys();longResultPending=false;dialog.remove();if(exit){showLongSelect();return;}if(longIndex>=longLines.length)finishLong();else enterLongPage(longPage+1);};
+ dialog.onkeydown=e=>{if(activateFocusedDialogClose(e,dialog))return;e.preventDefault();e.stopImmediatePropagation();if(e.key==='Escape')dismiss(true);else if(e.key==='Enter'||e.key===' ')dismiss(false);};
+ dialog.querySelector('button').onclick=()=>dismiss(true);
+ workspace.append(dialog);dialog.focus({preventScroll:true});$('#status').textContent='Enter를 누르세요.';
+}
+
 function saveLongProgress(){
  if(longIndex<=longSavedThrough||(longIndex%5!==0&&longIndex<longLines.length))return null;
  const complete=longResults.slice(longSavedThrough,longIndex);if(complete.some(x=>!x))return null;
@@ -495,7 +516,7 @@ function endInvaders(){
 
 
 function wrapLongText(text){return wrapOriginalLongText(text);}
-function showLongSelect(){resetNativeComposerMode();coreIdle=null;clearCoreComposers();const available=LONG_TEXTS.filter(t=>t.language===currentLanguage);if(!available.some(t=>t.id===selectedLongId))selectedLongId=available[0]?.id;const selected=Math.max(0,available.findIndex(t=>t.id===selectedLongId));workspace.innerHTML=`<section class="long-select"><h1>긴글 연습<button class="dialog-close" data-go="home">×</button></h1><fieldset><legend>글</legend><div id="long-list" role="listbox" aria-label="연습할 글 선택" tabindex="0">${available.map((t,i)=>`<div role="option" aria-selected="${i===selected}" data-text-id="${t.id}" style="padding-right:${textColumns(t.title)%2?8:0}px" class="${i===selected?'selected':''}">${esc(t.title)}</div>`).join('')}</div></fieldset><div class="select-message">연습하고자하는 글을 선택하세요.</div></section>`;let index=selected;const list=$('#long-list');function choose(){selectedLongId=available[index].id;imported='';startLong()}function highlight(){list.querySelectorAll('[role=option]').forEach((el,i)=>{el.classList.toggle('selected',i===index);el.setAttribute('aria-selected',String(i===index))});list.children[index]?.scrollIntoView({block:'nearest'})}list.onclick=e=>{const id=e.target.dataset.textId;if(!id)return;const next=available.findIndex(t=>t.id===id);if(next===index){choose();return;}index=next;highlight();list.focus({preventScroll:true});};list.onkeydown=e=>{if(['ArrowDown','ArrowUp','Home','End','PageUp','PageDown','Enter',' '].includes(e.key)){e.preventDefault();e.stopPropagation();}if(['ArrowDown','ArrowUp','Home','End','PageUp','PageDown'].includes(e.key)){index=['Home','PageUp'].includes(e.key)?0:['End','PageDown'].includes(e.key)?available.length-1:(index+(e.key==='ArrowDown'?1:-1)+available.length)%available.length;highlight()}else if(e.key==='Enter'||e.key===' '){choose()}};list.focus({preventScroll:true});$('#status').textContent='상하 화살표로 항목을 선택한 후 Enter를 누르세요.';}
+function showLongSelect(){longResultPending=false;resetNativeComposerMode();coreIdle=null;clearCoreComposers();const available=LONG_TEXTS.filter(t=>t.language===currentLanguage);if(!available.some(t=>t.id===selectedLongId))selectedLongId=available[0]?.id;const selected=Math.max(0,available.findIndex(t=>t.id===selectedLongId));workspace.innerHTML=`<section class="long-select"><h1>긴글 연습<button class="dialog-close" data-go="home">×</button></h1><fieldset><legend>글</legend><div id="long-list" role="listbox" aria-label="연습할 글 선택" tabindex="0">${available.map((t,i)=>`<div role="option" aria-selected="${i===selected}" data-text-id="${t.id}" style="padding-right:${textColumns(t.title)%2?8:0}px" class="${i===selected?'selected':''}">${esc(t.title)}</div>`).join('')}</div></fieldset><div class="select-message">연습하고자하는 글을 선택하세요.</div></section>`;let index=selected;const list=$('#long-list');function choose(){selectedLongId=available[index].id;imported='';startLong()}function highlight(){list.querySelectorAll('[role=option]').forEach((el,i)=>{el.classList.toggle('selected',i===index);el.setAttribute('aria-selected',String(i===index))});list.children[index]?.scrollIntoView({block:'nearest'})}list.onclick=e=>{const id=e.target.dataset.textId;if(!id)return;const next=available.findIndex(t=>t.id===id);if(next===index){choose();return;}index=next;highlight();list.focus({preventScroll:true});};list.onkeydown=e=>{if(['ArrowDown','ArrowUp','Home','End','PageUp','PageDown','Enter',' '].includes(e.key)){e.preventDefault();e.stopPropagation();}if(['ArrowDown','ArrowUp','Home','End','PageUp','PageDown'].includes(e.key)){index=['Home','PageUp'].includes(e.key)?0:['End','PageDown'].includes(e.key)?available.length-1:(index+(e.key==='ArrowDown'?1:-1)+available.length)%available.length;highlight()}else if(e.key==='Enter'||e.key===' '){choose()}};list.focus({preventScroll:true});$('#status').textContent='상하 화살표로 항목을 선택한 후 Enter를 누르세요.';}
 const STAGE_LABELS=['기본 자리','왼손 윗글쇠','검지 글쇠','오른손 윗글쇠','왼손 밑글쇠','오른손 밑글쇠','왼손 쌍자음','윗글쇠 나머지','숫자 글쇠','기호 글쇠'];
 const KO_POOLS=['ㅁㄴㅇㄹㅓㅏㅣ','ㅂㅈㄷㄱㅅ','ㄱㅅㄹㅎㅗㅛㅕㅓ','ㅛㅕㅑㅐㅔ','ㅋㅌㅊㅍ','ㅠㅜㅡ','ㅃㅉㄸㄲㅆ','ㅒㅖ[]','1234567890','!@#$%^&*()_+-='];
 const EN_POOLS=['asdfjkl;','qwert','rtyufghj','yuiop','zxcvb','nm,./','ASDF','QWERTY','1234567890','!@#$%^&*()_+-='];

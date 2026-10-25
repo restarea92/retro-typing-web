@@ -244,7 +244,7 @@
 .titlebar>span:before{position:relative;top:-1px}
 .classic.menu-open .titlebar>span:before,.classic.game-mode .titlebar>span:before,.classic:has(#workspace:empty) .titlebar>span:before{top:0}
 .classic.game-mode:has(.extra-game-scores) .titlebar>span:before,.classic:has(.repeat-dialog) .sentence-dialog h1:before,.classic:has(.repeat-dialog) .key-dialog h1:before{position:relative;top:-1px}
-.extra-notepad:has(.extra-notepad-result)>h1:before,.extra-exam-running:has(.extra-exam-result-modal)>h1:before{position:relative;top:-1px;background-image:none /* Embedded asset omitted from public source archive. */}
+.extra-notepad:has(.extra-notepad-result)>h1:before,.extra-exam-running:has(.extra-exam-result-modal)>h1:before,.classic:has(.long-result-dialog) .long-dialog>h1:before{position:relative;top:-1px;background-image:none /* Embedded asset omitted from public source archive. */}
 /* Native key states: stippled home keys use white text+1px; depressed keys+3px. */
 .original-help .row-2 .physical-key:nth-child(n+2):nth-child(-n+5),.original-help .row-2 .physical-key:nth-child(n+8):nth-child(-n+11){border-color:#656565;padding-top:3px}
 .key-dialog .physical-key.native-stippled-key{color:#fff;padding-top:1px}
@@ -307,3 +307,10 @@
 
 /* Native inner raised frame: the later dark right/bottom lines own shared corners. */
 .speed-panel,.result-panel{box-shadow:inset -1px -1px #656565,inset 1px 1px #fff}
+
+/* Native long practice blocks on a five-field result after every completed page. */
+.long-result-dialog{position:absolute;left:182px;top:128px;width:281px;height:126px;border:1px solid;border-color:#656565 #000 #000 #656565;box-shadow:inset 1px 1px #fff,inset -1px -1px #656565;background:#aaa;z-index:5;outline:none}
+.long-result-dialog h1{position:absolute;left:4px;right:4px;top:4px;height:19px;margin:0;padding:1px 4px 2px;background:#00008a;line-height:16px;color:#fff;font-weight:normal}
+.long-result-dialog dl{position:absolute;left:39px;top:31px;display:grid;grid-template-columns:112px 88px;margin:0;font:16px/16px HTTDPixel,monospace;white-space:pre}
+.long-result-dialog dt,.long-result-dialog dd{margin:0;height:16px}.long-result-dialog dd{text-align:right}
+.classic:has(.long-result-dialog) .long-dialog>h1{background:#656565}

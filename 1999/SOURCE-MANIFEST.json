@@ -5,8 +5,8 @@
   "files": [
     {
       "path": "app.js",
-      "sourceSha256": "a94216aa21a558946cc4b3ffee9f4fea361f33ebcee3a7a28d42eaf35c845d4c",
-      "publishedSha256": "a94216aa21a558946cc4b3ffee9f4fea361f33ebcee3a7a28d42eaf35c845d4c",
+      "sourceSha256": "b9cd841c296cc73fe4a3b4aed9bf4ded865779ddbdbf565c84354fc48b0b6d18",
+      "publishedSha256": "b9cd841c296cc73fe4a3b4aed9bf4ded865779ddbdbf565c84354fc48b0b6d18",
       "removedEmbeddedAssets": 0
     },
     {
@@ -35,8 +35,8 @@
     },
     {
       "path": "extras.js",
-      "sourceSha256": "07f61431212dc0fbd1b927e99b3b409cf8fbbbccc968a22ede2a20fa0cfc93af",
-      "publishedSha256": "07f61431212dc0fbd1b927e99b3b409cf8fbbbccc968a22ede2a20fa0cfc93af",
+      "sourceSha256": "6366b340b45bc8aa87f448d0a98f735e0a5bae7acba70036cab920d002ad6946",
+      "publishedSha256": "6366b340b45bc8aa87f448d0a98f735e0a5bae7acba70036cab920d002ad6946",
       "removedEmbeddedAssets": 0
     },
     {
@@ -185,8 +185,8 @@
     },
     {
       "path": "styles.css",
-      "sourceSha256": "0365ca2d7f08fbcf13a361b51129dbe3f658ba52ba9fb1d232d655f5d13db768",
-      "publishedSha256": "b9aa995801dd75c4b3837caad89c9ad220413d4355c60df6d4b2f8b29b839ded",
+      "sourceSha256": "12c258fd1869c0f5744a3a1dfef1c736fbcf58965061dfc44e2cbb0041bcb129",
+      "publishedSha256": "bf0439b0f67498f561a19b7c4c6d7e9bf5a7ec9ccf052464788a141d8e91acba",
       "removedEmbeddedAssets": 21
     },
     {
@@ -228,5 +228,6 @@
   ],
   "previousPublishedAppSha256": "30999d4ad2165efb8b8b386c642cbaa825d8f132b99aa4d376c3869e66ecaac0",
   "sourceRuntimeManifestSha256": "f37ae768a3e18658895491e1e8642c21fca865e0cf1a29216840133cd95025ea",
-  "displayUpdate": "Fullscreen viewport and opt-out CRT display simulation added. Preserves the 640 x 480 program coordinate system. No original resources are added to the public archive. Runtime assets are kept separate."
+  "displayUpdate": "Fullscreen viewport and opt-out CRT display simulation added. Preserves the 640 x 480 program coordinate system. No original resources are added to the public archive. Runtime assets are kept separate.",
+  "parityFixCheckpoint": "2026-10-26: per-page long result, clean page reentry, blocking game wait idle exclusion, exam EOF heading. See TESTING.md."
 }

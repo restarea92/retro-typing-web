@@ -61,3 +61,7 @@ npm test
 CRT display defaults on and has persistent on/off controls outside the original screen and within fullscreen. A restrained highlight bloom preserves the sharp source; source-row scanlines track the display scale, while RGB phosphor stripes track output device pixels. Low-density displays attenuate masks to avoid aliasing. This is a lightweight DOM/SVG/CSS simulation, not a full analog CRT signal model or a claim of CRT-Royale equivalence. CRT off removes all added filters and masks.
 
 Validation separates pure geometry/preference tests, simulated-DOM input regressions, and real browser/device evidence. Actual iPhone/DOS verification is not implied. The original-resource modules and assets remain excluded from this public source tree.
+
+## 2026-10-26 completion parity fixes
+
+1999 long practice now waits for its per-page five-field result, including the short final page; Enter/Space continues and Escape/close leaves. Reentering a page starts with fresh answers. Special next-stage waits in both games no longer trigger the active-game idle timeout. Exam EOF headings advance beyond the final page, while deadline headings stay on the current page. Focused synthetic DOM regressions cover these boundaries; see `1999/TESTING.md` for passed and explicitly skipped checks. No 1997 code or excluded original assets changed.

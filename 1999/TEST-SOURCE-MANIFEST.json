@@ -16,8 +16,8 @@
     },
     {
       "path": "qa/dom-harness.mjs",
-      "sourceSha256": "065dba756c43ecf8ab2923acafbb523e166642340c0b922937bdf2610558b184",
-      "publishedSha256": "28b13db303f194074fe948d3948010f789b2029a8eb6c29ad813a4f03add907f",
+      "sourceSha256": "10b9cf7c37ce2eac334656a6efa1c065a56683513ee0b795d1232df3f91fcf53",
+      "publishedSha256": "10b9cf7c37ce2eac334656a6efa1c065a56683513ee0b795d1232df3f91fcf53",
       "adaptation": "Normal linkedom package import."
     },
     {
@@ -163,6 +163,13 @@
       "sourceSha256": "ce29973eda44ede0e359e0878bbadd78ff3dd62f095a1666cc3e5c68864cd256",
       "publishedSha256": "e3921cb67bdfa2c4b1e568c76402c6081003b81fb4818209b45f36b9f0694ef0",
       "adaptation": "Explicit resource gate; test bodies retained; normal linkedom package import where applicable."
+    },
+    {
+      "path": "qa/fullclear-parity-fixes.test.mjs",
+      "sourceSha256": "a761537bbd655f7dcc2a3fdc225f13988c296aac4f88841af063e5c04c456127",
+      "publishedSha256": "a761537bbd655f7dcc2a3fdc225f13988c296aac4f88841af063e5c04c456127",
+      "adaptation": "Authored synthetic regression fixtures for four full-clear parity fixes; resource-gated simulated DOM, not native/browser proof."
     }
-  ]
+  ],
+  "parityFixCheckpoint": "2026-10-26: per-page long result, clean page reentry, blocking game wait idle exclusion, exam EOF heading. See TESTING.md."
 }

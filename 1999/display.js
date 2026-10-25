@@ -6,7 +6,8 @@ export function displayGeometry(width,height,fullscreen=false,dpr=1){
   return {scale,width:640*scale,height:480*scale,left:fullscreen?(width-640*scale)/2:0,
     maskPixel:1/Math.max(1,dpr),scanlineOpacity:Math.min(.18,Math.max(0,(scale*Math.max(1,dpr)-1)*.14))};
 }
-export function readCrtPreference(storage){try{return storage.getItem(CRT_STORAGE_KEY)!=='off';}catch{return true;}}
+// Keep explicit choices, but leave the source image unfiltered for development QA.
+export function readCrtPreference(storage){try{return storage.getItem(CRT_STORAGE_KEY)==='on';}catch{return false;}}
 export function installDisplay(doc=document,win=window){
   const viewport=doc.querySelector('#display-viewport'),frame=doc.querySelector('#frame-box');
   if(!viewport||!frame)return null;

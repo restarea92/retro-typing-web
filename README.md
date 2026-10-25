@@ -58,10 +58,14 @@ npm test
 
 1999 fullscreen now targets an outer viewport rather than the 640×480 program itself. It scales uniformly to viewport height, centers horizontally, and clips the sides on narrow screens rather than relaying out the original UI. Wide displays retain side bars. Windowed mode keeps its existing fit-down behavior.
 
-CRT display defaults on and has persistent on/off controls outside the original screen and within fullscreen. A restrained highlight bloom preserves the sharp source; source-row scanlines track the display scale, while RGB phosphor stripes track output device pixels. Low-density displays attenuate masks to avoid aliasing. This is a lightweight DOM/SVG/CSS simulation, not a full analog CRT signal model or a claim of CRT-Royale equivalence. CRT off removes all added filters and masks.
+CRT display defaults off during development image verification and has persistent on/off controls outside the original screen and within fullscreen. A restrained highlight bloom preserves the sharp source; source-row scanlines track the display scale, while RGB phosphor stripes track output device pixels. Low-density displays attenuate masks to avoid aliasing. This is a lightweight DOM/SVG/CSS simulation, not a full analog CRT signal model or a claim of CRT-Royale equivalence. CRT off removes all added filters and masks.
 
 Validation separates pure geometry/preference tests, simulated-DOM input regressions, and real browser/device evidence. Actual iPhone/DOS verification is not implied. The original-resource modules and assets remain excluded from this public source tree.
 
 ## 2026-10-26 completion parity fixes
 
 1999 long practice now waits for its per-page five-field result, including the short final page; Enter/Space continues and Escape/close leaves. Reentering a page starts with fresh answers. Special next-stage waits in both games no longer trigger the active-game idle timeout. Exam EOF headings advance beyond the final page, while deadline headings stay on the current page. Focused synthetic DOM regressions cover these boundaries; see `1999/TESTING.md` for passed and explicitly skipped checks. No 1997 code or excluded original assets changed.
+
+## 2026-10-26 CRT development default
+
+New or unstored CRT preferences now start off so pixel comparisons use the unfiltered image. Explicitly saved on/off choices and both toggle controls are preserved. Missing, blocked or invalid storage also falls back to off; merely loading the page does not overwrite preferences. Re-enabling CRT by default after development remains a future decision, not an automatic change. Fixed 640×480 layout and scaling behavior are unchanged by this patch.

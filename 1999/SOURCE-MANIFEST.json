@@ -65,8 +65,8 @@
     },
     {
       "path": "index.html",
-      "sourceSha256": "cc8ecd1773998011b843063e46860f2a3b3655848c349ab708878ad4e4a0b4f1",
-      "publishedSha256": "cc8ecd1773998011b843063e46860f2a3b3655848c349ab708878ad4e4a0b4f1",
+      "sourceSha256": "64c09dfe8573caec771ce312daa25afa9c9c8e47ba4a37c21b789d7506eeb149",
+      "publishedSha256": "64c09dfe8573caec771ce312daa25afa9c9c8e47ba4a37c21b789d7506eeb149",
       "removedEmbeddedAssets": 0
     },
     {
@@ -215,8 +215,8 @@
     },
     {
       "path": "display.js",
-      "sourceSha256": "0a90251599159e7dbf7236f9418c4e1b0df183c114ec916ecc6b387d84f14566",
-      "publishedSha256": "0a90251599159e7dbf7236f9418c4e1b0df183c114ec916ecc6b387d84f14566",
+      "sourceSha256": "f520d7c70b2987c6360aaf59883fdeceb6e253700e1f74b22ed488ac1277854b",
+      "publishedSha256": "f520d7c70b2987c6360aaf59883fdeceb6e253700e1f74b22ed488ac1277854b",
       "removedEmbeddedAssets": 0
     },
     {

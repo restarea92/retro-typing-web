@@ -61,3 +61,10 @@ test('keyup already released by navigation succeeds only when normal bridge conf
  const before=f.calls.length;assert.equal(f.api.keyUp({code:'Unidentified'}),false);assert.equal(f.api.keyUp({code:'MetaLeft'}),false);assert.equal(f.calls.length,before);
  delete f.bridge.pressedCodes;assert.equal(f.api.keyUp({code:'KeyA'}),false);
 });
+
+test('SDK mouse click carries pointer detail, not keyboard activation detail',()=>{
+ const f=fixture();let languageChanges=0,focusOnly=0,detail;
+ f.document.querySelector('#ok').onclick=e=>{detail=e.detail;if(e.detail===0)languageChanges++;else focusOnly++;};
+ f.api.pointer({type:'down',x:1,y:1,buttons:[0]});f.api.pointer({type:'up',x:1,y:1,buttons:[]});
+ assert.equal(detail,1);assert.equal(languageChanges,0);assert.equal(focusOnly,1);
+});

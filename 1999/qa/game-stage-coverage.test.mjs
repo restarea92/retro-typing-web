@@ -11,7 +11,7 @@ import {
  applyRainEffect, createInvadersStage, tickInvaders, tickInvaderBonus,
  hitInvaders, applyInvadersEffect,
 } from '../game-engine.js';
-import {createOriginalRandom} from '../original-random.js';
+import {createOriginalRandom,browserTimeSeed} from '../original-random.js';
 // The six simulated-DOM cases require private resources and are skipped by default.
 const resourceTests = process.env.RUN_PRIVATE_RESOURCE_TESTS === '1';
 const {api, document, saved} = resourceTests ? await import('./dom-harness.mjs') : {};
@@ -222,13 +222,18 @@ function seedFor(effect) {
  * boundaries. Production timers still exist, but synchronous driver loops
  * cannot yield to them; app.updateGame executes the real timer body. */
 async function withClock(run) {
- const descriptor=Object.getOwnPropertyDescriptor(performance,'now'), oldDateNow=Date.now;
- let now=1000, seed=0;
+ const descriptor=Object.getOwnPropertyDescriptor(performance,'now'), RealDate=Date;
+ const calendarBase=new RealDate(2026,0,1,0,0,0),baseSeed=browserTimeSeed(calendarBase);
+ let now=1000, wall=calendarBase.getTime();
+ const seed=value=>{wall=calendarBase.getTime()+((value-baseSeed+65536)%65536)*1000;assert.equal(browserTimeSeed(new Date()),value);};
  Object.defineProperty(performance,'now',{configurable:true,value:()=>now});
- Date.now=()=>seed*1000;
- try {await run({advance:(ms=2000)=>{now+=ms;api.updateGame();},seed:value=>{seed=value;}});}
+ // Production now reads the original local-calendar conversion, not Unix
+ // seconds. Fake the calendar input; do not mutate the application's RNG.
+ globalThis.Date=class extends RealDate{constructor(...args){super(...(args.length?args:[wall]));}static now(){return wall;}};
+ seed(0);
+ try {await run({advance:(ms=2000)=>{now+=ms;api.updateGame();},seed});}
  finally {
-  api.navigate('home'); Date.now=oldDateNow;
+  api.navigate('home'); globalThis.Date=RealDate;
   if(descriptor) Object.defineProperty(performance,'now',descriptor); else delete performance.now;
  }
 }

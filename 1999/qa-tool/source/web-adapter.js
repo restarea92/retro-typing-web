@@ -3,7 +3,7 @@ import {dosKey} from './input-core.js';
  * Same-origin parent code uses window.__HTTD_QA_WEB__; no postMessage command
  * endpoint is installed, and no score, RNG, clock or route mutator is exposed.
  */
-export function installQaWebAdapter({bridge,getOwner,getState=()=>({}),document=globalThis.document}={}){
+export function installQaWebAdapter({bridge,getOwner,getState=()=>({}),releasePointer=()=>{},document=globalThis.document}={}){
  if(!document||!bridge||typeof getOwner!=='function')throw new TypeError('A document, app keyboard bridge and input owner are required.');
  const win=document.defaultView,frame=document.querySelector('.classic');
  if(!win||!frame)throw new Error('The QA adapter requires the ordinary .classic app frame.');
@@ -56,8 +56,8 @@ export function installQaWebAdapter({bridge,getOwner,getState=()=>({}),document=
   if(!target||!frame.contains(target)||target.closest?.('[inert]'))return false;
   const mask=Array.isArray(buttons)?buttons.reduce((v,b)=>v|(b===0?1:b===2?2:0),0):0;
   const fields={bubbles:true,cancelable:true,composed:true,clientX,clientY,button,buttons:mask,pointerId:1,pointerType:'mouse',isPrimary:true};
-  const emit=(name,el=target)=>{const C=name.startsWith('pointer')?(win.PointerEvent||win.MouseEvent):win.MouseEvent;let e;
-   if(typeof C==='function')e=new C(name,fields);else{e=new win.Event(name,{bubbles:true,cancelable:true});for(const [key,value]of Object.entries(fields))if(!['bubbles','cancelable','composed'].includes(key))Object.defineProperty(e,key,{value});}
+  const emit=(name,el=target)=>{const eventFields={...fields,detail:['mousedown','mouseup','click'].includes(name)?1:0};const C=name.startsWith('pointer')?(win.PointerEvent||win.MouseEvent):win.MouseEvent;let e;
+   if(typeof C==='function')e=new C(name,eventFields);else{e=new win.Event(name,{bubbles:true,cancelable:true});for(const [key,value]of Object.entries(eventFields))if(!['bubbles','cancelable','composed'].includes(key))Object.defineProperty(e,key,{value});}
    Object.defineProperty(e,'qaBridgePointer',{value:true});return el.dispatchEvent(e);
   };
   markHover(target);
@@ -78,7 +78,7 @@ export function installQaWebAdapter({bridge,getOwner,getState=()=>({}),document=
   }
   return true;
  }
- function releaseAll(){downs.clear();clearMarks(active,'data-qa-active');bridge.releaseAll();}
+ function releaseAll(){downs.clear();clearMarks(active,'data-qa-active');releasePointer();bridge.releaseAll();}
  function observe(){const owner=getOwner();return{
   lastKey:lastObservedKey?{...lastObservedKey}:null,language:document.querySelector('#language')?.textContent||'',text:owner&&'value'in owner?String(owner.value):'',
   owner:owner?.getAttribute?.('aria-label')||owner?.id||owner?.tagName||'',title:document.querySelector('.titlebar')?.textContent||'',

@@ -3,11 +3,11 @@
   "files": [
     {
       "path": "source/README.md",
-      "sha256": "fec46f7ffa093b5419907461db3fcf5a1a083ee38fc9b272349c701dca763131"
+      "sha256": "a5012c8d12c40793cd5d9fa3bf00a4ae546d705543d0bad2e000b5771adb62f6"
     },
     {
       "path": "source/bundle-local.js",
-      "sha256": "bda396278d204c3da488a13bfb5d0bcea0a8c2d09ec7cc0143bc1962a254719e"
+      "sha256": "d61d57c2e7ce2082171aca14c97fa5596b2870b6ad9fcc54f77bbf6b9c2cc064"
     },
     {
       "path": "source/dos-adapter.js",
@@ -19,7 +19,7 @@
     },
     {
       "path": "source/dos-player.js",
-      "sha256": "6a963b679a0f776f38888f52c21dae819654a5e7989d5c713d2abb801109a28c"
+      "sha256": "c57da9ff29b7aa6db086074b844c4291e0e7ad01026b4b0c811662fa407c6d82"
     },
     {
       "path": "source/fetch-vendor.mjs",
@@ -27,7 +27,7 @@
     },
     {
       "path": "source/index.html",
-      "sha256": "affaeb819bc210b5a52b1d4b3e04d8da0bb631905ddf2ed951dc70cd3ee885c9"
+      "sha256": "4498450f95dc8463b8ecad517fc3c6909a01ba7a1188a2adf4730e8f99bda3e1"
     },
     {
       "path": "source/input-core.js",
@@ -39,7 +39,7 @@
     },
     {
       "path": "source/main.js",
-      "sha256": "56057527cf737e1e5fca9dc1e3dc45e9dae3dea28680618d14c4f99362c71410"
+      "sha256": "8c043e70c4f246509baa6834893ca14e970c49c93d62028e721cafbca7915a98"
     },
     {
       "path": "source/package.json",
@@ -48,6 +48,10 @@
     {
       "path": "source/prepare-runtime.mjs",
       "sha256": "51e8e24dfcf84b0078d23f1f046ecb685814318b4b620bde585067231a36f892"
+    },
+    {
+      "path": "source/qa-rng.js",
+      "sha256": "72301437f602ed3c5e5e24c4e6c51654b38b256f973b79d6d50b8df0ca113d3e"
     },
     {
       "path": "source/qa.css",
@@ -63,11 +67,11 @@
     },
     {
       "path": "source/web-adapter.js",
-      "sha256": "bacc1863152f8fd3bb7867ae748933834fa2cf1451ab4ad0bf7b9b5cd98b2898"
+      "sha256": "6f6549fe616ed1fa8cd07637ca2dc61efaccefbefed1687a1f403e80a5ebb53b"
     },
     {
       "path": "source/web-hook.js",
-      "sha256": "54bcc26eb7ef409d5edfee69c10ba636a6e8ad2402680107f434b780606e1721"
+      "sha256": "c7317a8edafc562be2cec98b6bf8c5cd2c22601db2acbf3b732384c1b5dbea63"
     },
     {
       "path": "tests/bundle-local.test.mjs",
@@ -78,24 +82,24 @@
       "sha256": "c6625698a9a2e6bec117f24d8a23d0aec811ca71487c82562c4768072b526926"
     },
     {
-      "path": "tests/dos-libzip-fixture.private.mjs",
-      "sha256": "f079bc0884e571a5669fbad30ae31c46aeeab5206063a0aa0e90ca979dfabcd2"
-    },
-    {
       "path": "tests/input-core.test.mjs",
       "sha256": "9327d911c9d5a0466bfc7e420740564399b61b84c055879d9378e5b62e6a51cf"
     },
     {
       "path": "tests/main-integration.test.mjs",
-      "sha256": "0e7eaada269576b9014a54462560eb300a087dae59340f06946077c7dc9284a5"
+      "sha256": "9ab5df32faaaf95c73319e9e61ca61a23594678e22c2e11498b56014fcfc2f18"
     },
     {
       "path": "tests/package.json",
       "sha256": "40c03bf7b1682c3a4602f70e4c8c3af77befc75ae9f28503b7f1ede5bc342888"
     },
     {
+      "path": "tests/qa-rng.test.mjs",
+      "sha256": "58b6d838b9dac1e66f969733ba17df1c4ad1925eb106f305abb199cc04857ee8"
+    },
+    {
       "path": "tests/web-adapter.test.mjs",
-      "sha256": "af7fd0302ec4f98ec34ecc6fad793ea490fa1a273003e805fad1fc7659da56ae"
+      "sha256": "ed85c1a72b34f4973d0b2537fe4dd303418492eea87e7fbd39b3fb08b6a2968f"
     }
   ]
 }

@@ -5,8 +5,8 @@
   "files": [
     {
       "path": "app.js",
-      "sourceSha256": "467b641902b8bf6665d450e560670199a8460e47deda2cfd6e317888c50f6b42",
-      "publishedSha256": "467b641902b8bf6665d450e560670199a8460e47deda2cfd6e317888c50f6b42",
+      "sourceSha256": "304dc2b2c0a3b34ca9069804b78bacba4c77268c9bd265ab18fb68abb1820630",
+      "publishedSha256": "304dc2b2c0a3b34ca9069804b78bacba4c77268c9bd265ab18fb68abb1820630",
       "removedEmbeddedAssets": 0
     },
     {
@@ -131,8 +131,8 @@
     },
     {
       "path": "original-random.js",
-      "sourceSha256": "8803b62b4ce3fdcc5d71538243208194c73db972b308c17d07f9d030b4300757",
-      "publishedSha256": "8803b62b4ce3fdcc5d71538243208194c73db972b308c17d07f9d030b4300757",
+      "sourceSha256": "a7e1070407c928664947100fc5408578a91a1bce1fef91ae745527281e9ddf76",
+      "publishedSha256": "a7e1070407c928664947100fc5408578a91a1bce1fef91ae745527281e9ddf76",
       "removedEmbeddedAssets": 0
     },
     {
@@ -179,14 +179,14 @@
     },
     {
       "path": "settings.js",
-      "sourceSha256": "ed652393b74cdd9fd9abcbdb68a0809761543d8124c473b0dab64c1bbbd4068e",
-      "publishedSha256": "ed652393b74cdd9fd9abcbdb68a0809761543d8124c473b0dab64c1bbbd4068e",
+      "sourceSha256": "84d7cb6f2bac97f4216ea4f5a615e4dac0d0a374fc2166717c7494baffd15e3c",
+      "publishedSha256": "84d7cb6f2bac97f4216ea4f5a615e4dac0d0a374fc2166717c7494baffd15e3c",
       "removedEmbeddedAssets": 0
     },
     {
       "path": "styles.css",
-      "sourceSha256": "12c258fd1869c0f5744a3a1dfef1c736fbcf58965061dfc44e2cbb0041bcb129",
-      "publishedSha256": "bf0439b0f67498f561a19b7c4c6d7e9bf5a7ec9ccf052464788a141d8e91acba",
+      "sourceSha256": "b67935cbe136ddeb625e54de7a905044416c23f90a3106f287db9fd66ad48925",
+      "publishedSha256": "4c7330da6ecfde0da0c55492a2c4915698e16a9968d520929d046e69ec7c3959",
       "removedEmbeddedAssets": 21
     },
     {
@@ -223,6 +223,17 @@
       "path": "display.css",
       "sourceSha256": "5c8b8d175599d5442b663e38af2a07ae87d87750ae11569f559e1faea91f6c0c",
       "publishedSha256": "5c8b8d175599d5442b663e38af2a07ae87d87750ae11569f559e1faea91f6c0c",
+      "removedEmbeddedAssets": 0
+    },
+    {
+      "path": "original-mouse-release.js",
+      "sourceSha256": "37a81dfd22c3cd43e705fd7a5bdf84998d6ad924b1c4611e4d2a1c3b22f06eef",
+      "publishedSha256": "37a81dfd22c3cd43e705fd7a5bdf84998d6ad924b1c4611e4d2a1c3b22f06eef"
+    },
+    {
+      "path": "original-dos-time.js",
+      "sourceSha256": "2546100a610cfdd1c8b833c5386a636df29430bb229810516d61c6f5766629b3",
+      "publishedSha256": "2546100a610cfdd1c8b833c5386a636df29430bb229810516d61c6f5766629b3",
       "removedEmbeddedAssets": 0
     }
   ],

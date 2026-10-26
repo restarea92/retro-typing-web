@@ -1,3 +1,4 @@
+import {inspectExecutableRng} from './qa-rng.js';
 /** Browser-local, bounded original archive conversion. No upload or RNG changes. */
 export const MAX_ARCHIVE_BYTES=32*1024*1024,MAX_EXPANDED_BYTES=64*1024*1024;
 export const DOSBOX_CONF='[sdl]\nautolock=false\n[dosbox]\nmachine=svga_s3\nmemsize=16\n[cpu]\ncycles=10000\n[ipx]\nipx=false\n[autoexec]\n@echo off\nmount c .\nc:\nHTTD.EXE\n';
@@ -38,5 +39,7 @@ export async function prepareLocalBundle(file,{unzipSync,zipSync}={}){
  if(file.size>MAX_ARCHIVE_BYTES)throw new Error('ZIP 크기는 32 MiB 이하여야 합니다.');
  const bytes=new Uint8Array(await file.arrayBuffer());validateZipDirectory(bytes);
  if(!unzipSync||!zipSync)throw new Error('ZIP 처리 모듈이 준비되지 않았습니다.');
- const selected=selectOriginalFiles(unzipSync(bytes));return new Blob([zipSync(Object.fromEntries(Object.entries(selected).sort(([a],[b])=>a.split('/').length-b.split('/').length||a.localeCompare(b))),{level:0})],{type:'application/zip'});
+ const selected=selectOriginalFiles(unzipSync(bytes)),rng=await inspectExecutableRng(selected['HTTD.EXE']);
+ const blob=new Blob([zipSync(Object.fromEntries(Object.entries(selected).sort(([a],[b])=>a.split('/').length-b.split('/').length||a.localeCompare(b))),{level:0})],{type:'application/zip'});
+ Object.defineProperty(blob,'rng',{value:rng});return blob;
 }

@@ -1,9 +1,10 @@
+import { installOriginalMouseRelease } from './original-mouse-release.js';
 import { installDisplay } from './display.js';
 import { bindKeyPracticeInput } from './key-practice-input.js';
 import { createKeyboardInputBridge } from './keyboard-input-bridge.js';
 import { originalKeyGuide } from './original-key-guide.js';
 import { createKeyPaintState, paintKeyGlyph, paintWarmupClockCue, initializeKeyPaint } from './original-key-paint.js';
-import { createOriginalRandom, originalRandomIndex } from './original-random.js';
+import { createOriginalAppRandom, originalRandomIndex } from './original-random.js';
 import { loadOriginalSpeedHistory, appendOriginalSpeedHistory } from './original-history-store.js';
 import { localRecordDate, loadOriginalGameScores, loadOriginalExamRecords, saveOriginalExamRecord } from './original-record-store.js';
 import { insertOriginalGameScore } from './original-records.js';
@@ -103,7 +104,7 @@ function setInputMethod(){
 let extraCleanup=null, navigationVersion=0,composerBaseLayout=null,composerMode=null,lastEnglishLayout='us';
 const profileSessionId=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
 const coreComposers=new Set();
-const originalRandom=createOriginalRandom(1);
+const originalRandom=createOriginalAppRandom(window.location?.search||'');
 let coreIdle=null;
 function armCoreIdle(onTimeout,started=true){coreIdle={...createOriginalIdle({started}),onTimeout};}
 function touchCoreIdle(){if(coreIdle)touchOriginalIdle(coreIdle);}
@@ -169,6 +170,7 @@ $('#external-controls').addEventListener('pointerdown',event=>event.preventDefau
 $('#external-controls').addEventListener('click',event=>{const key=event.target.dataset.controlKey;if(key!==undefined)dispatchExternalKey(key);});
 function dispatchExternalKey(key){const code=key===' '?'Space':key;keyboardBridge?.keyDown({code,key});keyboardBridge?.keyUp({code});}
 
+const originalMouse=installOriginalMouseRelease($('.classic'));
 const displayController=installDisplay();
 function resize(){displayController?.resize();}
 setInterval(()=>{$('#clock').textContent=formatOriginalElapsedClock(performance.now()-appClockStart);if(session&&!finished&&session.startedAt!==null)paint();checkCoreIdle()},1000);
@@ -198,7 +200,8 @@ function keyPress(value,ascii=null){
   const previousDrill=keyDrill;
   keyDrill=pressKeyDrill(keyDrill,correct?requestedKey(keyDrill):(ascii||'\0'),originalRandom);if(correct&&appSettings.repeat&&keyDrill.phaseCorrect===0)sound(2);
   keyCorrect=keyDrill.correct;keyCount=keyDrill.correct+keyDrill.incorrect;
-  $('#key-score').innerHTML=`<span class="key-accuracy">[정확도:${String(keyCount?Math.floor(keyCorrect/keyCount*100):0).padStart(3,' ')}%]</span> <span class="key-count">[횟수:${String(remainingKeyRounds(keyDrill)).padStart(3,' ')}]</span>`;
+  // Native f91b..f934 goes directly to fc61 on target→home, retaining HUD.
+  if(!(correct&&previousDrill.phase==='target'&&keyDrill.phase==='home'))$('#key-score').innerHTML=`<span class="key-accuracy">[정확도:${String(keyCount?Math.floor(keyCorrect/keyCount*100):0).padStart(3,' ')}%]</span> <span class="key-count">[횟수:${String(remainingKeyRounds(keyDrill)).padStart(3,' ')}]</span>`;
   // Native cap/finger cleanup precedes the completion branch (f8e8..f9b4).
   if(correct&&keyDrill.phaseCorrect===0){
    if(previousDrill.phase==='home'){
@@ -441,11 +444,16 @@ function prepareGame(kind,continuing=false){
  }});
  preventBulkInput(input);$('#game-start').onclick=beginGame;focusTypingInput(input);$('#status').style.color='';$('#status').textContent='사이띄개를 누르세요.';
 }
-function setupInvaders(continuing=false){prepareGame('invaders',continuing);rainState=null;invadersState=createInvadersStage(gameStage,gameWords(),{random:originalRandom,language:currentLanguage,wordMemory:gameWordMemory});}
-function setupRain(continuing=false){prepareGame('rain',continuing);invadersState=null;gameColumns=[];rainState=createRainStage(gameStage,gameWords(),{energy:rainLife,spawnMemory:rainSpawnMemory,random:originalRandom,language:currentLanguage,wordMemory:gameWordMemory});}
+function setupInvaders(continuing=false){prepareGame('invaders',continuing);rainState=null;invadersState=null;}
+function setupRain(continuing=false){prepareGame('rain',continuing);invadersState=null;gameColumns=[];rainState=null;}
 
 function beginGame(){
- if(gamePhase!=='intro')return;armCoreIdle(()=>selectGame(gameKind));gamePhase='running';gameActive=true;$('#game-start').hidden=true;$('#game-start').classList.remove('game-intro');$('#game-hud').hidden=false;$('#game-field').hidden=false;$('#game-input').readOnly=false;paintGameInput();focusTypingInput($('#game-input'));$('#status').textContent='';
+ if(gamePhase!=='intro')return;
+ // Native16ec4 waits for the start key; Esc exits before InitTypingData16f17.
+ // Opening/cancelling the intro must neither reseed nor consume word draws.
+ if(gameKind==='rain')rainState=createRainStage(gameStage,gameWords(),{energy:rainLife,spawnMemory:rainSpawnMemory,random:originalRandom,language:currentLanguage,wordMemory:gameWordMemory});
+ else invadersState=createInvadersStage(gameStage,gameWords(),{random:originalRandom,language:currentLanguage,wordMemory:gameWordMemory});
+ armCoreIdle(()=>selectGame(gameKind));gamePhase='running';gameActive=true;$('#game-start').hidden=true;$('#game-start').classList.remove('game-intro');$('#game-hud').hidden=false;$('#game-field').hidden=false;$('#game-input').readOnly=false;paintGameInput();focusTypingInput($('#game-input'));$('#status').textContent='';
  gameNextMove=performance.now()+(gameKind==='rain'?0:invadersState.interval*BIOS_TICK_MS);paintGame();gameTimer=setInterval(updateGame,16);
 }
 function beginInvaders(){beginGame();}function beginRain(){beginGame();}
@@ -634,8 +642,9 @@ function selectGame(kind){resetNativeComposerMode();stopCurrentActivity();closeM
 if (typeof URLSearchParams !== 'undefined' && new URLSearchParams(window.location?.search || '').get('qa') === '1') {
  import('./qa/web-adapter.js').then(({installQaWebAdapter})=>installQaWebAdapter({
   bridge:keyboardBridge,
+  releasePointer:()=>originalMouse.cancel(),
   getOwner:currentInputOwner,
-  getState:()=>({mode,languageCode:currentLanguage,layout:appSettings.layout,composer:composerMode?{...composerMode}:null}),
+  getState:()=>({rng:originalRandom.configuration,mode,languageCode:currentLanguage,layout:appSettings.layout,composer:composerMode?{...composerMode}:null}),
   document
  })).catch(error=>console.error('QA input adapter failed to load:',error));
 }

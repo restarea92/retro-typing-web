@@ -2,14 +2,15 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
+import {webQaUrl,describeRng} from '../source/qa-rng.js';
 const source=readFileSync(new URL('../source/main.js',import.meta.url),'utf8').replace(/^import .*;$/gm,'');
 function fixture(){
  const events={},calls=[],intervals=[];let enabled=false,held=[],buttons=[];
  const listener=()=>({addEventListener:(n,f)=>{(events[n]??=[]).push(f);}});
  const elements=new Map();
- const window=listener(),document={...listener(),querySelector:selector=>{if(!elements.has(selector))elements.set(selector,{...listener(),contentWindow:{},focus(){document.activeElement=this;}});return elements.get(selector);},hasFocus:()=>true,hidden:false};
+ const window={...listener(),location:{search:''}},document={...listener(),querySelector:selector=>{if(!elements.has(selector))elements.set(selector,{...listener(),contentWindow:{},getAttribute:()=> '../?qa=1',focus(){document.activeElement=this;}});return elements.get(selector);},hasFocus:()=>true,hidden:false};
  const router={status:()=>({enabled,held,buttons,running:false}),get enabled(){return enabled;},get pressedCodes(){return held;},log:[],setEnabled:v=>{enabled=v;},releaseAll:r=>{calls.push(['release',r]);held=[];buttons=[];},keyDown:p=>{calls.push(['down',p]);held.push(p.code);},keyUp:c=>{calls.push(['up',c]);held=held.filter(x=>x!==c);},mouseMove:(...x)=>calls.push(['move',...x]),mouseButton:(...x)=>calls.push(['button',...x]),sequence:()=>{},replay:()=>{},click:()=>{},cancelSequence:()=>{},clearLog:()=>{}};
- const context={window,document,createInputRouter:()=>router,createDosAdapter:()=>({destroy:()=>calls.push(['destroy']),state:{ready:false}}),createVisuals:()=>({update:()=>{},event:()=>{},clear:()=>{}}),setInterval:fn=>(intervals.push(fn),1),clearInterval:()=>{},setTimeout:()=>1,URL,Blob,console};
+ const context={webQaUrl,describeRng,window,document,createInputRouter:()=>router,createDosAdapter:()=>({destroy:()=>calls.push(['destroy']),state:{ready:false}}),createVisuals:()=>({update:()=>{},event:()=>{},clear:()=>{}}),setInterval:fn=>(intervals.push(fn),1),clearInterval:()=>{},setTimeout:()=>1,URL,Blob,console};
  vm.runInNewContext(source,context);
  return {window,document,router,calls,poll:()=>intervals.forEach(fn=>fn()),setHeld:v=>held=v,setButtons:v=>buttons=v,emit:(type,properties={})=>{const event={type,code:'KeyA',target:{closest:()=>false},preventDefault:()=>{},stopImmediatePropagation:()=>{},...properties};for(const f of events[type]||[])f(event);}};
 }

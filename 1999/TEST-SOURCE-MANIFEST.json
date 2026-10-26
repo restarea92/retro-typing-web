@@ -46,9 +46,9 @@
     },
     {
       "path": "qa/main-focus-regression.test.mjs",
-      "sourceSha256": "1d220f8f3a6cbdf295eec4ac1afdd7d0a9e4547053f13d4454c3ed2444ac6990",
-      "publishedSha256": "ec046c845bbe8f96140a7329e48c7d7273bdd8a850e8a89e4a5e3a82bc300c81",
-      "adaptation": "Explicit resource gate for LinkeDOM and app dependency imports; fixed local app path; test bodies retained."
+      "sourceSha256": "8db42b401f7c9ae90f98737ac150c11118c6160a535164015d13ec0d6fe8fcba",
+      "publishedSha256": "8db42b401f7c9ae90f98737ac150c11118c6160a535164015d13ec0d6fe8fcba",
+      "adaptation": "Explicit resource gate and window click capture ordering model for LinkeDOM; test assertions unchanged."
     },
     {
       "path": "qa/main-header-regression.test.mjs",
@@ -169,6 +169,45 @@
       "sourceSha256": "a761537bbd655f7dcc2a3fdc225f13988c296aac4f88841af063e5c04c456127",
       "publishedSha256": "a761537bbd655f7dcc2a3fdc225f13988c296aac4f88841af063e5c04c456127",
       "adaptation": "Authored synthetic regression fixtures for four full-clear parity fixes; resource-gated simulated DOM, not native/browser proof."
+    },
+    {
+      "path": "tests/settings-interaction.test.mjs",
+      "sourceSha256": "43b9e9e58a5aef9dac47a0706f56431701fbe40f7fb47e0b5f78f00f7169cae1",
+      "publishedSha256": "43b9e9e58a5aef9dac47a0706f56431701fbe40f7fb47e0b5f78f00f7169cae1"
+    },
+    {
+      "path": "tests/key-hud-transition.test.mjs",
+      "sourceSha256": "361c9eb142d394592657c2141cd75effd8226c1d09af3ff5a9f8b935f86962c6",
+      "publishedSha256": "361c9eb142d394592657c2141cd75effd8226c1d09af3ff5a9f8b935f86962c6"
+    },
+    {
+      "path": "tests/original-mouse-release.test.mjs",
+      "sourceSha256": "be40f973c5f11c4ebe3eb942441ad7562a11c9ef05fda2a8195d4b2c33ad30aa",
+      "publishedSha256": "be40f973c5f11c4ebe3eb942441ad7562a11c9ef05fda2a8195d4b2c33ad30aa"
+    },
+    {
+      "path": "qa/game-stage-coverage.test.mjs",
+      "sourceSha256": "71627f6e251bfa9f430fc436568a709ce432e330fcc6f573c1e50aca91fde120",
+      "publishedSha256": "71627f6e251bfa9f430fc436568a709ce432e330fcc6f573c1e50aca91fde120",
+      "adaptation": "Authored RNG/calendar regression; private-resource cases explicitly gated; no native/gameplay claim from simulated DOM."
+    },
+    {
+      "path": "qa/random-start-boundary.test.mjs",
+      "sourceSha256": "53e89bb7ad1105385876388ff9c95ae29a1e8218b46630c9a31354b164cddcc9",
+      "publishedSha256": "53e89bb7ad1105385876388ff9c95ae29a1e8218b46630c9a31354b164cddcc9",
+      "adaptation": "Authored RNG/calendar regression; private-resource cases explicitly gated; no native/gameplay claim from simulated DOM."
+    },
+    {
+      "path": "tests/original-dos-time.test.mjs",
+      "sourceSha256": "6739cb1eec498fdb88829197b338aebe7cd3f24dd477db56dec20df849aec0b3",
+      "publishedSha256": "6739cb1eec498fdb88829197b338aebe7cd3f24dd477db56dec20df849aec0b3",
+      "adaptation": "Authored RNG/calendar regression; private-resource cases explicitly gated; no native/gameplay claim from simulated DOM."
+    },
+    {
+      "path": "tests/original-random-environment.test.mjs",
+      "sourceSha256": "38cc41b5088bf6c36bc7c0c78c5a8fe1ce919c4d7441c44e4f3291d6b01f79d5",
+      "publishedSha256": "38cc41b5088bf6c36bc7c0c78c5a8fe1ce919c4d7441c44e4f3291d6b01f79d5",
+      "adaptation": "Authored RNG/calendar regression; private-resource cases explicitly gated; no native/gameplay claim from simulated DOM."
     }
   ],
   "parityFixCheckpoint": "2026-10-26: per-page long result, clean page reentry, blocking game wait idle exclusion, exam EOF heading. See TESTING.md."

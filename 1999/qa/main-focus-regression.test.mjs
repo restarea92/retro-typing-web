@@ -17,6 +17,11 @@ if(resourceTestsEnabled)for(const match of source.matchAll(/import\s*\{([^}]+)\}
 function setup({delayed=[]}={}){
   const {window,document}=parseHTML(fs.readFileSync(new URL('index.html',appURL),'utf8'));
   Object.assign(globalThis,{window,document});
+  // LinkeDOM omits capture ordering. Model the window click capture phase
+  // before target handlers, as a browser does for duplicate mouse suppression.
+  const clickCapture=new Set(),addWindow=window.addEventListener.bind(window),removeWindow=window.removeEventListener.bind(window);
+  window.addEventListener=(type,fn,capture)=>type==='click'&&capture?clickCapture.add(fn):addWindow(type,fn,capture);
+  window.removeEventListener=(type,fn,capture)=>type==='click'&&capture?clickCapture.delete(fn):removeWindow(type,fn,capture);
   let reloads=0,resolveBoot;const pending=new Map();
   const saved=new Map();
   window.localStorage={getItem:k=>saved.get(k)??null,setItem:(k,v)=>saved.set(k,String(v))};
@@ -48,7 +53,7 @@ function setup({delayed=[]}={}){
   const q=selector=>document.querySelector(selector);
   const event=(target,type,fields={})=>{
     const e=new window.Event(type,{bubbles:true,cancelable:true});
-    Object.assign(e,fields);target.dispatchEvent(e);return e;
+    Object.assign(e,fields);if(type==='click'){for(const handler of clickCapture)handler(e);if(e.cancelBubble)return e;}target.dispatchEvent(e);return e;
   };
   const key=(key,target=document.activeElement,{activate=true,...extra}={})=>{
     const e=event(target,'keydown',{key,code:key===' '?'Space':key,...extra});
